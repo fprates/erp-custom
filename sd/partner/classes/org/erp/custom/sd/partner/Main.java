@@ -9,6 +9,7 @@ import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.Link;
 import org.iocaste.shell.common.ViewData;
 
 public class Main extends AbstractPage {
@@ -32,13 +33,43 @@ public class Main extends AbstractPage {
         model.add(item);
     }
     
-    public void create(ViewData view) {
+    public final void address(ViewData view) {
+        Container container = new Form(null, "main");
+        byte modo = getMode(view);
+        Link link = new Link(container, "identity", "toidentity");
+        DataForm header = new DataForm(container, "header");
+        DocumentModel model = new DocumentModel();
         
+        addModelItem(model, "codigo");
+        addModelItem(model, "logradouro");
+        addModelItem(model, "cep");
+        addModelItem(model, "bairro");
+        addModelItem(model, "cidade");
+        addModelItem(model, "telefone");
+        addModelItem(model, "email");
+        addModelItem(model, "tipoEndereco");
+        
+        header.importModel(model);
+        
+        view.setNavbarActionEnabled("back", true);
+        view.setTitle(TITLE[modo]);
+        view.addContainer(container);
+    }
+    
+    public void create(ViewData view) {
+        view.export("mode", CREATE);
+        view.setReloadableView(true);
+        view.redirect(null, "identity");
+    }
+    
+    private final byte getMode(ViewData view) {
+        return (Byte)view.getParameter("mode");
     }
     
     public void identity(ViewData view) {
         Container container = new Form(null, "main");
-        byte modo = (Byte)view.getParameter("mode");
+        byte modo = getMode(view);
+        Link link = new Link(container, "address", "toaddress");
         DataForm header = new DataForm(container, "header");
         DocumentModel model = new DocumentModel();
         
@@ -49,10 +80,11 @@ public class Main extends AbstractPage {
         addModelItem(model, "insEstadual");
         addModelItem(model, "insMunicipal");
         addModelItem(model, "pessoaFJ");
-        addModelItem(model, "codigo");
+        addModelItem(model, "tipoParceiro");
         
         header.importModel(model);
         
+        view.setFocus("nomeRazao");
         view.setNavbarActionEnabled("back", true);
         view.setTitle(TITLE[modo]);
         view.addContainer(container);
@@ -73,12 +105,44 @@ public class Main extends AbstractPage {
     }
     
     public final void show(ViewData view) {
+        DataForm form = (DataForm)view.getElement("selection");
+        int ident = toInteger(form.getValue("partner"));
+        
+        if (ident == 0) {
+            view.message(Const.ERROR, "field.is.required");
+            return;
+        }
+        
         view.export("mode", SHOW);
         view.setReloadableView(true);
         view.redirect(null, "identity");
     }
     
+    public final void toaddress(ViewData view) {
+        view.export("mode", getMode(view));
+        view.redirect(null, "address");
+        view.dontPushPage();
+    }
+    
+    public final void toidentity(ViewData view) {
+        view.export("mode", getMode(view));
+        view.redirect(null, "identity");
+        view.dontPushPage();
+    }
+    
+    private final int toInteger(String value) {
+        return (value.equals("")?0:Integer.parseInt(value));
+    }
+    
     public final void update(ViewData view) {
+        DataForm form = (DataForm)view.getElement("selection");
+        int ident = toInteger(form.getValue("partner"));
+        
+        if (ident == 0) {
+            view.message(Const.ERROR, "field.is.required");
+            return;
+        }
+        
         view.export("mode", UPDATE);
         view.setReloadableView(true);
         view.redirect(null, "identity");
