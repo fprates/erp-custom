@@ -39,6 +39,10 @@ public class Response {
         model.add(item);
     }
 
+    /**
+     * 
+     * @param view
+     */
     public static final void identity(ViewData view) {
         DataForm form;
         TabbedPaneItem tab;
@@ -96,6 +100,10 @@ public class Response {
         view.addContainer(container);
     }
     
+    /**
+     * 
+     * @param view
+     */
     public static final void main(ViewData view) {
         Container container = new Form(null, "main");
         DataForm form = new DataForm(container, "selection");

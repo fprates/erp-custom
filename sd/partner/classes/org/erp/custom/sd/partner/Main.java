@@ -35,7 +35,7 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void save(ViewData view) throws Exception {
-        Request.save(view);
+        Request.save(view, this);
     }
     
     /**
