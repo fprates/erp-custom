@@ -28,6 +28,7 @@ public class Request {
      */
     public static final void save(ViewData view, Function function)
             throws Exception {
+        long codigo;
         TabbedPane tpane = (TabbedPane)view.getElement("pane");
         DataForm identityform = (DataForm)tpane.get("identitytab").
                 getContainer();
@@ -39,11 +40,17 @@ public class Request {
         
         switch (modo) {
         case Common.CREATE:
+            codigo = documents.getNextNumber("CUSTPARTNER");
+            opartner.setValue("CODIGO", codigo);
             documents.save(opartner);
-            documents.save(oaddress);
+            
+//            oaddress.setValue("codigo", codigo);
+//            
+//            documents.save(oaddress);
             documents.commit();
             
-            view.setReloadableView(true);
+            view.setTitle(Common.TITLE[Common.UPDATE]);
+            view.export("identityobject", opartner);
             view.export("mode", Common.UPDATE);
             
             break;
@@ -66,7 +73,7 @@ public class Request {
         Partner partner;
         Partners partners;
         DataForm form = (DataForm)view.getElement("selection");
-        int ident = toInteger(form.getValue("partner"));
+        int ident = toInteger(form.get("partner").getValue());
         
         if (ident == 0) {
             view.message(Const.ERROR, "field.is.required");
@@ -100,15 +107,22 @@ public class Request {
      * 
      * @param view
      */
-    public static final void update(ViewData view) {
+    public static final void update(ViewData view, Function function)
+            throws Exception {
+        Documents documents;
+        ExtendedObject object;
         DataForm form = (DataForm)view.getElement("selection");
-        int ident = toInteger(form.getValue("partner"));
+        int ident = toInteger(form.get("partner").getValue());
         
         if (ident == 0) {
             view.message(Const.ERROR, "field.is.required");
             return;
         }
         
+        documents = new Documents(function);
+        object = documents.getObject("CUSTOM_PARTNER", ident);
+        
+        view.export("identityobject", object);
         view.export("mode", Common.UPDATE);
         view.setReloadableView(true);
         view.redirect(null, "identity");

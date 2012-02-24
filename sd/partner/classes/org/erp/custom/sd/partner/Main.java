@@ -1,5 +1,7 @@
 package org.erp.custom.sd.partner;
 
+import org.iocaste.documents.common.DocumentModel;
+import org.iocaste.documents.common.Documents;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.ViewData;
 
@@ -17,9 +19,12 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
+     * @throws Exception
      */
-    public void identity(ViewData view) {
-        Response.identity(view);
+    public void identity(ViewData view) throws Exception {
+        DocumentModel model = new Documents(this).getModel("CUSTOM_PARTNER");
+        
+        Response.identity(view, model);
     }
     
     /**
@@ -45,12 +50,13 @@ public class Main extends AbstractPage {
     public final void show(ViewData view) {
         Request.show(view);
     }
-    
+
     /**
      * 
      * @param view
+     * @throws Exception
      */
-    public final void update(ViewData view) {
-        Request.update(view);
+    public final void update(ViewData view) throws Exception {
+        Request.update(view, this);
     }
 }
