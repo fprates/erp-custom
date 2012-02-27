@@ -28,6 +28,7 @@ public class Request {
      */
     public static final void save(ViewData view, Function function)
             throws Exception {
+        String scodigo;
         long codigo;
         TabbedPane tpane = (TabbedPane)view.getElement("pane");
         DataForm identityform = (DataForm)tpane.get("identitytab").
@@ -41,16 +42,19 @@ public class Request {
         switch (modo) {
         case Common.CREATE:
             codigo = documents.getNextNumber("CUSTPARTNER");
+            scodigo = Long.toString(codigo);
+            
             opartner.setValue("CODIGO", codigo);
             documents.save(opartner);
+            identityform.get("CODIGO").setValue(scodigo);
             
-//            oaddress.setValue("codigo", codigo);
-//            
-//            documents.save(oaddress);
+            oaddress.setValue("CODIGO", (codigo * 100) + 1);
+            documents.save(oaddress);
+            addressform.get("CODIGO").setValue(scodigo);
+            
             documents.commit();
             
             view.setTitle(Common.TITLE[Common.UPDATE]);
-            view.export("identityobject", opartner);
             view.export("mode", Common.UPDATE);
             
             break;

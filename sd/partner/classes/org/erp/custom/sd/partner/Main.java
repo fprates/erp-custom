@@ -22,9 +22,11 @@ public class Main extends AbstractPage {
      * @throws Exception
      */
     public void identity(ViewData view) throws Exception {
-        DocumentModel model = new Documents(this).getModel("CUSTOM_PARTNER");
+        Documents documents = new Documents(this);
+        DocumentModel identity = documents.getModel("CUSTOM_PARTNER");
+        DocumentModel address = documents.getModel("CUSTOM_PARTNER_ADDRESS");
         
-        Response.identity(view, model);
+        Response.identity(view, identity, address);
     }
     
     /**
