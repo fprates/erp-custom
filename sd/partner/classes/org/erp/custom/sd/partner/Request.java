@@ -1,6 +1,5 @@
 package org.erp.custom.sd.partner;
 
-import org.erp.custom.sd.partner.common.Partner;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
@@ -47,7 +46,7 @@ public class Request {
             opartner.setValue("CODIGO", codigo);
             documents.save(opartner);
             identityform.get("CODIGO").setValue(scodigo);
-            
+
             oaddress.setValue("CODIGO", (codigo * 100) + 1);
             documents.save(oaddress);
             addressform.get("CODIGO").setValue(scodigo);
@@ -63,6 +62,8 @@ public class Request {
             documents.modify(oaddress);
             documents.commit();
             
+            view.export("mode", Common.UPDATE);
+            
             break;
         }
         
@@ -72,10 +73,13 @@ public class Request {
     /**
      * 
      * @param view
+     * @param function
+     * @throws Exception
      */
-    public static final void show(ViewData view) {
-        Partner partner;
-        Partners partners;
+    public static final void show(ViewData view, Function function) 
+            throws Exception {
+        Documents documents;
+        ExtendedObject partner;
         DataForm form = (DataForm)view.getElement("selection");
         int ident = toInteger(form.get("partner").getValue());
         
@@ -84,8 +88,8 @@ public class Request {
             return;
         }
         
-        partners = new Partners();
-        partner = partners.get(ident);
+        documents = new Documents(function);
+        partner = documents.getObject("CUSTOM_PARTNER", ident);
         
         if (partner == null) {
             view.message(Const.ERROR, "invalid.partner");
@@ -126,7 +130,7 @@ public class Request {
         documents = new Documents(function);
         object = documents.getObject("CUSTOM_PARTNER", ident);
         
-        view.export("identityobject", object);
+        view.export("partner", object);
         view.export("mode", Common.UPDATE);
         view.setReloadableView(true);
         view.redirect(null, "identity");

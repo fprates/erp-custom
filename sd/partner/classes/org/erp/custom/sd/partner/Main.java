@@ -32,8 +32,9 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
+     * @throws Exception
      */
-    public void main(ViewData view) {
+    public void main(ViewData view) throws Exception {
         Response.main(view);
     }
     
@@ -48,9 +49,10 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
+     * @throws Exception
      */
-    public final void show(ViewData view) {
-        Request.show(view);
+    public final void show(ViewData view) throws Exception {
+        Request.show(view, this);
     }
 
     /**

@@ -1,11 +1,13 @@
 package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.DocumentModel;
+import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
+import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
@@ -21,14 +23,35 @@ public class Response {
      */
     public static final void identity(ViewData view,
             DocumentModel identitymodel, DocumentModel addressmodel) {
+        String name;
+        DataItem dataitem;
         DataForm form;
         TabbedPaneItem tab;
         Container container = new Form(null, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
-
-        tab = new TabbedPaneItem(tabs, "identitytab");
+        ExtendedObject partner = (ExtendedObject)view.getParameter("partner");
+        
         form = new DataForm(tabs, "identity");
+        form.importModel(identitymodel);
+        
+        for (Element element : form.getElements()) {
+            if (!element.isDataStorable())
+                continue;
+            
+            dataitem = (DataItem)element;
+            
+            if (dataitem.getName().equals("CODIGO")) {
+                form.get("CODIGO").setEnabled(false);
+                
+                continue;
+            }
+            
+            dataitem.setEnabled((modo == Common.SHOW)?false : true);
+            
+        }
+        
+        tab = new TabbedPaneItem(tabs, "identitytab");
         tab.setContainer(form);
         
 //        addModelItem(model, "codigo", DataType.NUMC);
@@ -40,10 +63,31 @@ public class Response {
 //        addModelItem(model, "pessoaFJ", DataType.NUMC);
 //        addModelItem(model, "tipoParceiro", DataType.NUMC);
         
-        form.importModel(identitymodel);
+        if (modo != Common.CREATE)
+            form.setObject(partner);
+        
+        form = new DataForm(tabs, "address");
+        form.importModel(addressmodel);
+        form.get("ADDRESS_ID").setEnabled(false);
+        
+        for (Element element : form.getElements()) {
+            if (!element.isDataStorable())
+                continue;
+            
+            dataitem = (DataItem)element;
+            name = dataitem.getName();
+            
+            if (name.equals("PARTNER_ID") || name.equals("ADDRESS_ID")) {
+                form.get(name).setEnabled(false);
+                
+                continue;
+            }
+            
+            dataitem.setEnabled((modo == Common.SHOW)?false : true);
+            
+        }
         
         tab = new TabbedPaneItem(tabs, "addresstab");
-        form = new DataForm(tabs, "address");
         tab.setContainer(form);
         
 //        addModelItem(model, "codigo", DataType.NUMC);
@@ -55,8 +99,6 @@ public class Response {
 //        addModelItem(model, "email", DataType.CHAR);
 //        addModelItem(model, "tipoEndereco", DataType.NUMC);
         
-        form.importModel(addressmodel);
-        
         switch (modo) {
         case Common.CREATE:
         case Common.UPDATE:
@@ -64,7 +106,6 @@ public class Response {
             break;
         }
         
-        view.setFocus("nomeRazao");
         view.setNavbarActionEnabled("back", true);
         view.setTitle(Common.TITLE[modo]);
         view.addContainer(container);
