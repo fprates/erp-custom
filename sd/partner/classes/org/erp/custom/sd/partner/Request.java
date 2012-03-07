@@ -49,6 +49,7 @@ public class Request {
             
             codigo = (codigo * 100) + 1;
             oaddress.setValue("ADDRESS_ID", codigo);
+            oaddress.setValue("PARTNER_ID", scodigo);
             documents.save(oaddress);
             
             addressform.get("ADDRESS_ID").setValue(Long.toString(codigo));
