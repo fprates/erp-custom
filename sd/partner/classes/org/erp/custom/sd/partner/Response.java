@@ -25,24 +25,25 @@ public class Response {
             DocumentModel identitymodel, DocumentModel addressmodel) {
         String name;
         DataItem dataitem;
-        DataForm form;
+        DataForm partnerform, addressform;
         TabbedPaneItem tab;
         Container container = new Form(null, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
         ExtendedObject partner = (ExtendedObject)view.getParameter("partner");
+        ExtendedObject address = (ExtendedObject)view.getParameter("address");
         
-        form = new DataForm(tabs, "identity");
-        form.importModel(identitymodel);
+        partnerform = new DataForm(tabs, "identity");
+        partnerform.importModel(identitymodel);
         
-        for (Element element : form.getElements()) {
+        for (Element element : partnerform.getElements()) {
             if (!element.isDataStorable())
                 continue;
             
             dataitem = (DataItem)element;
             
             if (dataitem.getName().equals("CODIGO")) {
-                form.get("CODIGO").setEnabled(false);
+                partnerform.get("CODIGO").setEnabled(false);
                 
                 continue;
             }
@@ -52,7 +53,7 @@ public class Response {
         }
         
         tab = new TabbedPaneItem(tabs, "identitytab");
-        tab.setContainer(form);
+        tab.setContainer(partnerform);
         
 //        addModelItem(model, "codigo", DataType.NUMC);
 //        addModelItem(model, "nomeRazao", DataType.CHAR);
@@ -63,23 +64,24 @@ public class Response {
 //        addModelItem(model, "pessoaFJ", DataType.NUMC);
 //        addModelItem(model, "tipoParceiro", DataType.NUMC);
         
-        if (modo != Common.CREATE)
-            form.setObject(partner);
+        addressform = new DataForm(tabs, "address");
+        addressform.importModel(addressmodel);
+        addressform.get("ADDRESS_ID").setEnabled(false);
         
-        form = new DataForm(tabs, "address");
-        form.importModel(addressmodel);
-        form.get("ADDRESS_ID").setEnabled(false);
-        
-        for (Element element : form.getElements()) {
+        for (Element element : addressform.getElements()) {
             if (!element.isDataStorable())
                 continue;
             
             dataitem = (DataItem)element;
             name = dataitem.getName();
             
-            if (name.equals("PARTNER_ID") || name.equals("ADDRESS_ID")) {
-                form.get(name).setEnabled(false);
-                
+            if (name.equals("PARTNER_ID")) {
+                addressform.get(name).setEnabled(false);
+                continue;
+            }
+            
+            if (name.equals("ADDRESS_ID")) {
+                addressform.get(name).setVisible(false);
                 continue;
             }
             
@@ -88,7 +90,7 @@ public class Response {
         }
         
         tab = new TabbedPaneItem(tabs, "addresstab");
-        tab.setContainer(form);
+        tab.setContainer(addressform);
         
 //        addModelItem(model, "codigo", DataType.NUMC);
 //        addModelItem(model, "logradouro", DataType.CHAR);
@@ -101,7 +103,17 @@ public class Response {
         
         switch (modo) {
         case Common.CREATE:
+            new Button(container, "save");
+            break;
+        
+        case Common.SHOW:
+            partnerform.setObject(partner);
+            addressform.setObject(address);
+            break;
+            
         case Common.UPDATE:
+            partnerform.setObject(partner);
+            addressform.setObject(address);
             new Button(container, "save");
             break;
         }
