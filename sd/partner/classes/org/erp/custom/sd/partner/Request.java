@@ -46,10 +46,13 @@ public class Request {
             opartner.setValue("CODIGO", codigo);
             documents.save(opartner);
             identityform.get("CODIGO").setValue(scodigo);
-
-            oaddress.setValue("CODIGO", (codigo * 100) + 1);
+            
+            codigo = (codigo * 100) + 1;
+            oaddress.setValue("ADDRESS_ID", codigo);
             documents.save(oaddress);
-            addressform.get("CODIGO").setValue(scodigo);
+            
+            addressform.get("ADDRESS_ID").setValue(Long.toString(codigo));
+            addressform.get("PARTNER_ID").setValue(scodigo);
             
             documents.commit();
             
