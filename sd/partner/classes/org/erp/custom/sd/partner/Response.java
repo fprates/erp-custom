@@ -41,14 +41,17 @@ public class Response {
                 continue;
             
             dataitem = (DataItem)element;
+            name = dataitem.getName();
             
-            if (dataitem.getName().equals("CODIGO")) {
+            if (name.equals("CODIGO")) {
                 partnerform.get("CODIGO").setEnabled(false);
-                
                 continue;
             }
             
-            dataitem.setEnabled((modo == Common.SHOW)?false : true);
+            if (name.equals("NOME_RAZAO"))
+                view.setFocus(name);
+            
+            dataitem.setEnabled((modo == Common.SHOW)? false : true);
             
         }
         

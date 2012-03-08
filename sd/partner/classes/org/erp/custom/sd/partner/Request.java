@@ -128,8 +128,10 @@ public class Request {
      */
     public static final void update(ViewData view, Function function)
             throws Exception {
+        String query;
         Documents documents;
         ExtendedObject object;
+        ExtendedObject[] addresses;
         DataForm form = (DataForm)view.getElement("selection");
         int ident = toInteger(form.get("partner").getValue());
         
@@ -141,7 +143,11 @@ public class Request {
         documents = new Documents(function);
         object = documents.getObject("CUSTOM_PARTNER", ident);
         
+        query = "from custom_partner_address where partner_id = ?";
+        addresses = documents.select(query, new Integer[] {ident});
+                
         view.export("partner", object);
+        view.export("address", addresses[0]);
         view.export("mode", Common.UPDATE);
         view.setReloadableView(true);
         view.redirect(null, "identity");
