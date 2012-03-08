@@ -13,8 +13,8 @@ public class Main extends AbstractPage {
         Request.create(view);
     }
     
-    public final void display(ViewData view) {
-        Request.display(view);
+    public final void display(ViewData view) throws Exception {
+        Request.display(view, this);
     }
     
     public final void document(ViewData view) throws Exception {
@@ -29,11 +29,11 @@ public class Main extends AbstractPage {
         Request.remove(view);
     }
     
-    public final void save(ViewData view) {
-        Request.save(view);
+    public final void save(ViewData view) throws Exception {
+        Request.save(view, this);
     }
     
-    public final void update(ViewData view) {
-        Request.update(view);
+    public final void update(ViewData view) throws Exception {
+        Request.update(view, this);
     }
 }

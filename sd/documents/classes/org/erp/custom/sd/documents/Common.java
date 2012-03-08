@@ -1,6 +1,9 @@
 package org.erp.custom.sd.documents;
 
+import org.iocaste.documents.common.DataType;
+import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
@@ -22,18 +25,30 @@ public class Common {
         return (Byte)view.getParameter("mode");
     }
     
-    public static final void insertItem(Table itens) {
+    public static final void insertItem(Table itens, ViewData view,
+            ExtendedObject object) {
         String name;
         TextField tfield;
-        TableItem item = new TableItem(itens);
-        int i = 0;
+        TableItem item;
+        long docid = 0, i = 0;
+        byte mode = getMode(view);
         
-        for (TableItem item_ : itens.getItens())
-            i = Integer.parseInt(
-                    ((InputComponent)item_.get("ITEM_NUMBER")).getValue());
+        if (object == null) {
+            for (TableItem item_ : itens.getItens()) {
+                i = Long.parseLong(((InputComponent)item_.get("ITEM_NUMBER")).
+                        getValue());
+            
+                docid = Long.parseLong(((InputComponent)item_.get("DOCUMENT_ID")).
+                        getValue()); 
+            }
+            
+            i++;
+        } else {
+            i = (Long)object.getValue("ITEM_NUMBER");
+            docid = (Long)object.getValue("DOCUMENT_ID");
+        }
         
         item = new TableItem(itens);
-        i++;
         
         for (TableColumn column : itens.getColumns()) {
             if (column.isMark())
@@ -45,8 +60,26 @@ public class Common {
             tfield.setModelItem(column.getModelItem());
             item.add(tfield);
             
-            if (column.getName().equals("ITEM_NUMBER"))
-                tfield.setValue(Integer.toString(i));
+            if (name.equals("ITEM_NUMBER")) {
+                tfield.setValue(Long.toString(i));
+                tfield.setEnabled(false);
+                continue;
+            }
+            
+            if (name.equals("DOCUMENT_ID")) {
+                tfield.setValue(Long.toString(docid));
+                continue;
+            }
+            
+            tfield.setObligatory((mode == SHOW)? false: true);
+            tfield.setEnabled((mode == SHOW)? false : true);
+            
+            if (object != null) {
+                if (Shell.getDataElement(tfield).getType() == DataType.NUMC)
+                    tfield.setValue(Long.toString((Long)object.getValue(name)));
+                else
+                    tfield.setValue((String)object.getValue(name));
+            }
         }
     }
 }
