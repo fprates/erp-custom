@@ -53,9 +53,11 @@ public class Request {
         
         if (mode == Common.CREATE) {
             view.export("mode", Common.UPDATE);
+            documents.save(obase);
+        } else {
+            documents.modify(obase);
         }
         
-        documents.save(obase);
         documents.commit();
         
         view.message(Const.STATUS, "material.saved.successfully");

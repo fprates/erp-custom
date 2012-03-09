@@ -8,6 +8,7 @@ import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
+import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
 import org.iocaste.shell.common.ViewData;
 
@@ -34,14 +35,26 @@ public class Response {
     
     public static final void material(ViewData view, Function function)
             throws Exception {
-        String matid;
+        String matid, name;
         ExtendedObject material;
+        DataItem dataitem;
         byte mode = Common.getMode(view);
         Container container = new Form(null, "main");
         DataForm base = new DataForm(container, "base");
         
         base.importModel(new Documents(function).getModel("MATERIAL"));
-        base.get("ID").setEnabled(false);
+        
+        for (Element element : base.getElements()) {
+            dataitem = (DataItem)element;
+            
+            name = dataitem.getName();
+            if (name.equals("ID")) {
+                base.get("ID").setEnabled(false);
+                continue;
+            }
+            
+            dataitem.setEnabled((mode == Common.SHOW)? false : true);
+        }
         
         switch (mode) {
         case Common.CREATE:
