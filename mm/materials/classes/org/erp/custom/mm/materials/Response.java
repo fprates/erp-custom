@@ -1,0 +1,72 @@
+package org.erp.custom.mm.materials;
+
+import org.iocaste.documents.common.Documents;
+import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.protocol.Function;
+import org.iocaste.shell.common.Button;
+import org.iocaste.shell.common.Const;
+import org.iocaste.shell.common.Container;
+import org.iocaste.shell.common.DataForm;
+import org.iocaste.shell.common.DataItem;
+import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.ViewData;
+
+public class Response {
+
+    public static final void main(ViewData view, Function function)
+            throws Exception {
+        Container container = new Form(null, "main");
+        DataForm form = new DataForm(container, "selection");
+        DataItem item = new DataItem(form, Const.TEXT_FIELD, "material");
+        
+        item.setDataElement(new Documents(function).
+                getDataElement("MATERIAL.ID"));
+        item.setObligatory(true);
+        
+        new Button(container, "create");
+        new Button(container, "show");
+        new Button(container, "update");
+        
+        view.setTitle("material-selection");
+        view.addContainer(container);
+        view.setNavbarActionEnabled("back", true);
+    }
+    
+    public static final void material(ViewData view, Function function)
+            throws Exception {
+        String matid;
+        ExtendedObject material;
+        byte mode = Common.getMode(view);
+        Container container = new Form(null, "main");
+        DataForm base = new DataForm(container, "base");
+        
+        base.importModel(new Documents(function).getModel("MATERIAL"));
+        base.get("ID").setEnabled(false);
+        
+        switch (mode) {
+        case Common.CREATE:
+            matid = (String)view.getParameter("matid");
+            base.get("ID").setValue(matid);
+            
+            new Button(container, "save");
+            
+            break;
+        case Common.UPDATE:
+            material = (ExtendedObject)view.getParameter("material");
+            base.setObject(material);
+            
+            new Button(container, "save");
+            
+            break;
+        case Common.SHOW:
+            material = (ExtendedObject)view.getParameter("material");
+            base.setObject(material);
+            
+            break;
+        }
+        
+        view.setNavbarActionEnabled("back", true);
+        view.addContainer(container);
+        view.setTitle(Common.TITLE[mode]);
+    }
+}
