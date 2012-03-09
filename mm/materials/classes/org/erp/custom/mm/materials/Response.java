@@ -49,9 +49,12 @@ public class Response {
             
             name = dataitem.getName();
             if (name.equals("ID")) {
-                base.get("ID").setEnabled(false);
+                dataitem.setEnabled(false);
                 continue;
             }
+            
+            if (name.equals("ACTIVE") && mode != Common.SHOW)
+                dataitem.setComponentType(Const.CHECKBOX);
             
             dataitem.setEnabled((mode == Common.SHOW)? false : true);
         }
