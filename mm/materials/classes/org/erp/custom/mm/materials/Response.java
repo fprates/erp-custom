@@ -61,21 +61,21 @@ public class Response {
         
         switch (mode) {
         case Common.CREATE:
-            matid = (String)view.getParameter("matid");
+            matid = view.getParameter("matid");
             base.get("ID").setValue(matid);
             
             new Button(container, "save");
             
             break;
         case Common.UPDATE:
-            material = (ExtendedObject)view.getParameter("material");
+            material = view.getParameter("material");
             base.setObject(material);
             
             new Button(container, "save");
             
             break;
         case Common.SHOW:
-            material = (ExtendedObject)view.getParameter("material");
+            material = view.getParameter("material");
             base.setObject(material);
             
             break;

@@ -16,8 +16,8 @@ import org.iocaste.shell.common.ViewData;
 public class Response {
     public static final void document(ViewData view, Function function)
             throws Exception {
-        ExtendedObject oheader = (ExtendedObject)view.getParameter("header");
-        ExtendedObject[] oitens = (ExtendedObject[])view.getParameter("itens");
+        ExtendedObject oheader = view.getParameter("header");
+        ExtendedObject[] oitens = view.getParameter("itens");
         Container container = new Form(null, "main");
         DataForm header = new DataForm(container, "header");
         Table itens = new Table(container, "itens");

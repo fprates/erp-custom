@@ -13,7 +13,7 @@ import org.iocaste.shell.common.ViewData;
 public class Request {
 
     public static final void add(ViewData view) {
-        Table itens = (Table)view.getElement("itens");
+        Table itens = view.getElement("itens");
         
         Common.insertItem(itens, view, null);
     }
@@ -35,7 +35,7 @@ public class Request {
         ExtendedObject[] itens;
         long ident;
         Documents documents = new Documents(function);
-        DataForm form = (DataForm)view.getElement("selection");
+        DataForm form = view.getElement("selection");
         String query, sident = form.get("document").getValue();
         
         if (sident == null || sident.equals("")) {
@@ -52,7 +52,7 @@ public class Request {
         }
         
         query = "from custom_document_item where document_id = ?";
-        itens = documents.select(query, new Long[] {ident});
+        itens = documents.select(query, ident);
         
         view.setReloadableView(true);
         view.export("mode", mode);
@@ -62,7 +62,7 @@ public class Request {
     }
     
     public static final void remove(ViewData view) {
-        Table itens = (Table)view.getElement("itens");
+        Table itens = view.getElement("itens");
         
         for (TableItem item : itens.getItens())
             if (item.isSelected())
@@ -73,8 +73,8 @@ public class Request {
             throws Exception {
         String query;
         long docid, itemnr;
-        DataForm header = (DataForm)view.getElement("header");
-        Table itens = (Table)view.getElement("itens");
+        DataForm header = view.getElement("header");
+        Table itens = view.getElement("itens");
         Documents documents = new Documents(function);
         ExtendedObject oitem, oheader = header.getObject();
         byte mode = Common.getMode(view);

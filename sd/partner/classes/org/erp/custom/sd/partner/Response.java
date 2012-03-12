@@ -30,8 +30,8 @@ public class Response {
         Container container = new Form(null, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
-        ExtendedObject partner = (ExtendedObject)view.getParameter("partner");
-        ExtendedObject address = (ExtendedObject)view.getParameter("address");
+        ExtendedObject partner = view.getParameter("partner");
+        ExtendedObject address = view.getParameter("address");
         
         partnerform = new DataForm(tabs, "identity");
         partnerform.importModel(identitymodel);

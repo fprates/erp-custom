@@ -29,7 +29,7 @@ public class Request {
             throws Exception {
         String scodigo;
         long codigo;
-        TabbedPane tpane = (TabbedPane)view.getElement("pane");
+        TabbedPane tpane = view.getElement("pane");
         DataForm identityform = (DataForm)tpane.get("identitytab").
                 getContainer();
         DataForm addressform = (DataForm)tpane.get("addresstab").getContainer();
@@ -86,7 +86,7 @@ public class Request {
         Documents documents;
         ExtendedObject partner;
         ExtendedObject[] addresses;
-        DataForm form = (DataForm)view.getElement("selection");
+        DataForm form = view.getElement("selection");
         int ident = toInteger(form.get("partner").getValue());
         
         if (ident == 0) {
@@ -98,7 +98,7 @@ public class Request {
         partner = documents.getObject("CUSTOM_PARTNER", ident);
         
         query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
-        addresses = documents.select(query, new Integer[] {ident});
+        addresses = documents.select(query, ident);
 
         
         if (partner == null) {
@@ -132,7 +132,7 @@ public class Request {
         Documents documents;
         ExtendedObject object;
         ExtendedObject[] addresses;
-        DataForm form = (DataForm)view.getElement("selection");
+        DataForm form = view.getElement("selection");
         int ident = toInteger(form.get("partner").getValue());
         
         if (ident == 0) {
@@ -144,7 +144,7 @@ public class Request {
         object = documents.getObject("CUSTOM_PARTNER", ident);
         
         query = "from custom_partner_address where partner_id = ?";
-        addresses = documents.select(query, new Integer[] {ident});
+        addresses = documents.select(query, ident);
                 
         view.export("partner", object);
         view.export("address", addresses[0]);

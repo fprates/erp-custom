@@ -14,6 +14,6 @@ public class Common {
     };
     
     public static final byte getMode(ViewData view) {
-        return (Byte)view.getParameter("mode");
+        return view.getParameter("mode");
     }
 }

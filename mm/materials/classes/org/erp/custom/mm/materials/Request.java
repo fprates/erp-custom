@@ -22,7 +22,7 @@ public class Request {
     
     private static final void load(ViewData view, Function function, byte mode)
             throws Exception {
-        DataForm selection = (DataForm)view.getElement("selection");
+        DataForm selection = view.getElement("selection");
         String matid = selection.get("material").getValue();
         Documents documents = new Documents(function);
         ExtendedObject material = documents.getObject("MATERIAL", matid);
@@ -47,7 +47,7 @@ public class Request {
     public static final void save(ViewData view, Function function)
             throws Exception {
         Documents documents = new Documents(function);
-        DataForm base = (DataForm)view.getElement("base");
+        DataForm base = view.getElement("base");
         ExtendedObject obase = base.getObject();
         byte mode = Common.getMode(view);
         
