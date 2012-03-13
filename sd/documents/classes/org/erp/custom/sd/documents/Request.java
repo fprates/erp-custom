@@ -44,14 +44,14 @@ public class Request {
         }
         
         ident = Long.parseLong(sident);
-        header = documents.getObject("CUSTOM_DOCUMENT", ident);
+        header = documents.getObject("CUSTOM_SD_DOCUMENT", ident);
         
         if (header == null) {
             view.message(Const.ERROR, "invalid.sd.document");
             return;
         }
         
-        query = "from custom_document_item where document_id = ?";
+        query = "from custom_sd_document_item where document_id = ?";
         itens = documents.select(query, ident);
         
         view.setReloadableView(true);
