@@ -53,7 +53,7 @@ public class Response {
                 continue;
             }
             
-            if (name.equals("ACTIVE") && mode != Common.SHOW)
+            if (name.equals("ACTIVE"))
                 dataitem.setComponentType(Const.CHECKBOX);
             
             dataitem.setEnabled((mode == Common.SHOW)? false : true);
