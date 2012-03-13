@@ -25,13 +25,12 @@ public class Common {
         return (Byte)view.getParameter("mode");
     }
     
-    public static final void insertItem(Table itens, ViewData view,
+    public static final void insertItem(byte mode, Table itens, ViewData view,
             ExtendedObject object) {
         String name;
         TextField tfield;
         TableItem item;
         long docid = 0, i = 0;
-        byte mode = getMode(view);
         
         if (object == null) {
             for (TableItem item_ : itens.getItens()) {
@@ -67,9 +66,13 @@ public class Common {
             }
             
             if (name.equals("DOCUMENT_ID")) {
+                tfield.setReferenceValidable(false);
                 tfield.setValue(Long.toString(docid));
                 continue;
             }
+            
+            if (name.equals("MATERIAL") && view != null)
+                view.setFocus(tfield);
             
             tfield.setObligatory((mode == SHOW)? false: true);
             tfield.setEnabled((mode == SHOW)? false : true);

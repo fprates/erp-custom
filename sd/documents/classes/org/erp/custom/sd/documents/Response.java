@@ -14,6 +14,13 @@ import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
+    
+    /**
+     * 
+     * @param view
+     * @param function
+     * @throws Exception
+     */
     public static final void document(ViewData view, Function function)
             throws Exception {
         ExtendedObject oheader = view.getParameter("header");
@@ -22,13 +29,13 @@ public class Response {
         DataForm header = new DataForm(container, "header");
         Table itens = new Table(container, "itens");
         Documents documents = new Documents(function);
-        DocumentModel model = documents.getModel("CUSTOM_DOCUMENT");
+        DocumentModel model = documents.getModel("CUSTOM_SD_DOCUMENT");
         byte mode = Common.getMode(view);
         
         header.importModel(model);
         header.get("ID").setEnabled(false);
          
-        model = documents.getModel("CUSTOM_DOCUMENT_ITEM");
+        model = documents.getModel("CUSTOM_SD_DOCUMENT_ITEM");
         itens.importModel(model);
         itens.getColumn("DOCUMENT_ID").setVisible(false);
         itens.setMark(true);
@@ -38,7 +45,7 @@ public class Response {
             header.get("SENDER").setObligatory(true);
             header.get("RECEIVER").setObligatory(true);
             
-            Common.insertItem(itens, view, null);
+            Common.insertItem(mode, itens, null, null);
             
             new Button(container, "save");
             new Button(container, "add");
@@ -53,7 +60,7 @@ public class Response {
             itens.setMark(false);
             
             for (ExtendedObject oitem : oitens)
-                Common.insertItem(itens, view, oitem);
+                Common.insertItem(mode, itens, view, oitem);
             
             break;
         case Common.UPDATE:
@@ -62,7 +69,7 @@ public class Response {
             header.setObject(oheader);
             
             for (ExtendedObject oitem : oitens)
-                Common.insertItem(itens, view, oitem);
+                Common.insertItem(mode, itens, view, oitem);
 
             new Button(container, "save");
             new Button(container, "add");
@@ -71,11 +78,16 @@ public class Response {
             break;
         }
         
+        view.setFocus("SENDER");
         view.setTitle(Common.TITLE[mode]);
         view.setNavbarActionEnabled("back", true);
         view.addContainer(container);
     }
     
+    /**
+     * 
+     * @param view
+     */
     public static final void main(ViewData view) {
         Container container = new Form(null, "main");
         DataForm form = new DataForm(container, "selection");

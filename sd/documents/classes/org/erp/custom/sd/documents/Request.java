@@ -15,7 +15,7 @@ public class Request {
     public static final void add(ViewData view) {
         Table itens = view.getElement("itens");
         
-        Common.insertItem(itens, view, null);
+        Common.insertItem(Common.getMode(view), itens, view, null);
     }
     
     public static final void create(ViewData view) {
