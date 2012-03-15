@@ -28,6 +28,7 @@ public class Response {
         new Button(container, "show");
         new Button(container, "update");
         
+        view.setFocus("material");
         view.setTitle("material-selection");
         view.addContainer(container);
         view.setNavbarActionEnabled("back", true);
