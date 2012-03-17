@@ -45,16 +45,16 @@ public class Install {
         // id
         element = data.getDataElement(ITEM+".ITEM_NUMBER", 0, 15, DataType.NUMC,
                 false);
-        data.addModelItem(docitem, ITEM+".ITEM_NUMBER", "ITMNR", element,
-                "item", IS_KEY);
+        data.addModelItem(docitem, "ITEM_NUMBER", "ITMNR", element, "item",
+                IS_KEY);
         
         // id documento
-        data.addModelItem(docitem, ITEM+".DOCUMENT_ID", "DOCID", edocid,
-                "document", !IS_KEY, docid);
+        data.addModelItem(docitem, "DOCUMENT_ID", "DOCID", edocid, "document",
+                !IS_KEY, docid);
         
         // material
         materialid = documents.getModel("MATERIAL").getModelItem("ID");
-        data.addModelItem(docitem, ITEM+".MATERIAL", "MATCD",
+        data.addModelItem(docitem, "MATERIAL", "MATCD",
                 materialid.getDataElement(), "material", !IS_KEY, materialid);
         
         /*
