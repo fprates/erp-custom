@@ -2,17 +2,23 @@ package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
+import org.iocaste.packagetool.common.InstallData;
+import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.ViewData;
 
 
 public class Main extends AbstractPage {
     
+    public Main() {
+        export("install", "install");
+    }
+    
     /**
      * 
      * @param view
      */
-    public void create(ViewData view) {
+    public final void create(ViewData view) {
         Request.create(view);
     }
     
@@ -21,7 +27,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public void identity(ViewData view) throws Exception {
+    public final void identity(ViewData view) throws Exception {
         Documents documents = new Documents(this);
         DocumentModel identity = documents.getModel("CUSTOM_PARTNER");
         DocumentModel address = documents.getModel("CUSTOM_PARTNER_ADDRESS");
@@ -29,12 +35,16 @@ public class Main extends AbstractPage {
         Response.identity(view, identity, address);
     }
     
+    public final InstallData install(Message message) {
+        return Install.self();
+    }
+    
     /**
      * 
      * @param view
      * @throws Exception
      */
-    public void main(ViewData view) throws Exception {
+    public final void main(ViewData view) throws Exception {
         Response.main(view);
     }
     

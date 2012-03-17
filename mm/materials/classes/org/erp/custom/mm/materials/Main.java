@@ -1,12 +1,31 @@
 package org.erp.custom.mm.materials;
 
+import org.iocaste.packagetool.common.InstallData;
+import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.ViewData;
 
 public class Main extends AbstractPage {
 
+    public Main() {
+        export("install", "install");
+    }
+    
+    /**
+     * 
+     * @param view
+     */
     public final void create(ViewData view) {
         Request.create(view);
+    }
+    
+    /**
+     * 
+     * @param message
+     * @return
+     */
+    public final InstallData install(Message message) {
+        return Install.self();
     }
     
     /**

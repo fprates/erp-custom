@@ -1,9 +1,15 @@
 package org.erp.custom.sd.documents;
 
+import org.iocaste.packagetool.common.InstallData;
+import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.ViewData;
 
 public class Main extends AbstractPage {
+    
+    public Main() {
+        export("install", "install");
+    }
 
     public final void add(ViewData view) {
         Request.add(view);
@@ -19,6 +25,10 @@ public class Main extends AbstractPage {
     
     public final void document(ViewData view) throws Exception {
         Response.document(view, this);
+    }
+    
+    public final InstallData install(Message message) throws Exception {
+        return Install.self(this);
     }
     
     public final void main(ViewData view) {
