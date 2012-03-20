@@ -3,28 +3,64 @@ package org.erp.custom.mm.materials;
 import org.iocaste.documents.common.DataElement;
 import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.DocumentModel;
+import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.packagetool.common.InstallData;
 
 public class Install {
-    private static final boolean IS_KEY = true;
     
+    /**
+     * 
+     * @return
+     */
     public static final InstallData self() {
         DataElement element;
+        DocumentModelItem item;
         InstallData data = new InstallData();
         DocumentModel material = data.getModel("MATERIAL", "CMATERIAL", "");
         
-        element = data.getDataElement("MATERIAL.ID", 0, 20, DataType.CHAR,
-                DataType.UPPERCASE);
-        data.addModelItem(material, "ID", "IDENT", element, "id", IS_KEY);
+        element = new DataElement();
+        element.setName("MATERIAL.ID");
+        element.setLength(20);
+        element.setType(DataType.CHAR);
+        element.setUpcase(true);
         
-        element = data.getDataElement("MATERIAL.NAME", 0, 60, DataType.CHAR,
-                DataType.UPPERCASE);
-        data.addModelItem(material, "NAME", "NAME1", element, "name", !IS_KEY);
+        item = new DocumentModelItem();
+        item.setDocumentModel(material);
+        item.setName("ID");
+        item.setTableFieldName("IDENT");
+        item.setDataElement(element);
+        item.setIndex(0);
         
-        element = data.getDataElement("MATERIAL.ACTIVE", 0, 1, DataType.NUMC,
-                DataType.KEEPCASE);
-        data.addModelItem(material, "ACTIVE", "ACTIV", element, "active",
-                !IS_KEY);
+        material.add(item);
+        
+        element = new DataElement();
+        element.setName("MATERIAL.NAME");
+        element.setLength(60);
+        element.setType(DataType.CHAR);
+        element.setUpcase(true);
+        
+        item = new DocumentModelItem();
+        item.setDocumentModel(material);
+        item.setName("NAME");
+        item.setTableFieldName("NAME1");
+        item.setDataElement(element);
+        item.setIndex(1);
+        
+        material.add(item);
+        
+        element = new DataElement();
+        element.setName("MATERIAL.ACTIVE");
+        element.setLength(1);
+        element.setType(DataType.NUMC);
+        
+        item = new DocumentModelItem();
+        item.setDocumentModel(material);
+        item.setName("ACTIVE");
+        item.setTableFieldName("ACTIV");
+        item.setDataElement(element);
+        item.setIndex(2);
+        
+        material.add(item);
         
         data.link("MATERIAL", "erp-custom-mm.materials");
         data.link("MM01", "erp-custom-mm.materials");
