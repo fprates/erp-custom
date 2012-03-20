@@ -35,6 +35,11 @@ public class Main extends AbstractPage {
         Response.identity(view, identity, address);
     }
     
+    /**
+     * 
+     * @param message
+     * @return
+     */
     public final InstallData install(Message message) {
         return Install.self();
     }
@@ -45,7 +50,7 @@ public class Main extends AbstractPage {
      * @throws Exception
      */
     public final void main(ViewData view) throws Exception {
-        Response.main(view);
+        Response.main(view, this);
     }
     
     /**

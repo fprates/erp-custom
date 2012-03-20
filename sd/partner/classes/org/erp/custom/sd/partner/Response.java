@@ -1,7 +1,9 @@
 package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.DocumentModel;
+import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.Container;
@@ -129,12 +131,17 @@ public class Response {
     /**
      * 
      * @param view
+     * @param function
+     * @throws Exception
      */
-    public static final void main(ViewData view) {
+    public static final void main(ViewData view, Function function)
+            throws Exception {
         Container container = new Form(null, "main");
         DataForm form = new DataForm(container, "selection");
+        DataItem partner = new DataItem(form, Const.TEXT_FIELD, "partner");
         
-        new DataItem(form, Const.TEXT_FIELD, "partner");
+        partner.setModelItem(new Documents(function).getModel("CUSTOM_PARTNER").
+                getModelItem("CODIGO"));
         new Button(container, "show");
         new Button(container, "create");
         new Button(container, "update");
