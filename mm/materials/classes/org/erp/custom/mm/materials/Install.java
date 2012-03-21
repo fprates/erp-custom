@@ -6,6 +6,7 @@ import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.packagetool.common.InstallData;
+import org.iocaste.packagetool.common.SearchHelpData;
 
 public class Install {
     
@@ -16,6 +17,7 @@ public class Install {
     public static final InstallData self() {
         DataElement element;
         DocumentModelItem item;
+        SearchHelpData sh;
         InstallData data = new InstallData();
         DocumentModel material = data.getModel("MATERIAL", "CMATERIAL", "");
         
@@ -30,6 +32,7 @@ public class Install {
         item.setName("ID");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
+        item.setSearchHelp("SH_MATERIAL");
         item.setIndex(0);
         
         material.add(item);
@@ -63,6 +66,15 @@ public class Install {
         item.setIndex(2);
         
         material.add(item);
+        
+        sh = new SearchHelpData();
+        sh.setName("SH_MATERIAL");
+        sh.setModel("MATERIAL");
+        sh.setExport("ID");
+        sh.add("ID");
+        sh.add("NAME");
+        
+        data.add(sh);
         
         data.link("MATERIAL", "erp-custom-mm.materials");
         data.link("MM01", "erp-custom-mm.materials");
