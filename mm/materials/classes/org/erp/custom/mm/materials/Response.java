@@ -14,14 +14,20 @@ import org.iocaste.shell.common.ViewData;
 
 public class Response {
 
+    /**
+     * 
+     * @param view
+     * @param function
+     * @throws Exception
+     */
     public static final void main(ViewData view, Function function)
             throws Exception {
         Container container = new Form(null, "main");
         DataForm form = new DataForm(container, "selection");
         DataItem item = new DataItem(form, Const.TEXT_FIELD, "material");
         
-        item.setDataElement(new Documents(function).
-                getDataElement("MATERIAL.ID"));
+        item.setModelItem(new Documents(function).getModel("MATERIAL").
+                getModelItem("ID"));
         item.setObligatory(true);
         
         new Button(container, "create");
@@ -34,6 +40,12 @@ public class Response {
         view.setNavbarActionEnabled("back", true);
     }
     
+    /**
+     * 
+     * @param view
+     * @param function
+     * @throws Exception
+     */
     public static final void material(ViewData view, Function function)
             throws Exception {
         String matid, name;
