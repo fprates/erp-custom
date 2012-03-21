@@ -4,6 +4,7 @@ import org.iocaste.documents.common.DataElement;
 import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.DocumentModelItem;
+import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.packagetool.common.InstallData;
 
 public class Install {
@@ -32,6 +33,7 @@ public class Install {
         item.setIndex(0);
         
         material.add(item);
+        material.add(new DocumentModelKey(item));
         
         element = new DataElement();
         element.setName("MATERIAL.NAME");
