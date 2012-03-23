@@ -11,6 +11,10 @@ public class Main extends AbstractPage {
         export("install", "install");
     }
     
+    public final void additem(ViewData view) {
+        Request.additem(view);
+    }
+    
     /**
      * 
      * @param view
@@ -44,6 +48,10 @@ public class Main extends AbstractPage {
      */
     public final void material(ViewData view) throws Exception {
         Response.material(view, this);
+    }
+    
+    public final void removeitem(ViewData view) {
+        Request.removeitem(view);
     }
     
     /**

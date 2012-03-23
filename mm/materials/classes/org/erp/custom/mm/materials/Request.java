@@ -6,10 +6,26 @@ import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
 
+    /**
+     * 
+     * @param view
+     */
+    public static final void additem(ViewData view) {
+        Table itens = view.getElement("prices");
+        
+        Common.insertItem(itens, view);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
     public static final void create(ViewData view) {
         DataForm selection = (DataForm)view.getElement("selection");
         String matid = ((InputComponent)selection.get("material")).getValue();
@@ -20,6 +36,13 @@ public class Request {
         view.redirect(null, "material");
     }
     
+    /**
+     * 
+     * @param view
+     * @param function
+     * @param mode
+     * @throws Exception
+     */
     private static final void load(ViewData view, Function function, byte mode)
             throws Exception {
         DataForm selection = view.getElement("selection");
@@ -36,6 +59,18 @@ public class Request {
         view.export("material", material);
         view.export("mode", mode);
         view.redirect(null, "material");
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public static final void removeitem(ViewData view) {
+        Table itens = view.getElement("prices");
+        
+        for (TableItem item : itens.getItens())
+            if (item.isSelected())
+                itens.remove(item);
     }
     
     /**

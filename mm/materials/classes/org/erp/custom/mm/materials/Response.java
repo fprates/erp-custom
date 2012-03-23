@@ -10,6 +10,10 @@ import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.StandardContainer;
+import org.iocaste.shell.common.TabbedPane;
+import org.iocaste.shell.common.TabbedPaneItem;
+import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
@@ -53,9 +57,18 @@ public class Response {
         DataItem dataitem;
         byte mode = Common.getMode(view);
         Container container = new Form(null, "main");
-        DataForm base = new DataForm(container, "base");
+        TabbedPane tabs = new TabbedPane(container, "tabs");
+        TabbedPaneItem tabitem = new TabbedPaneItem(tabs, "basepane");
+        DataForm base = new DataForm(tabs, "base");
+        StandardContainer pricescnt = new StandardContainer(tabs, "pricescnt");
+        Table prices = new Table(pricescnt, "prices");
+        Documents documents = new Documents(function);
         
-        base.importModel(new Documents(function).getModel("MATERIAL"));
+        /*
+         * Base
+         */
+        tabitem.setContainer(base);
+        base.importModel(documents.getModel("MATERIAL"));
         
         for (Element element : base.getElements()) {
             dataitem = (DataItem)element;
@@ -72,10 +85,24 @@ public class Response {
             dataitem.setEnabled((mode == Common.SHOW)? false : true);
         }
         
+        /*
+         * Prices
+         */
+        tabitem = new TabbedPaneItem(tabs, "pricespane");
+        tabitem.setContainer(pricescnt);
+        
+        prices.importModel(documents.getModel("PRECO_MATERIAL"));
+        
         switch (mode) {
         case Common.CREATE:
             matid = view.getParameter("matid");
             base.get("ID").setValue(matid);
+            
+            prices.setMark(true);
+            Common.insertItem(prices, view);
+            
+            new Button(pricescnt, "additem");
+            new Button(pricescnt, "removeitem");
             
             new Button(container, "save");
             
@@ -83,6 +110,11 @@ public class Response {
         case Common.UPDATE:
             material = view.getParameter("material");
             base.setObject(material);
+
+            prices.setMark(true);
+            
+            new Button(pricescnt, "additem");
+            new Button(pricescnt, "removeitem");
             
             new Button(container, "save");
             
@@ -90,6 +122,8 @@ public class Response {
         case Common.SHOW:
             material = view.getParameter("material");
             base.setObject(material);
+            
+            prices.setMark(false);
             
             break;
         }
