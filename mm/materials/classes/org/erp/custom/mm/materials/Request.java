@@ -27,7 +27,7 @@ public class Request {
      * @param view
      */
     public static final void create(ViewData view) {
-        DataForm selection = (DataForm)view.getElement("selection");
+        DataForm selection = view.getElement("selection");
         String matid = ((InputComponent)selection.get("material")).getValue();
         
         view.setReloadableView(true);
@@ -83,14 +83,28 @@ public class Request {
             throws Exception {
         Documents documents = new Documents(function);
         DataForm base = view.getElement("base");
-        ExtendedObject obase = base.getObject();
+        Table prices = view.getElement("prices");
+        ExtendedObject oprice, obase = base.getObject();
         byte mode = Common.getMode(view);
+        int i = 0;
+        String material = obase.getValue("ID");
         
         if (mode == Common.CREATE) {
             view.export("mode", Common.UPDATE);
             documents.save(obase);
         } else {
             documents.modify(obase);
+            documents.update("delete from PRECO_MATERIAL where MATERIAL = ?",
+                    material);
+        }
+        
+        i = 0;
+        for (TableItem item : prices.getItens()) {
+            oprice = item.getObject();
+            oprice.setValue("ID", new StringBuilder(i++).append(".").
+                    append(material).toString());
+            oprice.setValue("MATERIAL", material);
+            documents.save(oprice);
         }
         
         documents.commit();

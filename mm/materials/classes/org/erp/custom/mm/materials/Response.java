@@ -14,6 +14,7 @@ import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
@@ -92,6 +93,9 @@ public class Response {
         tabitem.setContainer(pricescnt);
         
         prices.importModel(documents.getModel("PRECO_MATERIAL"));
+        for (TableColumn column : prices.getColumns())
+            if (column.getName().equals("MATERIAL"))
+                column.setVisible(false);
         
         switch (mode) {
         case Common.CREATE:
