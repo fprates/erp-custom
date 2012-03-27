@@ -5,7 +5,6 @@ import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
-import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.ViewData;
@@ -19,16 +18,25 @@ public class Request {
     public static final void additem(ViewData view) {
         Table itens = view.getElement("prices");
         
-        Common.insertItem(itens, view);
+        Common.insertItem(itens, view, null);
     }
     
     /**
      * 
      * @param view
+     * @param function
+     * @throws Exception
      */
-    public static final void create(ViewData view) {
+    public static final void create(ViewData view, Function function)
+            throws Exception {
         DataForm selection = view.getElement("selection");
-        String matid = ((InputComponent)selection.get("material")).getValue();
+        String matid = selection.get("material").getValue();
+        Documents documents = new Documents(function);
+        
+        if (documents.getObject("MATERIAL", matid) != null) {
+            view.message(Const.ERROR, "material.already.exists");
+            return;
+        }
         
         view.setReloadableView(true);
         view.export("matid", matid);
@@ -45,8 +53,9 @@ public class Request {
      */
     private static final void load(ViewData view, Function function, byte mode)
             throws Exception {
+        ExtendedObject[] prices;
         DataForm selection = view.getElement("selection");
-        String matid = selection.get("material").getValue();
+        String query, matid = selection.get("material").getValue();
         Documents documents = new Documents(function);
         ExtendedObject material = documents.getObject("MATERIAL", matid);
         
@@ -55,8 +64,13 @@ public class Request {
             return;
         }
         
+        query = "from PRECO_MATERIAL where MATERIAL = ?";
+        prices = documents.select(query, matid);
+        
+        view.setTitle(Common.TITLE[mode]);
         view.setReloadableView(true);
         view.export("material", material);
+        view.export("prices", prices);
         view.export("mode", mode);
         view.redirect(null, "material");
     }
@@ -87,9 +101,10 @@ public class Request {
         ExtendedObject oprice, obase = base.getObject();
         byte mode = Common.getMode(view);
         int i = 0;
-        String material = obase.getValue("ID");
+        String itemid, material = obase.getValue("ID");
         
         if (mode == Common.CREATE) {
+            view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
             documents.save(obase);
         } else {
@@ -101,8 +116,9 @@ public class Request {
         i = 0;
         for (TableItem item : prices.getItens()) {
             oprice = item.getObject();
-            oprice.setValue("ID", new StringBuilder(i++).append(".").
-                    append(material).toString());
+            itemid = new StringBuilder(Integer.toString(i++)).append(".").
+                    append(material).toString();
+            oprice.setValue("ID", itemid);
             oprice.setValue("MATERIAL", material);
             documents.save(oprice);
         }

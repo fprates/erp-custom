@@ -2,6 +2,7 @@ package org.erp.custom.mm.materials;
 
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.DocumentModelItem;
+import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
@@ -31,8 +32,10 @@ public class Common {
      * 
      * @param itens
      * @param view
+     * @param object
      */
-    public static final void insertItem(Table itens, ViewData view) {
+    public static final void insertItem(Table itens, ViewData view,
+            ExtendedObject object) {
         TextField tfield;
         String name;
         TableItem item = new TableItem(itens);
@@ -51,6 +54,9 @@ public class Common {
             
             item.add(tfield);
         }
+        
+        if (object != null)
+            item.setObject(object);
         
     }
 }

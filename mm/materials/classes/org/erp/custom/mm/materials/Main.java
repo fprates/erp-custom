@@ -18,9 +18,10 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
+     * @throws Exception
      */
-    public final void create(ViewData view) {
-        Request.create(view);
+    public final void create(ViewData view) throws Exception {
+        Request.create(view, this);
     }
     
     /**

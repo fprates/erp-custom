@@ -27,7 +27,7 @@ public class Response {
      */
     public static final void main(ViewData view, Function function)
             throws Exception {
-        Container container = new Form(null, "main");
+        Container container = new Form(view, "main");
         DataForm form = new DataForm(container, "selection");
         DataItem item = new DataItem(form, Const.TEXT_FIELD, "material");
         
@@ -41,7 +41,6 @@ public class Response {
         
         view.setFocus("material");
         view.setTitle("material-selection");
-        view.addContainer(container);
         view.setNavbarActionEnabled("back", true);
     }
     
@@ -55,9 +54,10 @@ public class Response {
             throws Exception {
         String matid, name;
         ExtendedObject material;
+        ExtendedObject[] oprices;
         DataItem dataitem;
         byte mode = Common.getMode(view);
-        Container container = new Form(null, "main");
+        Container container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "tabs");
         TabbedPaneItem tabitem = new TabbedPaneItem(tabs, "basepane");
         DataForm base = new DataForm(tabs, "base");
@@ -103,7 +103,7 @@ public class Response {
             base.get("ID").setValue(matid);
             
             prices.setMark(true);
-            Common.insertItem(prices, view);
+            Common.insertItem(prices, view, null);
             
             new Button(pricescnt, "additem");
             new Button(pricescnt, "removeitem");
@@ -113,9 +113,12 @@ public class Response {
             break;
         case Common.UPDATE:
             material = view.getParameter("material");
+            oprices = view.getParameter("prices");
             base.setObject(material);
-
             prices.setMark(true);
+            
+            for (ExtendedObject oprice : oprices)
+                Common.insertItem(prices, view, oprice);
             
             new Button(pricescnt, "additem");
             new Button(pricescnt, "removeitem");
@@ -125,15 +128,17 @@ public class Response {
             break;
         case Common.SHOW:
             material = view.getParameter("material");
+            oprices = view.getParameter("prices");
             base.setObject(material);
-            
             prices.setMark(false);
+            
+            for (ExtendedObject oprice : oprices)
+                Common.insertItem(prices, view, oprice);
             
             break;
         }
         
         view.setNavbarActionEnabled("back", true);
-        view.addContainer(container);
         view.setTitle(Common.TITLE[mode]);
     }
 }
