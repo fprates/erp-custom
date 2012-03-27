@@ -29,7 +29,7 @@ public class Response {
         DataItem dataitem;
         DataForm partnerform, addressform;
         TabbedPaneItem tab;
-        Container container = new Form(null, "main");
+        Container container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
         ExtendedObject partner = view.getParameter("partner");
@@ -125,7 +125,6 @@ public class Response {
         
         view.setNavbarActionEnabled("back", true);
         view.setTitle(Common.TITLE[modo]);
-        view.addContainer(container);
     }
     
     /**
@@ -136,7 +135,7 @@ public class Response {
      */
     public static final void main(ViewData view, Function function)
             throws Exception {
-        Container container = new Form(null, "main");
+        Container container = new Form(view, "main");
         DataForm form = new DataForm(container, "selection");
         DataItem partner = new DataItem(form, Const.TEXT_FIELD, "partner");
         
@@ -149,6 +148,5 @@ public class Response {
         view.setFocus("partner");
         view.setNavbarActionEnabled("back", true);
         view.setTitle("partner-selection");
-        view.addContainer(container);
     }
 }

@@ -25,7 +25,7 @@ public class Response {
             throws Exception {
         ExtendedObject oheader = view.getParameter("header");
         ExtendedObject[] oitens = view.getParameter("itens");
-        Container container = new Form(null, "main");
+        Container container = new Form(view, "main");
         DataForm header = new DataForm(container, "header");
         Table itens = new Table(container, "itens");
         Documents documents = new Documents(function);
@@ -81,7 +81,6 @@ public class Response {
         view.setFocus("SENDER");
         view.setTitle(Common.TITLE[mode]);
         view.setNavbarActionEnabled("back", true);
-        view.addContainer(container);
     }
     
     /**
@@ -89,7 +88,7 @@ public class Response {
      * @param view
      */
     public static final void main(ViewData view) {
-        Container container = new Form(null, "main");
+        Container container = new Form(view, "main");
         DataForm form = new DataForm(container, "selection");
         
         new DataItem(form, Const.TEXT_FIELD, "document");
@@ -100,7 +99,6 @@ public class Response {
         view.setFocus("document");
         view.setNavbarActionEnabled("back", true);
         view.setTitle("document-selection");
-        view.addContainer(container);
     }
 
 }
