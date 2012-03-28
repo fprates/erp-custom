@@ -93,9 +93,11 @@ public class Response {
         tabitem.setContainer(pricescnt);
         
         prices.importModel(documents.getModel("PRECO_MATERIAL"));
-        for (TableColumn column : prices.getColumns())
-            if (column.getName().equals("MATERIAL"))
+        for (TableColumn column : prices.getColumns()) {
+            name = column.getName();
+            if (name.equals("MATERIAL") || name.equals("ID"))
                 column.setVisible(false);
+        }
         
         switch (mode) {
         case Common.CREATE:
@@ -103,7 +105,7 @@ public class Response {
             base.get("ID").setValue(matid);
             
             prices.setMark(true);
-            Common.insertItem(prices, view, null);
+            Common.insertItem(mode, prices, view, null);
             
             new Button(pricescnt, "additem");
             new Button(pricescnt, "removeitem");
@@ -118,7 +120,7 @@ public class Response {
             prices.setMark(true);
             
             for (ExtendedObject oprice : oprices)
-                Common.insertItem(prices, view, oprice);
+                Common.insertItem(mode, prices, view, oprice);
             
             new Button(pricescnt, "additem");
             new Button(pricescnt, "removeitem");
@@ -133,7 +135,7 @@ public class Response {
             prices.setMark(false);
             
             for (ExtendedObject oprice : oprices)
-                Common.insertItem(prices, view, oprice);
+                Common.insertItem(mode, prices, view, oprice);
             
             break;
         }

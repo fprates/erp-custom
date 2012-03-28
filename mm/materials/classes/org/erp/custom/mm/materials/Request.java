@@ -17,8 +17,9 @@ public class Request {
      */
     public static final void additem(ViewData view) {
         Table itens = view.getElement("prices");
+        byte mode = Common.getMode(view);
         
-        Common.insertItem(itens, view, null);
+        Common.insertItem(mode, itens, view, null);
     }
     
     /**

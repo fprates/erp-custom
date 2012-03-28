@@ -34,7 +34,7 @@ public class Common {
      * @param view
      * @param object
      */
-    public static final void insertItem(Table itens, ViewData view,
+    public static final void insertItem(byte mode, Table itens, ViewData view,
             ExtendedObject object) {
         TextField tfield;
         String name;
@@ -52,6 +52,7 @@ public class Common {
             if (name.equals("VL_VENDA") && view.getFocus() == null)
                 view.setFocus(tfield);
             
+            tfield.setEnabled((mode == Common.SHOW)? false : true);
             item.add(tfield);
         }
         
