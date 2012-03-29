@@ -6,6 +6,7 @@ import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
+import org.iocaste.shell.common.ValidatorConfig;
 import org.iocaste.shell.common.ViewData;
 
 public class Common {
@@ -40,20 +41,41 @@ public class Common {
         String name;
         TableItem item = new TableItem(itens);
         DocumentModel model = itens.getModel();
+        ValidatorConfig vlvalidatorcfg = new ValidatorConfig();
+        ValidatorConfig dtvalidatorcfg = new ValidatorConfig();
+        
+        vlvalidatorcfg.setValidator(ValorCustoValidator.class);
+        dtvalidatorcfg.setValidator(DataInicialValidator.class);
         
         for (DocumentModelItem modelitem : model.getItens()) {
             tfield = new TextField(itens, modelitem.getName());
             tfield.setModelItem(modelitem);
+            tfield.setEnabled((mode == Common.SHOW)? false : true);
+            item.add(tfield);
             
             name = modelitem.getName();
             if (name.equals("ID"))
                 tfield.setEnabled(false);
             
-            if (name.equals("VL_VENDA") && view.getFocus() == null)
-                view.setFocus(tfield);
+            if (name.equals("VL_CUSTO")) {
+                vlvalidatorcfg.add(tfield);
+                tfield.setValidatorConfig(vlvalidatorcfg);
+            }
             
-            tfield.setEnabled((mode == Common.SHOW)? false : true);
-            item.add(tfield);
+            if (name.equals("VL_VENDA")) {
+                if (view.getFocus() == null)
+                    view.setFocus(tfield);
+                
+                vlvalidatorcfg.add(tfield);
+            }
+            
+            if (name.equals("DT_INICIAL")) {
+                tfield.setValidatorConfig(dtvalidatorcfg);
+                dtvalidatorcfg.add(tfield);
+            }
+            
+            if (name.equals("DT_FINAL"))
+                dtvalidatorcfg.add(tfield);
         }
         
         if (object != null)
