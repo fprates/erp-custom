@@ -49,14 +49,10 @@ public class Common {
         
         for (DocumentModelItem modelitem : model.getItens()) {
             tfield = new TextField(itens, modelitem.getName());
-            tfield.setModelItem(modelitem);
             tfield.setEnabled((mode == Common.SHOW)? false : true);
             item.add(tfield);
             
             name = modelitem.getName();
-            if (name.equals("ID"))
-                tfield.setEnabled(false);
-            
             if (name.equals("VL_CUSTO")) {
                 vlvalidatorcfg.add(tfield);
                 tfield.setValidatorConfig(vlvalidatorcfg);

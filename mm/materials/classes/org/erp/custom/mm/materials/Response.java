@@ -14,7 +14,6 @@ import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
@@ -95,11 +94,8 @@ public class Response {
         tabitem.setContainer(pricescnt);
         
         prices.importModel(documents.getModel("PRECO_MATERIAL"));
-        for (TableColumn column : prices.getColumns()) {
-            name = column.getName();
-            if (name.equals("MATERIAL") || name.equals("ID"))
-                column.setVisible(false);
-        }
+        prices.getColumn("MATERIAL").setVisible(false);
+        prices.getColumn("ID").setVisible(false);
         
         /*
          * Promotion
@@ -108,11 +104,8 @@ public class Response {
         tabitem.setContainer(promocnt);
         
         promos.importModel(documents.getModel("PROMOCAO_MATERIAL"));
-        for (TableColumn column : promos.getColumns()) {
-            name = column.getName();
-            if (name.equals("MATERIAL") || name.equals("ID"))
-                column.setVisible(false);
-        }
+        promos.getColumn("MATERIAL").setVisible(false);
+        promos.getColumn("ID").setVisible(false);
         
         switch (mode) {
         case Common.CREATE:
