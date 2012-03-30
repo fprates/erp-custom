@@ -5,7 +5,11 @@ import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
+import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.TabbedPane;
+import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
@@ -27,14 +31,13 @@ public class Request {
      */
     public static final void save(ViewData view, Function function)
             throws Exception {
-        String scodigo;
-        long codigo;
+        String query, scodigo;
+        long codigo, i;
+        ExtendedObject oaddress;
+        Table addresses;
         TabbedPane tpane = view.getElement("pane");
-        DataForm identityform = (DataForm)tpane.get("identitytab").
-                getContainer();
-        DataForm addressform = (DataForm)tpane.get("addresstab").getContainer();
+        DataForm identityform = tpane.get("identitytab").getContainer();
         ExtendedObject opartner = identityform.getObject();
-        ExtendedObject oaddress = addressform.getObject();
         byte modo = Common.getMode(view);
         Documents documents = new Documents(function);
         
@@ -44,32 +47,47 @@ public class Request {
             scodigo = Long.toString(codigo);
             
             opartner.setValue("CODIGO", codigo);
-            documents.save(opartner);
+            if (documents.save(opartner) == 0) {
+                view.message(Const.ERROR, "header.save.error");
+                return;
+            }
+            
             identityform.get("CODIGO").setValue(scodigo);
-            
-            codigo = (codigo * 100) + 1;
-            oaddress.setValue("ADDRESS_ID", codigo);
-            oaddress.setValue("PARTNER_ID", scodigo);
-            documents.save(oaddress);
-            
-            addressform.get("ADDRESS_ID").setValue(Long.toString(codigo));
-            addressform.get("PARTNER_ID").setValue(scodigo);
-            
-            documents.commit();
             
             view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
             
             break;
-        case Common.UPDATE:
+        default:
             documents.modify(opartner);
-            documents.modify(oaddress);
-            documents.commit();
+            codigo = opartner.getValue("CODIGO");
+            scodigo = Long.toString(codigo);
+            
+            query = "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?";
+            documents.update(query, codigo);
             
             view.export("mode", Common.UPDATE);
             
             break;
         }
+        
+        addresses = tpane.get("addresstab").getContainer();
+        i = (codigo * 100) + 1;
+        
+        for (TableItem address : addresses.getItens()) {
+            oaddress = address.getObject();
+            oaddress.setValue("ADDRESS_ID", i);
+            oaddress.setValue("PARTNER_ID", codigo);
+            documents.save(oaddress);
+            
+            Shell.setInputValue((InputComponent)address.get("ADDRESS_ID"),
+                    codigo);
+            Shell.setInputValue((InputComponent)address.get("PARTNER_ID"), i);
+            
+            i++;
+        }
+        
+        documents.commit();
         
         view.message(Const.STATUS, "partner.saved.successfuly");
     }
@@ -145,9 +163,10 @@ public class Request {
         
         query = "from custom_partner_address where partner_id = ?";
         addresses = documents.select(query, ident);
-                
+        if (addresses != null)
+            view.export("address", addresses[0]);
+        
         view.export("partner", object);
-        view.export("address", addresses[0]);
         view.export("mode", Common.UPDATE);
         view.setReloadableView(true);
         view.redirect(null, "identity");

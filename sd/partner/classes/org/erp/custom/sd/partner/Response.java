@@ -13,6 +13,7 @@ import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
+import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
@@ -27,13 +28,14 @@ public class Response {
             DocumentModel identitymodel, DocumentModel addressmodel) {
         String name;
         DataItem dataitem;
-        DataForm partnerform, addressform;
+        DataForm partnerform;
+        Table addresses;
         TabbedPaneItem tab;
         Container container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
-        ExtendedObject partner = view.getParameter("partner");
-        ExtendedObject address = view.getParameter("address");
+        ExtendedObject opartner = view.getParameter("partner");
+        ExtendedObject[] oaddresses = view.getParameter("addresses");
         
         partnerform = new DataForm(tabs, "identity");
         partnerform.importModel(identitymodel);
@@ -53,6 +55,12 @@ public class Response {
             if (name.equals("NOME_RAZAO"))
                 view.setFocus(name);
             
+            if (name.equals("TIPO_PESSOA")) {
+                dataitem.setComponentType(Const.LIST_BOX);
+                dataitem.add("Física", "0");
+                dataitem.add("Jurídica", "1");
+            }
+            
             dataitem.setEnabled((modo == Common.SHOW)? false : true);
             
         }
@@ -60,66 +68,38 @@ public class Response {
         tab = new TabbedPaneItem(tabs, "identitytab");
         tab.setContainer(partnerform);
         
-//        addModelItem(model, "codigo", DataType.NUMC);
-//        addModelItem(model, "nomeRazao", DataType.CHAR);
-//        addModelItem(model, "nomeFantasia", DataType.CHAR);
-//        addModelItem(model, "docFiscal", DataType.CHAR);
-//        addModelItem(model, "insEstadual", DataType.CHAR);
-//        addModelItem(model, "insMunicipal", DataType.CHAR);
-//        addModelItem(model, "pessoaFJ", DataType.NUMC);
-//        addModelItem(model, "tipoParceiro", DataType.NUMC);
-        
-        addressform = new DataForm(tabs, "address");
-        addressform.importModel(addressmodel);
-        addressform.get("ADDRESS_ID").setEnabled(false);
-        
-        for (Element element : addressform.getElements()) {
-            if (!element.isDataStorable())
-                continue;
-            
-            dataitem = (DataItem)element;
-            name = dataitem.getName();
-            
-            if (name.equals("PARTNER_ID")) {
-                addressform.get(name).setEnabled(false);
-                continue;
-            }
-            
-            if (name.equals("ADDRESS_ID")) {
-                addressform.get(name).setVisible(false);
-                continue;
-            }
-            
-            dataitem.setEnabled((modo == Common.SHOW)?false : true);
-            
-        }
+        addresses = new Table(tabs, "addresses");
+        addresses.importModel(addressmodel);
+        addresses.getColumn("ADDRESS_ID").setVisible(false);
+        addresses.getColumn("PARTNER_ID").setVisible(false);
         
         tab = new TabbedPaneItem(tabs, "addresstab");
-        tab.setContainer(addressform);
-        
-//        addModelItem(model, "codigo", DataType.NUMC);
-//        addModelItem(model, "logradouro", DataType.CHAR);
-//        addModelItem(model, "cep", DataType.NUMC);
-//        addModelItem(model, "bairro", DataType.CHAR);
-//        addModelItem(model, "cidade", DataType.CHAR);
-//        addModelItem(model, "telefone", DataType.CHAR);
-//        addModelItem(model, "email", DataType.CHAR);
-//        addModelItem(model, "tipoEndereco", DataType.NUMC);
+        tab.setContainer(addresses);
         
         switch (modo) {
         case Common.CREATE:
+            Common.insertItem(addresses, null);
+            
             new Button(container, "save");
+            
             break;
         
         case Common.SHOW:
-            partnerform.setObject(partner);
-            addressform.setObject(address);
+            partnerform.setObject(opartner);
+            
+            for (ExtendedObject oaddress : oaddresses)
+                Common.insertItem(addresses, oaddress);
+            
             break;
             
         case Common.UPDATE:
-            partnerform.setObject(partner);
-            addressform.setObject(address);
+            partnerform.setObject(opartner);
+            
+            for (ExtendedObject oaddress : oaddresses)
+                Common.insertItem(addresses, oaddress);
+            
             new Button(container, "save");
+            
             break;
         }
         

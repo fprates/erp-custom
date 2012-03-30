@@ -1,5 +1,10 @@
 package org.erp.custom.sd.partner;
 
+import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableColumn;
+import org.iocaste.shell.common.TableItem;
+import org.iocaste.shell.common.TextField;
 import org.iocaste.shell.common.ViewData;
 
 public class Common {
@@ -20,6 +25,22 @@ public class Common {
      */
     public static final byte getMode(ViewData view) {
         return (Byte)view.getParameter("mode");
+    }
+    
+    /**
+     * 
+     * @param itens
+     * @param object
+     */
+    public static final void insertItem(Table itens, ExtendedObject object) {
+        TableItem item = new TableItem(itens);
+        
+        for (TableColumn column : itens.getColumns())
+            if (!column.isMark())
+                item.add(new TextField(itens, column.getName()));
+        
+        if (object != null)
+            item.setObject(object);
     }
 
 }
