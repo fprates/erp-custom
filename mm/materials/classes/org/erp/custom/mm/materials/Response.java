@@ -54,7 +54,7 @@ public class Response {
             throws Exception {
         String matid, name;
         ExtendedObject material;
-        ExtendedObject[] oprices;
+        ExtendedObject[] oprices, opromos;
         DataItem dataitem;
         byte mode = Common.getMode(view);
         Container container = new Form(view, "main");
@@ -62,7 +62,9 @@ public class Response {
         TabbedPaneItem tabitem = new TabbedPaneItem(tabs, "basepane");
         DataForm base = new DataForm(tabs, "base");
         StandardContainer pricescnt = new StandardContainer(tabs, "pricescnt");
+        StandardContainer promocnt = new StandardContainer(tabs, "promocnt");
         Table prices = new Table(pricescnt, "prices");
+        Table promos = new Table(promocnt, "promos");
         Documents documents = new Documents(function);
         
         /*
@@ -99,6 +101,19 @@ public class Response {
                 column.setVisible(false);
         }
         
+        /*
+         * Promotion
+         */
+        tabitem = new TabbedPaneItem(tabs, "promotions");
+        tabitem.setContainer(promocnt);
+        
+        promos.importModel(documents.getModel("PROMOCAO_MATERIAL"));
+        for (TableColumn column : promos.getColumns()) {
+            name = column.getName();
+            if (name.equals("MATERIAL") || name.equals("ID"))
+                column.setVisible(false);
+        }
+        
         switch (mode) {
         case Common.CREATE:
             matid = view.getParameter("matid");
@@ -107,8 +122,14 @@ public class Response {
             prices.setMark(true);
             Common.insertItem(mode, prices, view, null);
             
-            new Button(pricescnt, "additem");
-            new Button(pricescnt, "removeitem");
+            promos.setMark(true);
+            Common.insertItem(mode, promos, view, null);
+            
+            new Button(pricescnt, "addprice");
+            new Button(pricescnt, "removeprice");
+            
+            new Button(promocnt, "addpromo");
+            new Button(promocnt, "removepromo");
             
             new Button(container, "save");
             
@@ -116,26 +137,46 @@ public class Response {
         case Common.UPDATE:
             material = view.getParameter("material");
             oprices = view.getParameter("prices");
+            opromos = view.getParameter("promos");
+            
             base.setObject(material);
             prices.setMark(true);
             
-            for (ExtendedObject oprice : oprices)
-                Common.insertItem(mode, prices, view, oprice);
+            if (oprices != null)
+                for (ExtendedObject oprice : oprices)
+                    Common.insertItem(mode, prices, view, oprice);
+
+            promos.setMark(true);
             
-            new Button(pricescnt, "additem");
-            new Button(pricescnt, "removeitem");
+            if (opromos != null)
+                for (ExtendedObject opromo : opromos)
+                    Common.insertItem(mode, promos, view, opromo);
+            
+            new Button(pricescnt, "addprice");
+            new Button(pricescnt, "removeprice");
+            
+            new Button(promocnt, "addpromo");
+            new Button(promocnt, "removepromo");
             
             new Button(container, "save");
             
             break;
+            
         case Common.SHOW:
             material = view.getParameter("material");
             oprices = view.getParameter("prices");
+            opromos = view.getParameter("promos");
+            
             base.setObject(material);
             prices.setMark(false);
             
-            for (ExtendedObject oprice : oprices)
-                Common.insertItem(mode, prices, view, oprice);
+            if (oprices != null)
+                for (ExtendedObject oprice : oprices)
+                    Common.insertItem(mode, prices, view, oprice);
+            
+            if (opromos != null)
+                for (ExtendedObject opromo : opromos)
+                    Common.insertItem(mode, promos, view, opromo);
             
             break;
         }

@@ -15,13 +15,16 @@ public class Install {
      * @return
      */
     public static final InstallData self() {
-        DataElement ematid, element;
+        DataElement evalue, edate, ematid, element;
         DocumentModelItem imatid, item;
         SearchHelpData sh;
         InstallData data = new InstallData();
-        DocumentModel precoMaterial, material =
+        DocumentModel promocaoMaterial, precoMaterial, material =
                 data.getModel("MATERIAL", "CMATERIAL", "");
         
+        /*
+         * MATERIAL
+         */
         ematid = new DataElement();
         ematid.setName("MATERIAL.ID");
         ematid.setLength(20);
@@ -75,6 +78,9 @@ public class Install {
         sh.add("ID");
         sh.add("NAME");
         
+        /*
+         * PRECO_MATERIAL
+         */
         precoMaterial = data.getModel("PRECO_MATERIAL", "CMATPRICE", "");
         
         element = new DataElement();
@@ -103,16 +109,16 @@ public class Install {
         
         precoMaterial.add(item);
         
-        element = new DataElement();
-        element.setName("PRECO_MATERIAL.VALOR");
-        element.setDecimals(3);
-        element.setLength(12);
-        element.setType(DataType.DEC);
+        evalue = new DataElement();
+        evalue.setName("PRECO_MATERIAL.VALOR");
+        evalue.setDecimals(3);
+        evalue.setLength(12);
+        evalue.setType(DataType.DEC);
         
         item = new DocumentModelItem();
         item.setName("VL_VENDA");
         item.setTableFieldName("VLVND");
-        item.setDataElement(element);
+        item.setDataElement(evalue);
         item.setDocumentModel(precoMaterial);
         item.setIndex(2);
         
@@ -121,20 +127,20 @@ public class Install {
         item = new DocumentModelItem();
         item.setName("VL_CUSTO");
         item.setTableFieldName("VLCST");
-        item.setDataElement(element);
+        item.setDataElement(evalue);
         item.setDocumentModel(precoMaterial);
         item.setIndex(3);
         
         precoMaterial.add(item);
         
-        element = new DataElement();
-        element.setName("PRECO_MATERIAL.DATA");
-        element.setType(DataType.DATE);
+        edate = new DataElement();
+        edate.setName("PRECO_MATERIAL.DATA");
+        edate.setType(DataType.DATE);
         
         item = new DocumentModelItem();
         item.setName("DT_INICIAL");
         item.setTableFieldName("DTINI");
-        item.setDataElement(element);
+        item.setDataElement(edate);
         item.setDocumentModel(precoMaterial);
         item.setIndex(4);
         
@@ -144,10 +150,77 @@ public class Install {
         item.setName("DT_FINAL");
         item.setTableFieldName("DTTRM");
         item.setDocumentModel(precoMaterial);
-        item.setDataElement(element);
+        item.setDataElement(edate);
         item.setIndex(5);
         
         precoMaterial.add(item);
+        
+        /*
+         * PROMOCAO_MATERIAL
+         */
+        promocaoMaterial = data.getModel("PROMOCAO_MATERIAL", "CMATPROMO", "");
+        
+        element = new DataElement();
+        element.setName("PROMOCAO_MATERIAL.ID");
+        element.setType(DataType.CHAR);
+        element.setLength(23);
+        element.setUpcase(true);
+        
+        item = new DocumentModelItem();
+        item.setName("ID");
+        item.setTableFieldName("IDENT");
+        item.setDocumentModel(promocaoMaterial);
+        item.setDataElement(element);
+        item.setIndex(0);
+        
+        promocaoMaterial.add(item);
+        promocaoMaterial.add(new DocumentModelKey(item));
+        
+        item = new DocumentModelItem();
+        item.setName("MATERIAL");
+        item.setDocumentModel(promocaoMaterial);
+        item.setDataElement(ematid);
+        item.setTableFieldName("MATCD");
+        item.setReference(imatid);
+        item.setIndex(1);
+
+        promocaoMaterial.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("VL_VENDA");
+        item.setTableFieldName("VLVND");
+        item.setDataElement(evalue);
+        item.setDocumentModel(promocaoMaterial);
+        item.setIndex(2);
+
+        promocaoMaterial.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("VL_CUSTO");
+        item.setTableFieldName("VLCST");
+        item.setDataElement(evalue);
+        item.setDocumentModel(promocaoMaterial);
+        item.setIndex(3);
+
+        promocaoMaterial.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("DT_INICIAL");
+        item.setTableFieldName("DTINI");
+        item.setDataElement(edate);
+        item.setDocumentModel(promocaoMaterial);
+        item.setIndex(4);
+
+        promocaoMaterial.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("DT_FINAL");
+        item.setTableFieldName("DTTRM");
+        item.setDataElement(edate);
+        item.setDocumentModel(promocaoMaterial);
+        item.setIndex(5);
+        
+        promocaoMaterial.add(item);
         
         data.add(sh);
         data.link("MATERIAL", "erp-custom-mm.materials");

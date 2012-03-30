@@ -11,8 +11,12 @@ public class Main extends AbstractPage {
         export("install", "install");
     }
     
-    public final void additem(ViewData view) {
-        Request.additem(view);
+    public final void addprice(ViewData view) {
+        Request.additem(view, "prices");
+    }
+    
+    public final void addpromo(ViewData view) {
+        Request.additem(view, "promos");
     }
     
     /**
@@ -51,8 +55,20 @@ public class Main extends AbstractPage {
         Response.material(view, this);
     }
     
-    public final void removeitem(ViewData view) {
-        Request.removeitem(view);
+    /**
+     * 
+     * @param view
+     */
+    public final void removeprice(ViewData view) {
+        Request.removeitem(view, "prices");
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void removepromo(ViewData view) {
+        Request.removeitem(view, "promos");
     }
     
     /**

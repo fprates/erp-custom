@@ -15,8 +15,8 @@ public class Request {
      * 
      * @param view
      */
-    public static final void additem(ViewData view) {
-        Table itens = view.getElement("prices");
+    public static final void additem(ViewData view, String tablename) {
+        Table itens = view.getElement(tablename);
         byte mode = Common.getMode(view);
         
         Common.insertItem(mode, itens, view, null);
@@ -47,6 +47,17 @@ public class Request {
     
     /**
      * 
+     * @param i
+     * @param material
+     * @return
+     */
+    private static final String getItemId(int i, String material) {
+        return new StringBuilder(Integer.toString(i)).append(".").
+        append(material).toString();
+    }
+    
+    /**
+     * 
      * @param view
      * @param function
      * @param mode
@@ -54,7 +65,7 @@ public class Request {
      */
     private static final void load(ViewData view, Function function, byte mode)
             throws Exception {
-        ExtendedObject[] prices;
+        ExtendedObject[] prices, promos;
         DataForm selection = view.getElement("selection");
         String query, matid = selection.get("material").getValue();
         Documents documents = new Documents(function);
@@ -68,10 +79,14 @@ public class Request {
         query = "from PRECO_MATERIAL where MATERIAL = ?";
         prices = documents.select(query, matid);
         
+        query = "from PROMOCAO_MATERIAL where MATERIAL = ?";
+        promos = documents.select(query, matid);
+        
         view.setTitle(Common.TITLE[mode]);
         view.setReloadableView(true);
         view.export("material", material);
         view.export("prices", prices);
+        view.export("promos", promos);
         view.export("mode", mode);
         view.redirect(null, "material");
     }
@@ -80,8 +95,8 @@ public class Request {
      * 
      * @param view
      */
-    public static final void removeitem(ViewData view) {
-        Table itens = view.getElement("prices");
+    public static final void removeitem(ViewData view, String tablename) {
+        Table itens = view.getElement(tablename);
         
         for (TableItem item : itens.getItens())
             if (item.isSelected())
@@ -99,7 +114,8 @@ public class Request {
         Documents documents = new Documents(function);
         DataForm base = view.getElement("base");
         Table prices = view.getElement("prices");
-        ExtendedObject oprice, obase = base.getObject();
+        Table promos = view.getElement("promos");
+        ExtendedObject opromo, oprice, obase = base.getObject();
         byte mode = Common.getMode(view);
         int i = 0;
         String itemid, material = obase.getValue("ID");
@@ -112,16 +128,29 @@ public class Request {
             documents.modify(obase);
             documents.update("delete from PRECO_MATERIAL where MATERIAL = ?",
                     material);
+            
+            documents.update("delete from PROMOCAO_MATERIAL where MATERIAL = ?",
+                    material);
         }
         
         i = 0;
         for (TableItem item : prices.getItens()) {
             oprice = item.getObject();
-            itemid = new StringBuilder(Integer.toString(i++)).append(".").
-                    append(material).toString();
+            itemid = getItemId(i, material);
+            i++;
             oprice.setValue("ID", itemid);
             oprice.setValue("MATERIAL", material);
             documents.save(oprice);
+        }
+        
+        i = 0;
+        for (TableItem item : promos.getItens()) {
+            opromo = item.getObject();
+            itemid = getItemId(i, material);
+            i++;
+            opromo.setValue("ID", itemid);
+            opromo.setValue("MATERIAL", material);
+            documents.save(opromo);
         }
         
         documents.commit();
