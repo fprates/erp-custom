@@ -18,6 +18,9 @@ public class DataInicialValidator implements Validator {
         Date dtini = (Date)config.get("DT_INICIAL");
         Date dtfin = (Date)config.get("DT_FINAL");
         
+        if (dtini == null || dtfin == null)
+            return null;
+        
         if (dtini.getTime() > dtfin.getTime())
             return "dtini.gt.dtfin";
         
