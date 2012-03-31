@@ -67,6 +67,10 @@ public class Install {
         
         partnertype.add(item);
         
+        data.addValues(partnertype, 1, "CL", "CLIENTE");
+        data.addValues(partnertype, 2, "FR", "FORNECEDOR");
+        data.addValues(partnertype, 3, "TR", "TRANSPORTADOR");
+        
         /*
          * Partner
          */
@@ -113,14 +117,14 @@ public class Install {
         partner.add(item);
         
         element = new DataElement();
-        element.setName("CUSTOM_PARTNER.TPFIS");
-        element.setLength(1);
-        element.setType(DataType.NUMC);
+        element.setName("CUSTOM_PARTNER.DOCUMENTO_FISCAL");
+        element.setLength(22);
+        element.setType(DataType.CHAR);
         
         item = new DocumentModelItem();
         item.setDocumentModel(partner);
         item.setName("DOCUMENTO_FISCAL");
-        item.setTableFieldName("TPFIS");
+        item.setTableFieldName("DOCFS");
         item.setDataElement(element);
         item.setIndex(3);
         
@@ -176,6 +180,7 @@ public class Install {
         item.setTableFieldName("TPPAR");
         item.setDataElement(typecode.getDataElement());
         item.setReference(typecode);
+        item.setSearchHelp("SH_PARTNER_TYPE");
         item.setIndex(7);
         
         partner.add(item);
@@ -209,8 +214,8 @@ public class Install {
         item.setDocumentModel(address);
         item.setName("PARTNER_ID");
         item.setTableFieldName("PRTNR");
-        item.setDataElement(typecode.getDataElement());
-        item.setReference(typecode);
+        item.setDataElement(partnercode.getDataElement());
+        item.setReference(partnercode);
         item.setIndex(1);
         
         address.add(item);
@@ -291,12 +296,24 @@ public class Install {
         
         shdata = new SearchHelpData();
         shdata.add("CODIGO");
-        shdata.add("NAME");
+        shdata.add("RAZAO_SOCIAL");
         shdata.setName("SH_PARTNER");
         shdata.setModel("CUSTOM_PARTNER");
         shdata.setExport("CODIGO");
         
         data.add(shdata);
+        
+        shdata = new SearchHelpData();
+        shdata.add("CODIGO");
+        shdata.add("SIGLA");
+        shdata.add("DESCRICAO");
+        shdata.add("DOCUMENTO_FISCAL");
+        shdata.setName("SH_PARTNER_TYPE");
+        shdata.setModel("CUSTOM_PARTNER_TYPE");
+        shdata.setExport("CODIGO");
+        
+        data.add(shdata);
+        
         data.addNumberFactory("CUSTPARTNER");
         data.link("PARTNER", "erp-custom-sd.partner");
         data.link("XD01", "erp-custom-sd.partner");
