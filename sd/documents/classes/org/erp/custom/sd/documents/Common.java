@@ -37,8 +37,8 @@ public class Common {
                 i = Long.parseLong(((InputComponent)item_.get("ITEM_NUMBER")).
                         getValue());
             
-                docid = Long.parseLong(((InputComponent)item_.get("DOCUMENT_ID")).
-                        getValue()); 
+                docid = Long.parseLong(((InputComponent)item_.
+                        get("DOCUMENT_ID")).getValue()); 
             }
             
             i++;
@@ -66,7 +66,7 @@ public class Common {
             }
             
             if (name.equals("DOCUMENT_ID")) {
-                tfield.setReferenceValidable(false);
+                tfield.getModelItem().setReference(null);
                 tfield.setValue(Long.toString(docid));
                 continue;
             }
