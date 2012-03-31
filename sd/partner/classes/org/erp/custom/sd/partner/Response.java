@@ -11,6 +11,7 @@ import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
@@ -31,7 +32,7 @@ public class Response {
         DataForm partnerform;
         Table addresses;
         TabbedPaneItem tab;
-        Container container = new Form(view, "main");
+        Container addresscnt, container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
         ExtendedObject opartner = view.getParameter("partner");
@@ -57,8 +58,8 @@ public class Response {
             
             if (name.equals("TIPO_PESSOA")) {
                 dataitem.setComponentType(Const.LIST_BOX);
-                dataitem.add("Física", "0");
-                dataitem.add("Jurídica", "1");
+                dataitem.add("fis", "0");
+                dataitem.add("jur", "1");
             }
             
             dataitem.setEnabled((modo == Common.SHOW)? false : true);
@@ -68,13 +69,15 @@ public class Response {
         tab = new TabbedPaneItem(tabs, "identitytab");
         tab.setContainer(partnerform);
         
-        addresses = new Table(tabs, "addresses");
+        addresscnt = new StandardContainer(tabs, "addresscnt");
+        addresses = new Table(addresscnt, "addresses");
         addresses.importModel(addressmodel);
         addresses.getColumn("ADDRESS_ID").setVisible(false);
         addresses.getColumn("PARTNER_ID").setVisible(false);
+        addresses.setMark(true);
         
         tab = new TabbedPaneItem(tabs, "addresstab");
-        tab.setContainer(addresses);
+        tab.setContainer(addresscnt);
         
         switch (modo) {
         case Common.CREATE:
@@ -82,21 +85,29 @@ public class Response {
             
             new Button(container, "save");
             
+            new Button(addresscnt, "addaddress");
+            new Button(addresscnt, "removeaddress");
+            
             break;
         
         case Common.SHOW:
             partnerform.setObject(opartner);
-            
-            for (ExtendedObject oaddress : oaddresses)
-                Common.insertItem(addresses, oaddress);
+
+            if (oaddresses != null)
+                for (ExtendedObject oaddress : oaddresses)
+                    Common.insertItem(addresses, oaddress);
             
             break;
             
         case Common.UPDATE:
             partnerform.setObject(opartner);
             
-            for (ExtendedObject oaddress : oaddresses)
-                Common.insertItem(addresses, oaddress);
+            if (oaddresses != null)
+                for (ExtendedObject oaddress : oaddresses)
+                    Common.insertItem(addresses, oaddress);
+            
+            new Button(addresscnt, "addaddress");
+            new Button(addresscnt, "removeaddress");
             
             new Button(container, "save");
             

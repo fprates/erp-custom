@@ -14,6 +14,12 @@ import org.iocaste.shell.common.ViewData;
 
 public class Request {
 
+    public static final void addaddress(ViewData view) {
+        Table addresses = view.getElement("addresses");
+        
+        Common.insertItem(addresses, null);
+    }
+    
     /**
      * 
      * @param view
@@ -22,6 +28,56 @@ public class Request {
         view.export("mode", Common.CREATE);
         view.setReloadableView(true);
         view.redirect(null, "identity");
+    }
+    
+    /**
+     * 
+     * @param view
+     * @param function
+     * @param mode
+     * @throws Exception
+     */
+    public static final void load(ViewData view, Function function, byte mode)
+            throws Exception {
+        String query;
+        Documents documents;
+        ExtendedObject partner;
+        ExtendedObject[] addresses;
+        DataForm form = view.getElement("selection");
+        int ident = toInteger(form.get("partner").getValue());
+        
+        if (ident == 0) {
+            view.message(Const.ERROR, "field.is.required");
+            return;
+        }
+        
+        documents = new Documents(function);
+        partner = documents.getObject("CUSTOM_PARTNER", ident);
+        if (partner == null) {
+            view.message(Const.ERROR, "invalid.partner");
+            return;
+        }
+        
+        query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
+        addresses = documents.select(query, ident);
+        
+        view.export("partner", partner);
+        view.export("addresses", addresses);
+        view.export("mode", mode);
+        view.setReloadableView(true);
+        view.redirect(null, "identity");
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public static final void removeaddress(ViewData view) {
+        Table addresses = view.getElement("addresses");
+        
+        for (TableItem address : addresses.getItens())
+            if (address.isSelected())
+                addresses.remove(address);
     }
     
     /**
@@ -71,7 +127,7 @@ public class Request {
             break;
         }
         
-        addresses = tpane.get("addresstab").getContainer();
+        addresses = view.getElement("addresses");
         i = (codigo * 100) + 1;
         
         for (TableItem address : addresses.getItens()) {
@@ -80,9 +136,9 @@ public class Request {
             oaddress.setValue("PARTNER_ID", codigo);
             documents.save(oaddress);
             
-            Shell.setInputValue((InputComponent)address.get("ADDRESS_ID"),
+            Shell.setInputValue((InputComponent)address.get("ADDRESS_ID"), i);
+            Shell.setInputValue((InputComponent)address.get("PARTNER_ID"),
                     codigo);
-            Shell.setInputValue((InputComponent)address.get("PARTNER_ID"), i);
             
             i++;
         }
@@ -94,81 +150,10 @@ public class Request {
     
     /**
      * 
-     * @param view
-     * @param function
-     * @throws Exception
-     */
-    public static final void show(ViewData view, Function function) 
-            throws Exception {
-        String query;
-        Documents documents;
-        ExtendedObject partner;
-        ExtendedObject[] addresses;
-        DataForm form = view.getElement("selection");
-        int ident = toInteger(form.get("partner").getValue());
-        
-        if (ident == 0) {
-            view.message(Const.ERROR, "field.is.required");
-            return;
-        }
-        
-        documents = new Documents(function);
-        partner = documents.getObject("CUSTOM_PARTNER", ident);
-        
-        query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
-        addresses = documents.select(query, ident);
-
-        
-        if (partner == null) {
-            view.message(Const.ERROR, "invalid.partner");
-            return;
-        }
-        
-        view.export("partner", partner);
-        view.export("address", addresses[0]);
-        view.export("mode", Common.SHOW);
-        view.setReloadableView(true);
-        view.redirect(null, "identity");
-    }
-    
-    /**
-     * 
      * @param value
      * @return
      */
     private static final int toInteger(String value) {
         return (value.equals("")?0:Integer.parseInt(value));
-    }
-    
-    /**
-     * 
-     * @param view
-     */
-    public static final void update(ViewData view, Function function)
-            throws Exception {
-        String query;
-        Documents documents;
-        ExtendedObject object;
-        ExtendedObject[] addresses;
-        DataForm form = view.getElement("selection");
-        int ident = toInteger(form.get("partner").getValue());
-        
-        if (ident == 0) {
-            view.message(Const.ERROR, "field.is.required");
-            return;
-        }
-        
-        documents = new Documents(function);
-        object = documents.getObject("CUSTOM_PARTNER", ident);
-        
-        query = "from custom_partner_address where partner_id = ?";
-        addresses = documents.select(query, ident);
-        if (addresses != null)
-            view.export("address", addresses[0]);
-        
-        view.export("partner", object);
-        view.export("mode", Common.UPDATE);
-        view.setReloadableView(true);
-        view.redirect(null, "identity");
     }
 }

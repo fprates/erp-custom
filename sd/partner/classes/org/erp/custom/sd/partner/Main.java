@@ -18,6 +18,14 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
+    public final void addaddress(ViewData view) {
+        Request.addaddress(view);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
     public final void create(ViewData view) {
         Request.create(view);
     }
@@ -57,6 +65,14 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
+    public final void removeaddress(ViewData view) {
+        Request.removeaddress(view);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
     public final void save(ViewData view) throws Exception {
         Request.save(view, this);
     }
@@ -67,7 +83,7 @@ public class Main extends AbstractPage {
      * @throws Exception
      */
     public final void show(ViewData view) throws Exception {
-        Request.show(view, this);
+        Request.load(view, this, Common.SHOW);
     }
 
     /**
@@ -76,6 +92,6 @@ public class Main extends AbstractPage {
      * @throws Exception
      */
     public final void update(ViewData view) throws Exception {
-        Request.update(view, this);
+        Request.load(view, this, Common.UPDATE);
     }
 }
