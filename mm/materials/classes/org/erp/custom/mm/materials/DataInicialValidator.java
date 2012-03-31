@@ -2,10 +2,10 @@ package org.erp.custom.mm.materials;
 
 import java.util.Date;
 
-import org.iocaste.shell.common.Validator;
+import org.iocaste.shell.common.AbstractValidator;
 import org.iocaste.shell.common.ValidatorConfig;
 
-public class DataInicialValidator implements Validator {
+public class DataInicialValidator extends AbstractValidator {
     private static final long serialVersionUID = 8547533754211230557L;
 
     /*

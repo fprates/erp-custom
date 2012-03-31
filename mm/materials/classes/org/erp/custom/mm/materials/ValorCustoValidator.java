@@ -1,9 +1,9 @@
 package org.erp.custom.mm.materials;
 
-import org.iocaste.shell.common.Validator;
+import org.iocaste.shell.common.AbstractValidator;
 import org.iocaste.shell.common.ValidatorConfig;
 
-public class ValorCustoValidator implements Validator {
+public class ValorCustoValidator extends AbstractValidator {
     private static final long serialVersionUID = 7760956874809247964L;
 
     /*
