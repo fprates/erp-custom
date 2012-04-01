@@ -1,9 +1,7 @@
 package org.erp.custom.sd.documents;
 
-import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.shell.common.InputComponent;
-import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
@@ -34,11 +32,9 @@ public class Common {
         
         if (object == null) {
             for (TableItem item_ : itens.getItens()) {
-                i = Long.parseLong(((InputComponent)item_.get("ITEM_NUMBER")).
-                        getValue());
+                i = ((InputComponent)item_.get("ITEM_NUMBER")).get();
             
-                docid = Long.parseLong(((InputComponent)item_.
-                        get("DOCUMENT_ID")).getValue()); 
+                docid = ((InputComponent)item_.get("DOCUMENT_ID")).get(); 
             }
             
             i++;
@@ -60,14 +56,14 @@ public class Common {
             item.add(tfield);
             
             if (name.equals("ITEM_NUMBER")) {
-                tfield.setValue(Long.toString(i));
+                tfield.set(i);
                 tfield.setEnabled(false);
                 continue;
             }
             
             if (name.equals("DOCUMENT_ID")) {
                 tfield.getModelItem().setReference(null);
-                tfield.setValue(Long.toString(docid));
+                tfield.set(docid);
                 continue;
             }
             
@@ -77,12 +73,8 @@ public class Common {
             tfield.setObligatory((mode == SHOW)? false: true);
             tfield.setEnabled((mode == SHOW)? false : true);
             
-            if (object != null) {
-                if (Shell.getDataElement(tfield).getType() == DataType.NUMC)
-                    tfield.setValue(Long.toString((Long)object.getValue(name)));
-                else
-                    tfield.setValue((String)object.getValue(name));
-            }
+            if (object != null)
+                tfield.set(object.getValue(name));
         }
     }
 }

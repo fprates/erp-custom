@@ -6,7 +6,6 @@ import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
-import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
@@ -44,7 +43,7 @@ public class Request {
         ExtendedObject partner;
         ExtendedObject[] addresses;
         DataForm form = view.getElement("selection");
-        int ident = toInteger(form.get("partner").getValue());
+        int ident = form.get("partner").get();
         
         if (ident == 0) {
             view.message(Const.ERROR, "field.is.required");
@@ -108,7 +107,7 @@ public class Request {
                 return;
             }
             
-            identityform.get("CODIGO").setValue(scodigo);
+            identityform.get("CODIGO").set(scodigo);
             
             view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
@@ -136,24 +135,12 @@ public class Request {
             oaddress.setValue("PARTNER_ID", codigo);
             documents.save(oaddress);
             
-            Shell.setInputValue((InputComponent)address.get("ADDRESS_ID"), i);
-            Shell.setInputValue((InputComponent)address.get("PARTNER_ID"),
-                    codigo);
-            
-            i++;
+            ((InputComponent)address.get("ADDRESS_ID")).set(i++);
+            ((InputComponent)address.get("PARTNER_ID")).set(codigo);
         }
         
         documents.commit();
         
         view.message(Const.STATUS, "partner.saved.successfuly");
-    }
-    
-    /**
-     * 
-     * @param value
-     * @return
-     */
-    private static final int toInteger(String value) {
-        return (value.equals("")?0:Integer.parseInt(value));
     }
 }

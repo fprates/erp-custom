@@ -36,7 +36,7 @@ public class Request {
         long ident;
         Documents documents = new Documents(function);
         DataForm form = view.getElement("selection");
-        String query, sident = form.get("document").getValue();
+        String query, sident = form.get("document").get();
         
         if (sident == null || sident.equals("")) {
             view.message(Const.ERROR, "document.number.required");
@@ -82,7 +82,7 @@ public class Request {
         if (mode == Common.CREATE) {
             docid = documents.getNextNumber("SD_DOCUMENT");
             oheader.setValue("ID", docid);
-            header.get("ID").setValue(Long.toString(docid));
+            header.get("ID").set(docid);
             
             documents.save(oheader);
         } else {
@@ -103,8 +103,7 @@ public class Request {
                 
                 oitem.setValue("ITEM_NUMBER", itemnr);
             
-                ((InputComponent)item.get("ITEM_NUMBER")).
-                        setValue(Long.toString(itemnr));
+                ((InputComponent)item.get("ITEM_NUMBER")).set(itemnr);
             }
             
             oitem.setValue("DOCUMENT_ID", docid);
