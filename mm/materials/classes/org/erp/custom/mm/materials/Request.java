@@ -31,7 +31,7 @@ public class Request {
     public static final void create(ViewData view, Function function)
             throws Exception {
         DataForm selection = view.getElement("selection");
-        String matid = selection.get("material").getValue();
+        String matid = selection.get("material").get();
         Documents documents = new Documents(function);
         
         if (documents.getObject("MATERIAL", matid) != null) {
@@ -67,7 +67,7 @@ public class Request {
             throws Exception {
         ExtendedObject[] prices, promos;
         DataForm selection = view.getElement("selection");
-        String query, matid = selection.get("material").getValue();
+        String query, matid = selection.get("material").get();
         Documents documents = new Documents(function);
         ExtendedObject material = documents.getObject("MATERIAL", matid);
         

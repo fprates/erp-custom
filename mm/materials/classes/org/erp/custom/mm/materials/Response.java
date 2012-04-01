@@ -110,7 +110,7 @@ public class Response {
         switch (mode) {
         case Common.CREATE:
             matid = view.getParameter("matid");
-            base.get("ID").setValue(matid);
+            base.get("ID").set(matid);
             
             prices.setMark(true);
             Common.insertItem(mode, prices, view, null);
