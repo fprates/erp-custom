@@ -211,11 +211,6 @@ public class Install {
         address.add(item);
         address.add(new DocumentModelKey(item));
         
-        element = new DataElement();
-        element.setName("CUSTOM_PARTNER_ADDRESS.PARTNER_ID");
-        element.setLength(10);
-        element.setType(DataType.NUMC);
-        
         partnercode = partner.getModelItem("CODIGO");
         
         item = new DocumentModelItem();
@@ -229,11 +224,12 @@ public class Install {
         address.add(item);
 
         addresstypecode = addresstype.getModelItem("CODIGO");
+        
         item = new DocumentModelItem();
         item.setDocumentModel(address);
         item.setName("TIPO_ENDERECO");
         item.setTableFieldName("TPEND");
-        item.setDataElement(element);
+        item.setDataElement(addresstypecode.getDataElement());
         item.setReference(addresstypecode);
         item.setSearchHelp("SH_ADDRESS_TYPE");
         item.setIndex(i++);

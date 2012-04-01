@@ -15,8 +15,9 @@ public class Request {
 
     public static final void addaddress(ViewData view) {
         Table addresses = view.getElement("addresses");
+        byte mode = Common.getMode(view);
         
-        Common.insertItem(addresses, null);
+        Common.insertItem(mode, addresses, null);
     }
     
     /**
@@ -43,7 +44,7 @@ public class Request {
         ExtendedObject partner;
         ExtendedObject[] addresses;
         DataForm form = view.getElement("selection");
-        int ident = form.get("partner").get();
+        long ident = form.get("partner").get();
         
         if (ident == 0) {
             view.message(Const.ERROR, "field.is.required");

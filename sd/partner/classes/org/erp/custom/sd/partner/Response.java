@@ -58,8 +58,8 @@ public class Response {
             
             if (name.equals("TIPO_PESSOA")) {
                 dataitem.setComponentType(Const.LIST_BOX);
-                dataitem.add("fis", "0");
-                dataitem.add("jur", "1");
+                dataitem.add("fis", 0);
+                dataitem.add("jur", 1);
             }
             
             dataitem.setEnabled((modo == Common.SHOW)? false : true);
@@ -81,7 +81,7 @@ public class Response {
         
         switch (modo) {
         case Common.CREATE:
-            Common.insertItem(addresses, null);
+            Common.insertItem(modo, addresses, null);
             
             new Button(container, "save");
             
@@ -95,7 +95,7 @@ public class Response {
 
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(addresses, oaddress);
+                    Common.insertItem(modo, addresses, oaddress);
             
             break;
             
@@ -104,7 +104,7 @@ public class Response {
             
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(addresses, oaddress);
+                    Common.insertItem(modo, addresses, oaddress);
             
             new Button(addresscnt, "addaddress");
             new Button(addresscnt, "removeaddress");

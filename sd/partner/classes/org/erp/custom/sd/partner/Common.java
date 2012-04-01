@@ -1,6 +1,7 @@
 package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
@@ -32,12 +33,18 @@ public class Common {
      * @param itens
      * @param object
      */
-    public static final void insertItem(Table itens, ExtendedObject object) {
+    public static final void insertItem(byte mode, Table itens,
+            ExtendedObject object) {
+        InputComponent input;
         TableItem item = new TableItem(itens);
         
         for (TableColumn column : itens.getColumns())
-            if (!column.isMark())
-                item.add(new TextField(itens, column.getName()));
+            if (!column.isMark()) {
+                input = new TextField(itens, column.getName());
+                input.setEnabled((mode == Common.SHOW)? false : true);
+                
+                item.add(input);
+            }
         
         if (object != null)
             item.setObject(object);
