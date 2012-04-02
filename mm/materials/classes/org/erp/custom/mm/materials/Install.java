@@ -59,8 +59,7 @@ public class Install {
         
         element = new DataElement();
         element.setName("MATERIAL.ACTIVE");
-        element.setLength(1);
-        element.setType(DataType.NUMC);
+        element.setType(DataType.BOOLEAN);
         
         item = new DocumentModelItem();
         item.setDocumentModel(material);
@@ -94,7 +93,6 @@ public class Install {
         item.setTableFieldName("IDENT");
         item.setDocumentModel(precoMaterial);
         item.setDataElement(element);
-        item.setIndex(0);
         
         precoMaterial.add(item);
         precoMaterial.add(new DocumentModelKey(item));
@@ -105,7 +103,6 @@ public class Install {
         item.setDocumentModel(precoMaterial);
         item.setDataElement(ematid);
         item.setReference(imatid);
-        item.setIndex(1);
         
         precoMaterial.add(item);
         
@@ -120,7 +117,6 @@ public class Install {
         item.setTableFieldName("VLVND");
         item.setDataElement(evalue);
         item.setDocumentModel(precoMaterial);
-        item.setIndex(2);
         
         precoMaterial.add(item);
         
@@ -129,7 +125,6 @@ public class Install {
         item.setTableFieldName("VLCST");
         item.setDataElement(evalue);
         item.setDocumentModel(precoMaterial);
-        item.setIndex(3);
         
         precoMaterial.add(item);
         
@@ -142,7 +137,6 @@ public class Install {
         item.setTableFieldName("DTINI");
         item.setDataElement(edate);
         item.setDocumentModel(precoMaterial);
-        item.setIndex(4);
         
         precoMaterial.add(item);
         
@@ -151,7 +145,6 @@ public class Install {
         item.setTableFieldName("DTTRM");
         item.setDocumentModel(precoMaterial);
         item.setDataElement(edate);
-        item.setIndex(5);
         
         precoMaterial.add(item);
         
@@ -171,7 +164,6 @@ public class Install {
         item.setTableFieldName("IDENT");
         item.setDocumentModel(promocaoMaterial);
         item.setDataElement(element);
-        item.setIndex(0);
         
         promocaoMaterial.add(item);
         promocaoMaterial.add(new DocumentModelKey(item));
@@ -182,7 +174,6 @@ public class Install {
         item.setDataElement(ematid);
         item.setTableFieldName("MATCD");
         item.setReference(imatid);
-        item.setIndex(1);
 
         promocaoMaterial.add(item);
         
@@ -191,7 +182,6 @@ public class Install {
         item.setTableFieldName("VLVND");
         item.setDataElement(evalue);
         item.setDocumentModel(promocaoMaterial);
-        item.setIndex(2);
 
         promocaoMaterial.add(item);
         
@@ -200,7 +190,6 @@ public class Install {
         item.setTableFieldName("VLCST");
         item.setDataElement(evalue);
         item.setDocumentModel(promocaoMaterial);
-        item.setIndex(3);
 
         promocaoMaterial.add(item);
         
@@ -209,7 +198,6 @@ public class Install {
         item.setTableFieldName("DTINI");
         item.setDataElement(edate);
         item.setDocumentModel(promocaoMaterial);
-        item.setIndex(4);
 
         promocaoMaterial.add(item);
         
@@ -218,7 +206,6 @@ public class Install {
         item.setTableFieldName("DTTRM");
         item.setDataElement(edate);
         item.setDocumentModel(promocaoMaterial);
-        item.setIndex(5);
         
         promocaoMaterial.add(item);
         
