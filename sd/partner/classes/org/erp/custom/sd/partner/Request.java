@@ -87,7 +87,7 @@ public class Request {
      */
     public static final void save(ViewData view, Function function)
             throws Exception {
-        String query, scodigo;
+        String query;
         long codigo, i;
         ExtendedObject oaddress;
         Table addresses;
@@ -100,7 +100,6 @@ public class Request {
         switch (modo) {
         case Common.CREATE:
             codigo = documents.getNextNumber("CUSTPARTNER");
-            scodigo = Long.toString(codigo);
             
             opartner.setValue("CODIGO", codigo);
             if (documents.save(opartner) == 0) {
@@ -108,7 +107,7 @@ public class Request {
                 return;
             }
             
-            identityform.get("CODIGO").set(scodigo);
+            identityform.get("CODIGO").set(codigo);
             
             view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
@@ -117,7 +116,6 @@ public class Request {
         default:
             documents.modify(opartner);
             codigo = opartner.getValue("CODIGO");
-            scodigo = Long.toString(codigo);
             
             query = "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?";
             documents.update(query, codigo);

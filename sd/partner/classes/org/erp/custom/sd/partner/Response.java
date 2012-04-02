@@ -62,6 +62,9 @@ public class Response {
                 dataitem.add("jur", 1);
             }
             
+            if (name.equals("TIPO_PARCEIRO"))
+                dataitem.setObligatory((modo == Common.SHOW)? false : true);
+            
             dataitem.setEnabled((modo == Common.SHOW)? false : true);
             
         }
