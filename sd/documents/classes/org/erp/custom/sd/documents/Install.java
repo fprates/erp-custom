@@ -29,11 +29,9 @@ public class Install {
         edocid.setType(DataType.NUMC);
         
         docid = new DocumentModelItem();
-        docid.setDocumentModel(dochead);
         docid.setName("ID");
         docid.setTableFieldName("IDENT");
         docid.setDataElement(edocid);
-        docid.setIndex(0);
         
         dochead.add(docid);
         dochead.add(new DocumentModelKey(docid));
@@ -42,22 +40,18 @@ public class Install {
                 getModelItem("CODIGO");
         element = partnercode.getDataElement();
         item = new DocumentModelItem();
-        item.setDocumentModel(dochead);
         item.setName("SENDER");
         item.setTableFieldName("SENDR");
         item.setDataElement(element);
         item.setReference(partnercode);
-        item.setIndex(1);
         
         dochead.add(item);
         
         item = new DocumentModelItem();
-        item.setDocumentModel(dochead);
         item.setName("RECEIVER");
         item.setTableFieldName("RECVR");
         item.setDataElement(element);
         item.setReference(partnercode);
-        item.setIndex(2);
         
         dochead.add(item);
         
@@ -72,33 +66,27 @@ public class Install {
         element.setType(DataType.NUMC);
         
         item = new DocumentModelItem();
-        item.setDocumentModel(docitem);
         item.setName("ITEM_NUMBER");
         item.setTableFieldName("ITMNR");
         item.setDataElement(element);
-        item.setIndex(0);
         
         docitem.add(item);
         docitem.add(new DocumentModelKey(item));
         
         item = new DocumentModelItem();
-        item.setDocumentModel(docitem);
         item.setName("DOCUMENT_ID");
         item.setTableFieldName("DOCID");
         item.setDataElement(edocid);
         item.setReference(docid);
-        item.setIndex(1);
         
         docitem.add(item);
         
         materialid = documents.getModel("MATERIAL").getModelItem("ID");
         item = new DocumentModelItem();
-        item.setDocumentModel(docitem);
         item.setName("MATERIAL");
         item.setTableFieldName("MATCD");
         item.setDataElement(materialid.getDataElement());
         item.setReference(materialid);
-        item.setIndex(2);
         
         docitem.add(item);
         

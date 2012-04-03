@@ -12,6 +12,9 @@ public class Common {
     public final static byte SHOW = 0;
     public final static byte CREATE = 1;
     public final static byte UPDATE = 2;
+    public final static byte IDENTITY = 0;
+    public final static byte ADDRESS = 1;
+    public final static byte CONTACT = 2;
     
     public final static String[] TITLE = {
             "partner-display",

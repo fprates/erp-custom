@@ -19,7 +19,15 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addaddress(ViewData view) {
-        Request.addaddress(view);
+        Request.additem(view, "addresses");
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void addcontact(ViewData view) {
+        Request.additem(view, "contacts");
     }
     
     /**
@@ -37,10 +45,13 @@ public class Main extends AbstractPage {
      */
     public final void identity(ViewData view) throws Exception {
         Documents documents = new Documents(this);
-        DocumentModel identity = documents.getModel("CUSTOM_PARTNER");
-        DocumentModel address = documents.getModel("CUSTOM_PARTNER_ADDRESS");
+        DocumentModel[] models = new DocumentModel[3];
         
-        Response.identity(view, identity, address);
+        models[Common.IDENTITY] = documents.getModel("CUSTOM_PARTNER");
+        models[Common.ADDRESS] = documents.getModel("CUSTOM_PARTNER_ADDRESS");
+        models[Common.CONTACT] = documents.getModel("CUSTOM_PARTNER_CONTACT");
+        
+        Response.identity(view, models);
     }
     
     /**
@@ -66,7 +77,15 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void removeaddress(ViewData view) {
-        Request.removeaddress(view);
+        Request.removeitem(view, "addresses");
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void removecontact(ViewData view) {
+        Request.removeitem(view, "contacts");
     }
     
     /**

@@ -13,11 +13,11 @@ import org.iocaste.shell.common.ViewData;
 
 public class Request {
 
-    public static final void addaddress(ViewData view) {
-        Table addresses = view.getElement("addresses");
+    public static final void additem(ViewData view, String tablename) {
+        Table itens = view.getElement(tablename);
         byte mode = Common.getMode(view);
         
-        Common.insertItem(mode, addresses, null);
+        Common.insertItem(mode, itens, null);
     }
     
     /**
@@ -43,6 +43,7 @@ public class Request {
         Documents documents;
         ExtendedObject partner;
         ExtendedObject[] addresses;
+        ExtendedObject[] contacts;
         DataForm form = view.getElement("selection");
         long ident = form.get("partner").get();
         
@@ -61,8 +62,12 @@ public class Request {
         query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
         addresses = documents.select(query, ident);
         
+        query = "from CUSTOM_PARTNER_CONTACT where partner_id = ?";
+        contacts = documents.select(query, ident);
+        
         view.export("partner", partner);
         view.export("addresses", addresses);
+        view.export("contacts", contacts);
         view.export("mode", mode);
         view.setReloadableView(true);
         view.redirect(null, "identity");
@@ -72,12 +77,12 @@ public class Request {
      * 
      * @param view
      */
-    public static final void removeaddress(ViewData view) {
-        Table addresses = view.getElement("addresses");
+    public static final void removeitem(ViewData view, String tablename) {
+        Table itens = view.getElement(tablename);
         
-        for (TableItem address : addresses.getItens())
-            if (address.isSelected())
-                addresses.remove(address);
+        for (TableItem item : itens.getItens())
+            if (item.isSelected())
+                itens.remove(item);
     }
     
     /**
@@ -89,8 +94,8 @@ public class Request {
             throws Exception {
         String query;
         long codigo, i;
-        ExtendedObject oaddress;
-        Table addresses;
+        ExtendedObject ocontact, oaddress;
+        Table contacts, addresses;
         TabbedPane tpane = view.getElement("pane");
         DataForm identityform = tpane.get("identitytab").getContainer();
         ExtendedObject opartner = identityform.getObject();
@@ -120,6 +125,9 @@ public class Request {
             query = "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?";
             documents.update(query, codigo);
             
+            query = "delete from CUSTOM_PARTNER_CONTACT where PARTNER_ID = ?";
+            documents.update(query, codigo);
+            
             view.export("mode", Common.UPDATE);
             
             break;
@@ -136,6 +144,19 @@ public class Request {
             
             ((InputComponent)address.get("ADDRESS_ID")).set(i++);
             ((InputComponent)address.get("PARTNER_ID")).set(codigo);
+        }
+        
+        contacts = view.getElement("contacts");
+        i = (codigo * 100) + 1;
+        
+        for (TableItem contact : contacts.getItens()) {
+            ocontact = contact.getObject();
+            ocontact.setValue("CODIGO", i);
+            ocontact.setValue("PARTNER_ID", codigo);
+            documents.save(ocontact);
+            
+            ((InputComponent)contact.get("CODIGO")).set(i++);
+            ((InputComponent)contact.get("PARTNER_ID")).set(codigo);
         }
         
         documents.commit();

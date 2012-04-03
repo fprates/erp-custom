@@ -25,21 +25,24 @@ public class Response {
      * @param identitymodel
      * @param addressmodel
      */
-    public static final void identity(ViewData view,
-            DocumentModel identitymodel, DocumentModel addressmodel) {
+    public static final void identity(ViewData view, DocumentModel[] models) {
         String name;
         DataItem dataitem;
         DataForm partnerform;
-        Table addresses;
+        Table contacts, addresses;
         TabbedPaneItem tab;
-        Container addresscnt, container = new Form(view, "main");
+        Container contactcnt, addresscnt, container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
         ExtendedObject opartner = view.getParameter("partner");
         ExtendedObject[] oaddresses = view.getParameter("addresses");
+        ExtendedObject[] ocontacts = view.getParameter("contacts");
         
+        /*
+         * Identity
+         */
         partnerform = new DataForm(tabs, "identity");
-        partnerform.importModel(identitymodel);
+        partnerform.importModel(models[Common.IDENTITY]);
         
         for (Element element : partnerform.getElements()) {
             if (!element.isDataStorable())
@@ -72,45 +75,83 @@ public class Response {
         tab = new TabbedPaneItem(tabs, "identitytab");
         tab.setContainer(partnerform);
         
+        /*
+         * Address
+         */
         addresscnt = new StandardContainer(tabs, "addresscnt");
         addresses = new Table(addresscnt, "addresses");
-        addresses.importModel(addressmodel);
-        addresses.getColumn("ADDRESS_ID").setVisible(false);
+        addresses.importModel(models[Common.ADDRESS]);
+        addresses.getColumn("CODIGO").setVisible(false);
         addresses.getColumn("PARTNER_ID").setVisible(false);
-        addresses.setMark(true);
         
         tab = new TabbedPaneItem(tabs, "addresstab");
         tab.setContainer(addresscnt);
         
+        /*
+         * Contacts
+         */
+        contactcnt = new StandardContainer(tabs, "contactscnt");
+        contacts = new Table(contactcnt, "contacts");
+        contacts.importModel(models[Common.CONTACT]);
+        contacts.getColumn("CODIGO").setVisible(false);
+        contacts.getColumn("PARTNER_ID").setVisible(false);
+        
+        tab = new TabbedPaneItem(tabs, "contacttab");
+        tab.setContainer(contactcnt);
+        
         switch (modo) {
         case Common.CREATE:
+            addresses.setMark(true);
+            contacts.setMark(true);
+            
             Common.insertItem(modo, addresses, null);
+            Common.insertItem(modo, contacts, null);
             
             new Button(container, "save");
             
             new Button(addresscnt, "addaddress");
             new Button(addresscnt, "removeaddress");
             
+            new Button(contactcnt, "addcontact");
+            new Button(contactcnt, "removecontact");
+            
             break;
         
         case Common.SHOW:
+            addresses.setMark(false);
+            contacts.setMark(false);
+            
             partnerform.setObject(opartner);
 
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
                     Common.insertItem(modo, addresses, oaddress);
             
+            if (ocontacts != null)
+                for (ExtendedObject ocontact : ocontacts)
+                    Common.insertItem(modo, contacts, ocontact);
+            
             break;
             
         case Common.UPDATE:
+            addresses.setMark(true);
+            contacts.setMark(true);
+            
             partnerform.setObject(opartner);
             
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
                     Common.insertItem(modo, addresses, oaddress);
             
+            if (ocontacts != null)
+                for (ExtendedObject ocontact : ocontacts)
+                    Common.insertItem(modo, contacts, ocontact);
+            
             new Button(addresscnt, "addaddress");
             new Button(addresscnt, "removeaddress");
+            
+            new Button(contactcnt, "addcontact");
+            new Button(contactcnt, "removecontact");
             
             new Button(container, "save");
             
