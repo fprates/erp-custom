@@ -417,6 +417,7 @@ public class Install {
         item.setTableFieldName("COMMU");
         item.setDataElement(communicationcode.getDataElement());
         item.setReference(communicationcode);
+        item.setSearchHelp("SH_COMMUNICATION");
         
         contact.add(item);
         
@@ -521,6 +522,15 @@ public class Install {
         shdata.add("DESCRICAO");
         shdata.setName("SH_ADDRESS_TYPE");
         shdata.setModel("CUSTOM_ADDRESS_TYPE");
+        shdata.setExport("CODIGO");
+        
+        data.add(shdata);
+        
+        shdata = new SearchHelpData();
+        shdata.add("CODIGO");
+        shdata.add("DESCRICAO");
+        shdata.setName("SH_COMMUNICATION");
+        shdata.setModel("CUSTOM_COMMUNICATION");
         shdata.setExport("CODIGO");
         
         data.add(shdata);

@@ -40,14 +40,24 @@ public class Common {
             ExtendedObject object) {
         InputComponent input;
         TableItem item = new TableItem(itens);
+        String tablename = itens.getName();
         
-        for (TableColumn column : itens.getColumns())
-            if (!column.isMark()) {
-                input = new TextField(itens, column.getName());
-                input.setEnabled((mode == Common.SHOW)? false : true);
+        for (TableColumn column : itens.getColumns()) {
+            if (column.isMark())
+                continue;
+            
+            input = new TextField(itens, column.getName());
+            input.setEnabled((mode == Common.SHOW)? false : true);
+            
+            if (tablename.equals("contacts")) {
+                if (column.getName().equals("COMMUNICATION"))
+                    input.setObligatory((mode == Common.SHOW)? false : true);
                 
-                item.add(input);
+                
             }
+            
+            item.add(input);
+        }
         
         if (object != null)
             item.setObject(object);

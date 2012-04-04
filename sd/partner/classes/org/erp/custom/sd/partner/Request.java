@@ -138,11 +138,11 @@ public class Request {
         
         for (TableItem address : addresses.getItens()) {
             oaddress = address.getObject();
-            oaddress.setValue("ADDRESS_ID", i);
+            oaddress.setValue("CODIGO", i);
             oaddress.setValue("PARTNER_ID", codigo);
             documents.save(oaddress);
             
-            ((InputComponent)address.get("ADDRESS_ID")).set(i++);
+            ((InputComponent)address.get("CODIGO")).set(i++);
             ((InputComponent)address.get("PARTNER_ID")).set(codigo);
         }
         
