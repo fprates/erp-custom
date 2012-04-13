@@ -30,6 +30,7 @@ public class Install {
         ematid.setLength(20);
         ematid.setType(DataType.CHAR);
         ematid.setUpcase(true);
+        data.add(ematid);
         
         imatid = new DocumentModelItem();
         imatid.setName("ID");
@@ -45,6 +46,7 @@ public class Install {
         element.setLength(60);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("NAME");
@@ -56,6 +58,7 @@ public class Install {
         element = new DataElement();
         element.setName("MATERIAL.ACTIVE");
         element.setType(DataType.BOOLEAN);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("ACTIVE");
@@ -81,6 +84,7 @@ public class Install {
         element.setLength(23);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("ID");
@@ -103,6 +107,7 @@ public class Install {
         evalue.setDecimals(3);
         evalue.setLength(12);
         evalue.setType(DataType.DEC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("VL_VENDA");
@@ -121,6 +126,7 @@ public class Install {
         edate = new DataElement();
         edate.setName("PRECO_MATERIAL.DATA");
         edate.setType(DataType.DATE);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("DT_INICIAL");
@@ -146,6 +152,7 @@ public class Install {
         element.setType(DataType.CHAR);
         element.setLength(23);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("ID");

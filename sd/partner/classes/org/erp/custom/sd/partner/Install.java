@@ -25,12 +25,12 @@ public class Install {
         element.setName("CUSTOM_ADDRESS_TYPE.CODIGO");
         element.setLength(3);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CODIGO");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
-        item.setIndex(0);
         
         addresstype.add(item);
         addresstype.add(new DocumentModelKey(item));
@@ -40,12 +40,12 @@ public class Install {
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("DESCRICAO");
         item.setTableFieldName("DESCR");
         item.setDataElement(element);
-        item.setIndex(1);
         
         addresstype.add(item);
         
@@ -64,6 +64,7 @@ public class Install {
         element.setName("CUSTOM_COMMUNICATION.CODIGO");
         element.setLength(3);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CODIGO");
@@ -78,6 +79,7 @@ public class Install {
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("DESCRICAO");
@@ -100,18 +102,17 @@ public class Install {
         DataElement element;
         DocumentModelItem typecode, item;
         DocumentModel partner = data.getModel("CUSTOM_PARTNER", "CPARTNER", "");
-        int i = 0;
         
         element = new DataElement();
         element.setName("CUSTOM_PARTNER.CODIGO");
         element.setLength(10);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CODIGO");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
-        item.setIndex(i++);
         item.setSearchHelp("SH_PARTNER");
         
         partner.add(item);
@@ -122,12 +123,12 @@ public class Install {
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("RAZAO_SOCIAL");
         item.setTableFieldName("NAME1");
         item.setDataElement(element);
-        item.setIndex(i++);
         
         partner.add(item);
         
@@ -135,7 +136,6 @@ public class Install {
         item.setName("NOME_FANTASIA");
         item.setTableFieldName("NAME2");
         item.setDataElement(element);
-        item.setIndex(i++);
         
         partner.add(item);
         
@@ -143,12 +143,12 @@ public class Install {
         element.setName("CUSTOM_PARTNER.DOCUMENTO_FISCAL");
         element.setLength(22);
         element.setType(DataType.CHAR);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("DOCUMENTO_FISCAL");
         item.setTableFieldName("DOCFS");
         item.setDataElement(element);
-        item.setIndex(i++);
         
         partner.add(item);
         
@@ -157,12 +157,12 @@ public class Install {
         element.setLength(18);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("INSCR_ESTADUAL");
         item.setTableFieldName("IESTA");
         item.setDataElement(element);
-        item.setIndex(i++);
         
         partner.add(item);
         
@@ -171,12 +171,12 @@ public class Install {
         element.setLength(20);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("INSCR_MUNICIPAL");
         item.setTableFieldName("IMUNI");
         item.setDataElement(element);
-        item.setIndex(i++);
         
         partner.add(item);
         
@@ -184,12 +184,12 @@ public class Install {
         element.setName("CUSTOM_PARTNER.TIPO_PESSOA");
         element.setLength(1);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("TIPO_PESSOA");
         item.setTableFieldName("TPPES");
         item.setDataElement(element);
-        item.setIndex(i++);
         
         partner.add(item);
         
@@ -201,7 +201,6 @@ public class Install {
         item.setDataElement(typecode.getDataElement());
         item.setReference(typecode);
         item.setSearchHelp("SH_PARTNER_TYPE");
-        item.setIndex(i++);
         
         partner.add(item);
         
@@ -226,6 +225,7 @@ public class Install {
         element.setName("CUSTOM_PARTNER_ADDRESS.CODIGO");
         element.setLength(12);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CODIGO");
@@ -261,6 +261,7 @@ public class Install {
         element.setLength(60);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("LOGRADOURO");
@@ -273,6 +274,7 @@ public class Install {
         element.setName("CUSTOM_PARTNER_ADDRESS.CEP");
         element.setLength(8);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CEP");
@@ -299,6 +301,7 @@ public class Install {
         element.setLength(30);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CIDADE");
@@ -312,6 +315,7 @@ public class Install {
         element.setLength(16);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("TELEFONE");
@@ -325,6 +329,7 @@ public class Install {
         element.setLength(128);
         element.setType(DataType.CHAR);
         element.setUpcase(false);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("EMAIL");
@@ -338,6 +343,7 @@ public class Install {
         element.setLength(128);
         element.setType(DataType.CHAR);
         element.setUpcase(false);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("WEB_PAGE");
@@ -365,6 +371,7 @@ public class Install {
         element.setName("CUSTOM_PARTNER_CONTACT.CODIGO");
         element.setLength(12);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CODIGO");
@@ -387,6 +394,7 @@ public class Install {
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("PNOME");
@@ -439,6 +447,7 @@ public class Install {
         element.setName("CUSTOM_PARTNER_TYPE.CODIGO");
         element.setLength(3);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("CODIGO");
@@ -453,6 +462,7 @@ public class Install {
         element.setLength(2);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("SIGLA");
@@ -466,6 +476,7 @@ public class Install {
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("DESCRICAO");

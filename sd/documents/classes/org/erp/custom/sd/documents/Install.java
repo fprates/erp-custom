@@ -27,6 +27,7 @@ public class Install {
         edocid.setName(HEADER+".ID");
         edocid.setLength(10);
         edocid.setType(DataType.NUMC);
+        data.add(edocid);
         
         docid = new DocumentModelItem();
         docid.setName("ID");
@@ -64,6 +65,7 @@ public class Install {
         element.setName(ITEM+".ITEM_NUMBER");
         element.setLength(15);
         element.setType(DataType.NUMC);
+        data.add(element);
         
         item = new DocumentModelItem();
         item.setName("ITEM_NUMBER");
