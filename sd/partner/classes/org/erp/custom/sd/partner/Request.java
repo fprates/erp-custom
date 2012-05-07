@@ -13,11 +13,33 @@ import org.iocaste.shell.common.ViewData;
 
 public class Request {
 
-    public static final void additem(ViewData view, String tablename) {
-        Table itens = view.getElement(tablename);
+    /**
+     * 
+     * @param view
+     * @param tablename
+     */
+    public static final void additem(ViewData view, Table itens,
+            ExtendedObject object) {
         byte mode = Common.getMode(view);
         
-        Common.insertItem(mode, itens, null);
+        Common.insertItem(mode, itens, object);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public static final void addressmark(ViewData view) throws Exception {
+        Table addresses = view.getElement("addresses");
+        DataForm address = view.getElement("address");
+        
+        for (TableItem addressitem : addresses.getItens()) {
+            if (!addressitem.isSelected())
+                continue;
+            
+            address.setObject(addressitem.getObject());
+            break;
+        }
     }
     
     /**

@@ -1,6 +1,7 @@
 package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
@@ -28,7 +29,7 @@ public class Common {
      * @return
      */
     public static final byte getMode(ViewData view) {
-        return (Byte)view.getParameter("mode");
+        return view.getParameter("mode");
     }
     
     /**
@@ -39,22 +40,33 @@ public class Common {
     public static final void insertItem(byte mode, Table itens,
             ExtendedObject object) {
         InputComponent input;
+        Element mark;
         TableItem item = new TableItem(itens);
-        String tablename = itens.getName();
+        String name, tablename = itens.getName();
         
         for (TableColumn column : itens.getColumns()) {
-            if (column.isMark())
+            if (column.isMark()) {
+                if (!tablename.equals("addresses"))
+                    continue;
+                
+                mark = item.get("mark");
+                mark.addEvent("onclick", "send('addressmark', null)");
                 continue;
+            }
             
-            input = new TextField(itens, column.getName());
+            name = column.getName();
+            input = new TextField(itens, name);
             input.setEnabled((mode == Common.SHOW)? false : true);
             
-            if (tablename.equals("contacts")) {
-                if (column.getName().equals("COMMUNICATION"))
+            if (tablename.equals("addresses"))
+                if (name.equals("CODIGO")) {
+                    input.setObligatory(false);
+                    input.setEnabled(false);
+                }
+            
+            if (tablename.equals("contacts"))
+                if (name.equals("COMMUNICATION"))
                     input.setObligatory((mode == Common.SHOW)? false : true);
-                
-                
-            }
             
             item.add(input);
         }

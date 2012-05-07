@@ -15,6 +15,7 @@ import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
@@ -28,7 +29,7 @@ public class Response {
     public static final void identity(ViewData view, DocumentModel[] models) {
         String name;
         DataItem dataitem;
-        DataForm partnerform;
+        DataForm partnerform, address;
         Table contacts, addresses;
         TabbedPaneItem tab;
         Container contactcnt, addresscnt, container = new Form(view, "main");
@@ -37,6 +38,7 @@ public class Response {
         ExtendedObject opartner = view.getParameter("partner");
         ExtendedObject[] oaddresses = view.getParameter("addresses");
         ExtendedObject[] ocontacts = view.getParameter("contacts");
+        String[] columns = {"CODIGO", "TIPO_ENDERECO", "LOGRADOURO"};
         
         /*
          * Identity
@@ -69,7 +71,6 @@ public class Response {
                 dataitem.setObligatory((modo == Common.SHOW)? false : true);
             
             dataitem.setEnabled((modo == Common.SHOW)? false : true);
-            
         }
         
         tab = new TabbedPaneItem(tabs, "identitytab");
@@ -79,10 +80,30 @@ public class Response {
          * Address
          */
         addresscnt = new StandardContainer(tabs, "addresscnt");
+        address = new DataForm(addresscnt, "address");
+        address.importModel(models[Common.ADDRESS]);
+        address.get("CODIGO").setEnabled(false);
+        address.get("PARTNER_ID").setVisible(false);
+        
         addresses = new Table(addresscnt, "addresses");
         addresses.importModel(models[Common.ADDRESS]);
-        addresses.getColumn("CODIGO").setVisible(false);
-        addresses.getColumn("PARTNER_ID").setVisible(false);
+        addresses.setSelectionType(Table.SINGLE);
+        
+        for (TableColumn column : addresses.getColumns()) {
+            if (column.isMark())
+                continue;
+            
+            name = column.getName();
+            column.setVisible(false);
+            
+            for (String colname : columns) {
+                if (!colname.equals(name))
+                    continue;
+                    
+                column.setVisible(true);
+                break;
+            }
+        }
         
         tab = new TabbedPaneItem(tabs, "addresstab");
         tab.setContainer(addresscnt);
@@ -101,19 +122,22 @@ public class Response {
         
         switch (modo) {
         case Common.CREATE:
+            address.setVisible(false);
             addresses.setMark(true);
+            addresses.setVisible(false);
             contacts.setMark(true);
+            contacts.setVisible(false);
             
-            Common.insertItem(modo, addresses, null);
-            Common.insertItem(modo, contacts, null);
+//            Common.insertItem(Common.SHOW, addresses, null);
+//            Common.insertItem(modo, contacts, null);
             
             new Button(container, "save");
             
             new Button(addresscnt, "addaddress");
-            new Button(addresscnt, "removeaddress");
+            new Button(addresscnt, "removeaddress").setVisible(false);
             
             new Button(contactcnt, "addcontact");
-            new Button(contactcnt, "removecontact");
+            new Button(contactcnt, "removecontact").setVisible(false);
             
             break;
         
@@ -125,7 +149,7 @@ public class Response {
 
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(modo, addresses, oaddress);
+                    Common.insertItem(Common.SHOW, addresses, oaddress);
             
             if (ocontacts != null)
                 for (ExtendedObject ocontact : ocontacts)
@@ -141,7 +165,7 @@ public class Response {
             
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(modo, addresses, oaddress);
+                    Common.insertItem(Common.SHOW, addresses, oaddress);
             
             if (ocontacts != null)
                 for (ExtendedObject ocontact : ocontacts)
