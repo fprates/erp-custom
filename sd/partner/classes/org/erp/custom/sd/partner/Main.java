@@ -6,6 +6,7 @@ import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.Button;
+import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
@@ -22,19 +23,23 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addaddress(ViewData view) throws Exception {
-        Button remove;
+        Button button;
+        Container container;
         DataForm address = view.getElement("address");
         Table itens = view.getElement("addresses");
         
         if (itens.length() == 0) {
             itens.setVisible(true);
-            address.setVisible(true);
             
-            remove = view.getElement("removeaddress");
-            remove.setVisible(true);
+            button = view.getElement("removeaddress");
+            button.setVisible(true);
+            button = view.getElement("editaddress");
+            button.setVisible(true);
         }
+
+        container = view.getElement("addresscnt");
+        Request.additem(view, itens, address.getObject(), container);
         
-        Request.additem(view, itens, address.getObject());
         address.clearInputs();
     }
     
@@ -43,19 +48,23 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addcontact(ViewData view) {
-        Button remove;
+        Button button;
+        Container container;
         DataForm contact = view.getElement("contact");
         Table itens = view.getElement("contacts");
         
         if (itens.length() == 0) {
             itens.setVisible(true);
-            contact.setVisible(true);
             
-            remove = view.getElement("removecontact");
-            remove.setVisible(true);
+            button = view.getElement("removecontact");
+            button.setVisible(true);
+            button = view.getElement("editcontact");
+            button.setVisible(true);
         }
         
-        Request.additem(view, itens, null);
+        container = view.getElement("contactcnt");
+        Request.additem(view, itens, null, container);
+        
         contact.clearInputs();
     }
     
@@ -115,7 +124,7 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void removeaddress(ViewData view) {
-        Button remove;
+        Button button;
         Table itens = view.getElement("addresses");
         DataForm address = view.getElement("address");
         
@@ -125,10 +134,13 @@ public class Main extends AbstractPage {
             return;
         
         itens.setVisible(false);
-        address.setVisible(false);
         
-        remove = view.getElement("removeaddress");
-        remove.setVisible(false);
+        button = view.getElement("removeaddress");
+        button.setVisible(false);
+        button = view.getElement("editaddress");
+        button.setVisible(false);
+        
+        address.clearInputs();
     }
     
     /**
@@ -136,7 +148,7 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void removecontact(ViewData view) {
-        Button remove;
+        Button button;
         Table itens = view.getElement("contacts");
         DataForm contact = view.getElement("contact");
         
@@ -146,10 +158,13 @@ public class Main extends AbstractPage {
             return;
         
         itens.setVisible(false);
-        contact.setVisible(false);
         
-        remove = view.getElement("removecontact");
-        remove.setVisible(false);
+        button = view.getElement("removecontact");
+        button.setVisible(false);
+        button = view.getElement("removecontact");
+        button.setVisible(false);
+        
+        contact.clearInputs();
     }
     
     /**

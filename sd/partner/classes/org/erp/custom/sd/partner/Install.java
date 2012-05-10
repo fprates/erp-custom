@@ -49,7 +49,7 @@ public class Install {
         
         addresstype.add(item);
         
-        data.addValues(addresstype, 1, "COMERCIAL");
+        data.addValues(addresstype, 0, "COMERCIAL");
         
         return addresstype;
     }
@@ -87,6 +87,8 @@ public class Install {
         item.setDataElement(element);
         
         model.add(item);
+        
+        data.addValues(model, 0, "COMUNICAÇÃO 1");
         
         return model;
     }
@@ -485,9 +487,9 @@ public class Install {
         
         partnertype.add(item);
         
-        data.addValues(partnertype, 1, "CL", "CLIENTE");
-        data.addValues(partnertype, 2, "FR", "FORNECEDOR");
-        data.addValues(partnertype, 3, "TR", "TRANSPORTADOR");
+        data.addValues(partnertype, 0, "CL", "CLIENTE");
+        data.addValues(partnertype, 1, "FR", "FORNECEDOR");
+        data.addValues(partnertype, 2, "TR", "TRANSPORTADOR");
         
         return partnertype;
     }

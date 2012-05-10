@@ -29,9 +29,11 @@ public class Response {
     public static final void identity(ViewData view, DocumentModel[] models) {
         String name;
         DataItem dataitem;
-        DataForm partnerform, address;
+        DataForm partner, address;
         Table contacts, addresses;
         TabbedPaneItem tab;
+        Button save, editaddress, addaddress, removeaddress, addcontact,
+                removecontact, editcontact;
         Container contactcnt, addresscnt, container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         byte modo = Common.getMode(view);
@@ -43,10 +45,10 @@ public class Response {
         /*
          * Identity
          */
-        partnerform = new DataForm(tabs, "identity");
-        partnerform.importModel(models[Common.IDENTITY]);
+        partner = new DataForm(tabs, "identity");
+        partner.importModel(models[Common.IDENTITY]);
         
-        for (Element element : partnerform.getElements()) {
+        for (Element element : partner.getElements()) {
             if (!element.isDataStorable())
                 continue;
             
@@ -54,7 +56,7 @@ public class Response {
             name = dataitem.getName();
             
             if (name.equals("CODIGO")) {
-                partnerform.get("CODIGO").setEnabled(false);
+                partner.get("CODIGO").setEnabled(false);
                 continue;
             }
             
@@ -67,14 +69,11 @@ public class Response {
                 dataitem.add("jur", 1);
             }
             
-            if (name.equals("TIPO_PARCEIRO"))
-                dataitem.setObligatory((modo == Common.SHOW)? false : true);
-            
             dataitem.setEnabled((modo == Common.SHOW)? false : true);
         }
         
         tab = new TabbedPaneItem(tabs, "identitytab");
-        tab.setContainer(partnerform);
+        tab.setContainer(partner);
         
         /*
          * Address
@@ -105,6 +104,12 @@ public class Response {
             }
         }
         
+        save = new Button(container, "save");
+        
+        editaddress = new Button(addresscnt, "editaddress");
+        addaddress = new Button(addresscnt, "addaddress");
+        removeaddress = new Button(addresscnt, "removeaddress");
+        
         tab = new TabbedPaneItem(tabs, "addresstab");
         tab.setContainer(addresscnt);
         
@@ -116,28 +121,26 @@ public class Response {
         contacts.importModel(models[Common.CONTACT]);
         contacts.getColumn("CODIGO").setVisible(false);
         contacts.getColumn("PARTNER_ID").setVisible(false);
+
+        editcontact = new Button(contactcnt, "editcontact");
+        addcontact = new Button(contactcnt, "addcontact");
+        removecontact = new Button(contactcnt, "removecontact");
         
         tab = new TabbedPaneItem(tabs, "contacttab");
         tab.setContainer(contactcnt);
         
         switch (modo) {
         case Common.CREATE:
-            address.setVisible(false);
             addresses.setMark(true);
             addresses.setVisible(false);
             contacts.setMark(true);
             contacts.setVisible(false);
             
-//            Common.insertItem(Common.SHOW, addresses, null);
-//            Common.insertItem(modo, contacts, null);
-            
-            new Button(container, "save");
-            
-            new Button(addresscnt, "addaddress");
-            new Button(addresscnt, "removeaddress").setVisible(false);
-            
-            new Button(contactcnt, "addcontact");
-            new Button(contactcnt, "removecontact").setVisible(false);
+            save.setVisible(true);
+            editaddress.setVisible(false);
+            removeaddress.setVisible(false);
+            editcontact.setVisible(false);
+            removecontact.setVisible(false);
             
             break;
         
@@ -145,15 +148,23 @@ public class Response {
             addresses.setMark(false);
             contacts.setMark(false);
             
-            partnerform.setObject(opartner);
+            partner.setObject(opartner);
 
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(Common.SHOW, addresses, oaddress);
+                    Common.insertItem(modo, addresses, oaddress, addresscnt);
             
             if (ocontacts != null)
                 for (ExtendedObject ocontact : ocontacts)
-                    Common.insertItem(modo, contacts, ocontact);
+                    Common.insertItem(modo, contacts, ocontact, contactcnt);
+            
+            save.setVisible(false);
+            editaddress.setVisible(false);
+            addaddress.setVisible(false);
+            removeaddress.setVisible(false);
+            editcontact.setVisible(false);
+            addcontact.setVisible(false);
+            removecontact.setVisible(false);
             
             break;
             
@@ -161,23 +172,16 @@ public class Response {
             addresses.setMark(true);
             contacts.setMark(true);
             
-            partnerform.setObject(opartner);
+            partner.setObject(opartner);
             
             if (oaddresses != null)
                 for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(Common.SHOW, addresses, oaddress);
+                    Common.insertItem(Common.SHOW, addresses, oaddress,
+                            addresscnt);
             
             if (ocontacts != null)
                 for (ExtendedObject ocontact : ocontacts)
-                    Common.insertItem(modo, contacts, ocontact);
-            
-            new Button(addresscnt, "addaddress");
-            new Button(addresscnt, "removeaddress");
-            
-            new Button(contactcnt, "addcontact");
-            new Button(contactcnt, "removecontact");
-            
-            new Button(container, "save");
+                    Common.insertItem(modo, contacts, ocontact, contactcnt);
             
             break;
         }

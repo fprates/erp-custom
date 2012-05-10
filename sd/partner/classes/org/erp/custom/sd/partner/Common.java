@@ -1,8 +1,10 @@
 package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.shell.common.Element;
+import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.Link;
+import org.iocaste.shell.common.Parameter;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
@@ -38,37 +40,44 @@ public class Common {
      * @param object
      */
     public static final void insertItem(byte mode, Table itens,
-            ExtendedObject object) {
+            ExtendedObject object, Container container) {
+        Link link;
         InputComponent input;
-        Element mark;
+        Parameter index = new Parameter(container, "index");
         TableItem item = new TableItem(itens);
         String name, tablename = itens.getName();
         
         for (TableColumn column : itens.getColumns()) {
-            if (column.isMark()) {
-                if (!tablename.equals("addresses"))
-                    continue;
+            if (column.isMark())
+                continue;
+            
+            name = column.getName();
+            if (tablename.equals("addresses") && name.equals("LOGRADOURO")) {
+                link = new Link(itens, name, "addressmark");
+                link.setText((String)object.getValue(name));
+                link.add(index, itens.length() - 1);
                 
-                mark = item.get("mark");
-                mark.addEvent("onclick", "send('addressmark', null)");
+                item.add(link);
+                
                 continue;
             }
             
-            name = column.getName();
             input = new TextField(itens, name);
             input.setEnabled((mode == Common.SHOW)? false : true);
             
+            item.add(input);
+            
             if (tablename.equals("addresses"))
-                if (name.equals("CODIGO")) {
+                if (name.equals("TIPO_ENDERECO") || name.equals("CODIGO")) {
                     input.setObligatory(false);
                     input.setEnabled(false);
+                    
+                    continue;
                 }
             
             if (tablename.equals("contacts"))
                 if (name.equals("COMMUNICATION"))
                     input.setObligatory((mode == Common.SHOW)? false : true);
-            
-            item.add(input);
         }
         
         if (object != null)
