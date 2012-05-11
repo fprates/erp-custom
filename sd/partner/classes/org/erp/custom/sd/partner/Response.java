@@ -154,6 +154,7 @@ public class Response {
                 itemdata = new ItemData();
                 itemdata.container = addresscnt;
                 itemdata.itens = addresses;
+                addresses.setVisible(true);
                 
                 for (ExtendedObject oaddress : oaddresses) {
                     itemdata.object = oaddress;

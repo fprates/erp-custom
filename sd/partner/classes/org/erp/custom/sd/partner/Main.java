@@ -43,6 +43,7 @@ public class Main extends AbstractPage {
         itemdata.partner = Common.getLong(identity.get("CODIGO").get());
         itemdata.container = view.getElement("addresscnt");
         
+        itemdata.object.setValue("CODIGO", 0l);
         Request.additem(itemdata);
         
         address.clearInputs();
@@ -68,13 +69,14 @@ public class Main extends AbstractPage {
             button = view.getElement("editcontact");
             button.setVisible(true);
         }
-
+        
         itemdata.view = view;
         itemdata.itens = itens;
         itemdata.object = contact.getObject();
         itemdata.partner = Common.getLong(identity.get("CODIGO").get());
         itemdata.container = view.getElement("contactcnt");
         
+        itemdata.object.setValue("CODIGO", 0l);
         Request.additem(itemdata);
         
         contact.clearInputs();

@@ -1,8 +1,5 @@
 package org.erp.custom.sd.partner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
@@ -61,56 +58,6 @@ public class Request {
     /**
      * 
      * @param view
-     * @param function
-     * @param mode
-     * @throws Exception
-     */
-    public static final void load(ViewData view, Function function, byte mode)
-            throws Exception {
-        String query;
-        Documents documents;
-        ExtendedObject partner;
-        ExtendedObject[] addresses, oldaddresses, contacts;
-        DataForm form = view.getElement("selection");
-        long ident = form.get("partner").get();
-        
-        if (ident == 0) {
-            view.message(Const.ERROR, "field.is.required");
-            return;
-        }
-        
-        documents = new Documents(function);
-        partner = documents.getObject("CUSTOM_PARTNER", ident);
-        if (partner == null) {
-            view.message(Const.ERROR, "invalid.partner");
-            return;
-        }
-        
-        query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
-        addresses = documents.select(query, ident);
-        
-        view.clearParameters();
-        
-        if (addresses != null) {
-            oldaddresses = new ExtendedObject[addresses.length];
-            System.arraycopy(addresses, 0, oldaddresses, 0, addresses.length);
-            view.export("old_addresses", oldaddresses);
-        }
-        
-        query = "from CUSTOM_PARTNER_CONTACT where partner_id = ?";
-        contacts = documents.select(query, ident);
-        
-        view.export("partner", partner);
-        view.export("addresses", addresses);
-        view.export("contacts", contacts);
-        view.export("mode", mode);
-        view.setReloadableView(true);
-        view.redirect(null, "identity");
-    }
-    
-    /**
-     * 
-     * @param view
      * @param address
      * @throws Exception
      */
@@ -142,6 +89,49 @@ public class Request {
     /**
      * 
      * @param view
+     * @param function
+     * @param mode
+     * @throws Exception
+     */
+    public static final void load(ViewData view, Function function, byte mode)
+            throws Exception {
+        String query;
+        Documents documents;
+        ExtendedObject partner;
+        ExtendedObject[] addresses, contacts;
+        DataForm form = view.getElement("selection");
+        long ident = form.get("partner").get();
+        
+        if (ident == 0) {
+            view.message(Const.ERROR, "field.is.required");
+            return;
+        }
+        
+        documents = new Documents(function);
+        partner = documents.getObject("CUSTOM_PARTNER", ident);
+        if (partner == null) {
+            view.message(Const.ERROR, "invalid.partner");
+            return;
+        }
+        
+        query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
+        addresses = documents.select(query, ident);
+        
+        query = "from CUSTOM_PARTNER_CONTACT where partner_id = ?";
+        contacts = documents.select(query, ident);
+
+        view.clearParameters();
+        view.export("partner", partner);
+        view.export("addresses", addresses);
+        view.export("contacts", contacts);
+        view.export("mode", mode);
+        view.setReloadableView(true);
+        view.redirect(null, "identity");
+    }
+    
+    /**
+     * 
+     * @param view
      */
     public static final void removeitem(ViewData view, String tablename) {
         Link link;
@@ -168,12 +158,9 @@ public class Request {
             throws Exception {
         Link link;
         String query;
-        Object value;
-        long item, olditem, codigo, i;
+        long item, codigo, i;
         ExtendedObject ocontact, oaddress;
         Table itens;
-        List<ExtendedObject> oaddresses; 
-        ExtendedObject[] oldaddresses = view.getParameter("old_addresses");
         TabbedPane tpane = view.getElement("pane");
         DataForm identityform = tpane.get("identitytab").getContainer();
         ExtendedObject opartner = identityform.getObject();
@@ -212,50 +199,24 @@ public class Request {
         }
         
         itens = view.getElement("addresses");
-        if (oldaddresses != null)
-            i = oldaddresses[oldaddresses.length - 1].
-                    getValue("CODIGO");
-        else
-            i = codigo * 100;
         
-        i++;
-        
-        oaddresses = new ArrayList<ExtendedObject>();
         for (TableItem address : itens.getItens()) {
             oaddress = address.getObject();
             
-            value = oaddress.getValue("CODIGO");
-            item = (value == null)? 0 : (Long)value;
+            item = Common.getLong(oaddress.getValue("CODIGO"));
+            if (item < (codigo * 100))
+                item += (codigo * 100);
             
-            if (item == 0) {
-                link = address.get("LOGRADOURO");
-                oaddress.setValue("CODIGO", i);
-                oaddress.setValue("PARTNER_ID", codigo);
-                oaddress.setValue("LOGRADOURO", link.getText());
-                
-                documents.save(oaddress);
-                
-                ((InputComponent)address.get("CODIGO")).set(i++);
-                ((InputComponent)address.get("PARTNER_ID")).set(codigo);
-                
-                continue;
-            }
+            oaddress.setValue("CODIGO", item);
+            oaddress.setValue("PARTNER_ID", codigo);
             
-            for (ExtendedObject oldaddress : oldaddresses) {
-                olditem = oldaddress.getValue("CODIGO");
-                
-                if (item != olditem)
-                    continue;
-                
-                oaddress.setValue("CODIGO", item);
-                oaddress.setValue("PARTNER_ID", codigo);
-                documents.save(oaddress);
-                
-                ((InputComponent)address.get("CODIGO")).set(item);
-                ((InputComponent)address.get("PARTNER_ID")).set(codigo);
-                
-                break;
-            }
+            link = address.get("LOGRADOURO");
+            oaddress.setValue("LOGRADOURO", link.getText());
+            
+            documents.save(oaddress);
+            
+            ((InputComponent)address.get("CODIGO")).set(item);
+            ((InputComponent)address.get("PARTNER_ID")).set(codigo);
         }
         
         itens = view.getElement("contacts");
@@ -273,8 +234,6 @@ public class Request {
         
         documents.commit();
         
-        oldaddresses = oaddresses.toArray(new ExtendedObject[0]);
-        view.export("old_addresses", oldaddresses);
         view.message(Const.STATUS, "partner.saved.successfuly");
     }
 }
