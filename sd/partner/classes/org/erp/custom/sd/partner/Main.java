@@ -40,7 +40,7 @@ public class Main extends AbstractPage {
         itemdata.view = view;
         itemdata.itens = itens;
         itemdata.object = address.getObject();
-        itemdata.partner = identity.get("CODIGO").get();
+        itemdata.partner = Common.getLong(identity.get("CODIGO").get());
         itemdata.container = view.getElement("addresscnt");
         
         Request.additem(itemdata);
@@ -72,7 +72,7 @@ public class Main extends AbstractPage {
         itemdata.view = view;
         itemdata.itens = itens;
         itemdata.object = contact.getObject();
-        itemdata.partner = identity.get("CODIGO").get();
+        itemdata.partner = Common.getLong(identity.get("CODIGO").get());
         itemdata.container = view.getElement("contactcnt");
         
         Request.additem(itemdata);

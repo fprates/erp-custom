@@ -24,6 +24,15 @@ public class Common {
     
     /**
      * 
+     * @param value
+     * @return
+     */
+    public static final long getLong(Object value) {
+        return (value == null)? 0l : (Long)value;
+    }
+    
+    /**
+     * 
      * @param view
      * @return
      */
@@ -37,7 +46,6 @@ public class Common {
      * @param object
      */
     public static final void insertItem(byte mode, ItemData itemdata) {
-        Object value;
         int i;
         long codigo;
         Link link;
@@ -79,13 +87,16 @@ public class Common {
                     input.setObligatory((mode == Common.SHOW)? false : true);
         }
         
-        value = itemdata.object.getValue("CODIGO");
-        codigo = (value == null)? 0l : (Long)value;
+        codigo = getLong(itemdata.object.getValue("CODIGO"));
         
         if (codigo == 0) {
-            i = itemdata.itens.length() - 2;
-            input = itemdata.itens.get(i).get("CODIGO");
-            codigo = input.get();
+            i = itemdata.itens.length();
+            if (i > 1) {
+                i -= 2;
+                input = itemdata.itens.get(i).get("CODIGO");
+                codigo = input.get();
+            }
+            
             itemdata.object.setValue("CODIGO", codigo + 1);
         }
         
