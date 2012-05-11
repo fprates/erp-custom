@@ -27,6 +27,7 @@ public class Response {
      * @param addressmodel
      */
     public static final void identity(ViewData view, DocumentModel[] models) {
+        ItemData itemdata;
         String name;
         DataItem dataitem;
         DataForm partner, address;
@@ -86,7 +87,8 @@ public class Response {
         
         addresses = new Table(addresscnt, "addresses");
         addresses.importModel(models[Common.ADDRESS]);
-        addresses.setSelectionType(Table.SINGLE);
+        addresses.setVisible(false);
+        addresses.setMark(true);
         
         for (TableColumn column : addresses.getColumns()) {
             if (column.isMark())
@@ -121,6 +123,9 @@ public class Response {
         contacts.importModel(models[Common.CONTACT]);
         contacts.getColumn("CODIGO").setVisible(false);
         contacts.getColumn("PARTNER_ID").setVisible(false);
+        contacts.setVisible(false);
+        contacts.setMark(true);
+        
 
         editcontact = new Button(contactcnt, "editcontact");
         addcontact = new Button(contactcnt, "addcontact");
@@ -131,11 +136,6 @@ public class Response {
         
         switch (modo) {
         case Common.CREATE:
-            addresses.setMark(true);
-            addresses.setVisible(false);
-            contacts.setMark(true);
-            contacts.setVisible(false);
-            
             save.setVisible(true);
             editaddress.setVisible(false);
             removeaddress.setVisible(false);
@@ -150,13 +150,31 @@ public class Response {
             
             partner.setObject(opartner);
 
-            if (oaddresses != null)
-                for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(modo, addresses, oaddress, addresscnt);
+            if (oaddresses != null) {
+                itemdata = new ItemData();
+                itemdata.container = addresscnt;
+                itemdata.itens = addresses;
+                
+                for (ExtendedObject oaddress : oaddresses) {
+                    itemdata.object = oaddress;
+                    Common.insertItem(modo, itemdata);
+                }
+            } else {
+                itemdata = null;
+            }
             
-            if (ocontacts != null)
-                for (ExtendedObject ocontact : ocontacts)
-                    Common.insertItem(modo, contacts, ocontact, contactcnt);
+            if (ocontacts != null) {
+                if (itemdata == null)
+                    itemdata = new ItemData();
+                
+                itemdata.container = contactcnt;
+                itemdata.itens = contacts;
+                
+                for (ExtendedObject ocontact : ocontacts) {
+                    itemdata.object = ocontact;
+                    Common.insertItem(modo, itemdata);
+                }
+            }
             
             save.setVisible(false);
             editaddress.setVisible(false);
@@ -174,14 +192,36 @@ public class Response {
             
             partner.setObject(opartner);
             
-            if (oaddresses != null)
-                for (ExtendedObject oaddress : oaddresses)
-                    Common.insertItem(Common.SHOW, addresses, oaddress,
-                            addresscnt);
+            if (oaddresses != null) {
+                itemdata = new ItemData();
+                itemdata.container = addresscnt;
+                itemdata.itens = addresses;
+                
+                for (ExtendedObject oaddress : oaddresses) {
+                    itemdata.object = oaddress;
+                    Common.insertItem(Common.SHOW, itemdata);
+                }
+                
+                addresses.setVisible(true);
+                editaddress.setVisible(true);
+                addaddress.setVisible(true);
+                removeaddress.setVisible(true);
+            } else {
+                itemdata = null;
+            }
             
-            if (ocontacts != null)
-                for (ExtendedObject ocontact : ocontacts)
-                    Common.insertItem(modo, contacts, ocontact, contactcnt);
+            if (ocontacts != null) {
+                if (itemdata == null)
+                    itemdata = new ItemData();
+                
+                itemdata.container = contactcnt;
+                itemdata.itens = contacts;
+                
+                for (ExtendedObject ocontact : ocontacts) {
+                    itemdata.object = ocontact;
+                    Common.insertItem(modo, itemdata);
+                }
+            }
             
             break;
         }

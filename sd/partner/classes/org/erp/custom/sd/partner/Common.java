@@ -1,11 +1,8 @@
 package org.erp.custom.sd.partner;
 
-import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Link;
 import org.iocaste.shell.common.Parameter;
-import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
@@ -39,30 +36,32 @@ public class Common {
      * @param itens
      * @param object
      */
-    public static final void insertItem(byte mode, Table itens,
-            ExtendedObject object, Container container) {
+    public static final void insertItem(byte mode, ItemData itemdata) {
+        Object value;
+        int i;
+        long codigo;
         Link link;
         InputComponent input;
-        Parameter index = new Parameter(container, "index");
-        TableItem item = new TableItem(itens);
-        String name, tablename = itens.getName();
+        Parameter index = new Parameter(itemdata.container, "index");
+        TableItem item = new TableItem(itemdata.itens);
+        String name, tablename = itemdata.itens.getName();
         
-        for (TableColumn column : itens.getColumns()) {
+        for (TableColumn column : itemdata.itens.getColumns()) {
             if (column.isMark())
                 continue;
             
             name = column.getName();
             if (tablename.equals("addresses") && name.equals("LOGRADOURO")) {
-                link = new Link(itens, name, "addressmark");
-                link.setText((String)object.getValue(name));
-                link.add(index, itens.length() - 1);
+                link = new Link(itemdata.itens, name, "addressmark");
+                link.setText((String)itemdata.object.getValue(name));
+                link.add(index, itemdata.itens.length() - 1);
                 
                 item.add(link);
                 
                 continue;
             }
             
-            input = new TextField(itens, name);
+            input = new TextField(itemdata.itens, name);
             input.setEnabled((mode == Common.SHOW)? false : true);
             
             item.add(input);
@@ -80,8 +79,18 @@ public class Common {
                     input.setObligatory((mode == Common.SHOW)? false : true);
         }
         
-        if (object != null)
-            item.setObject(object);
+        value = itemdata.object.getValue("CODIGO");
+        codigo = (value == null)? 0l : (Long)value;
+        
+        if (codigo == 0) {
+            i = itemdata.itens.length() - 2;
+            input = itemdata.itens.get(i).get("CODIGO");
+            codigo = input.get();
+            itemdata.object.setValue("CODIGO", codigo + 1);
+        }
+        
+        if (itemdata.object != null)
+            item.setObject(itemdata.object);
     }
 
 }

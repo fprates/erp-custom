@@ -7,7 +7,6 @@ import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
-import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Link;
@@ -26,11 +25,10 @@ public class Request {
      * @param object
      * @param container
      */
-    public static final void additem(ViewData view, Table itens,
-            ExtendedObject object, Container container) {
-        byte mode = Common.getMode(view);
+    public static final void additem(ItemData itemdata) {
+        byte mode = Common.getMode(itemdata.view);
         
-        Common.insertItem(mode, itens, object, container);
+        Common.insertItem(mode, itemdata);
     }
     
     /**
@@ -90,19 +88,55 @@ public class Request {
         
         query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
         addresses = documents.select(query, ident);
-        oldaddresses = new ExtendedObject[addresses.length];
-        System.arraycopy(addresses, 0, oldaddresses, 0, addresses.length);
+        
+        view.clearParameters();
+        
+        if (addresses != null) {
+            oldaddresses = new ExtendedObject[addresses.length];
+            System.arraycopy(addresses, 0, oldaddresses, 0, addresses.length);
+            view.export("old_addresses", oldaddresses);
+        }
         
         query = "from CUSTOM_PARTNER_CONTACT where partner_id = ?";
         contacts = documents.select(query, ident);
         
         view.export("partner", partner);
         view.export("addresses", addresses);
-        view.export("old_addresses", oldaddresses);
         view.export("contacts", contacts);
         view.export("mode", mode);
         view.setReloadableView(true);
         view.redirect(null, "identity");
+    }
+    
+    /**
+     * 
+     * @param view
+     * @param address
+     * @throws Exception
+     */
+    public static final void editaddress(ViewData view, DataForm address)
+            throws Exception {
+        Object value;
+        long tcodigo, fcodigo;
+        Table addresses = view.getElement("addresses");
+        
+        value = address.get("CODIGO").get();
+        fcodigo = (value == null)? 0l : (Long)value;
+        
+        if (fcodigo == 0)
+            return;
+        
+        for (TableItem item : addresses.getItens()) {
+            tcodigo = ((InputComponent)item.get("CODIGO")).get();
+            
+            if (fcodigo != tcodigo)
+                continue;
+            
+            item.setObject(address.getObject());
+            ((Link)item.get("LOGRADOURO")).setText(
+                    (String)address.get("LOGRADOURO").get());
+            break;
+        }
     }
     
     /**

@@ -6,7 +6,6 @@ import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.Button;
-import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
@@ -24,7 +23,8 @@ public class Main extends AbstractPage {
      */
     public final void addaddress(ViewData view) throws Exception {
         Button button;
-        Container container;
+        ItemData itemdata = new ItemData();
+        DataForm identity = view.getElement("identity");
         DataForm address = view.getElement("address");
         Table itens = view.getElement("addresses");
         
@@ -37,8 +37,13 @@ public class Main extends AbstractPage {
             button.setVisible(true);
         }
 
-        container = view.getElement("addresscnt");
-        Request.additem(view, itens, address.getObject(), container);
+        itemdata.view = view;
+        itemdata.itens = itens;
+        itemdata.object = address.getObject();
+        itemdata.partner = identity.get("CODIGO").get();
+        itemdata.container = view.getElement("addresscnt");
+        
+        Request.additem(itemdata);
         
         address.clearInputs();
     }
@@ -46,10 +51,12 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
+     * @throws Exception
      */
-    public final void addcontact(ViewData view) {
+    public final void addcontact(ViewData view) throws Exception {
         Button button;
-        Container container;
+        ItemData itemdata = new ItemData();
+        DataForm identity = view.getElement("identity");
         DataForm contact = view.getElement("contact");
         Table itens = view.getElement("contacts");
         
@@ -61,9 +68,14 @@ public class Main extends AbstractPage {
             button = view.getElement("editcontact");
             button.setVisible(true);
         }
+
+        itemdata.view = view;
+        itemdata.itens = itens;
+        itemdata.object = contact.getObject();
+        itemdata.partner = identity.get("CODIGO").get();
+        itemdata.container = view.getElement("contactcnt");
         
-        container = view.getElement("contactcnt");
-        Request.additem(view, itens, null, container);
+        Request.additem(itemdata);
         
         contact.clearInputs();
     }
@@ -83,6 +95,19 @@ public class Main extends AbstractPage {
      */
     public final void create(ViewData view) {
         Request.create(view);
+    }
+    
+    /**
+     * 
+     * @param view
+     * @throws Exception
+     */
+    public final void editaddress(ViewData view) throws Exception {
+        DataForm address = view.getElement("address");
+        
+        Request.editaddress(view, address);
+        
+        address.clearInputs();
     }
     
     /**
