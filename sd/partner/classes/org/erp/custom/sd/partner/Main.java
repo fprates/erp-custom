@@ -46,7 +46,7 @@ public class Main extends AbstractPage {
         itemdata.container = view.getElement("addresscnt");
         itemdata.mark = "addressmark";
         itemdata.object.setValue("CODIGO", 0l);
-        Request.additem(itemdata);
+        Common.insertItem(itemdata);
         
         address.clearInputs();
     }
@@ -92,7 +92,7 @@ public class Main extends AbstractPage {
         itemdata.container = view.getElement("contactcnt");
         itemdata.mark = "contactmark";
         itemdata.object.setValue("CODIGO", 0l);
-        Request.additem(itemdata);
+        Common.insertItem(itemdata);
         
         contact.clearInputs();
     }

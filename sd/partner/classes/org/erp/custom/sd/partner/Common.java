@@ -74,7 +74,7 @@ public class Common {
      * @param itens
      * @param object
      */
-    public static final void insertItem(byte mode, ItemData itemdata) {
+    public static final void insertItem(ItemData itemdata) {
         long codigo;
         Link link;
         InputComponent input;
@@ -96,13 +96,10 @@ public class Common {
             }
             
             input = new TextField(itemdata.itens, name);
-            item.add(input);
-            
-            if (column.isVisible())
-                continue;
-            
             input.setObligatory(false);
             input.setEnabled(false);
+            
+            item.add(input);
         }
         
         codigo = getLong(itemdata.object.getValue("CODIGO"));

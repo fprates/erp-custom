@@ -17,19 +17,6 @@ public class Request {
     
     /**
      * 
-     * @param view
-     * @param itens
-     * @param object
-     * @param container
-     */
-    public static final void additem(ItemData itemdata) {
-        byte mode = Common.getMode(itemdata.view);
-        
-        Common.insertItem(mode, itemdata);
-    }
-    
-    /**
-     * 
      * @param contact
      * @param view
      * @return

@@ -149,7 +149,7 @@ public class Response {
                 
                 for (ExtendedObject oaddress : oaddresses) {
                     itemdata.object = oaddress;
-                    Common.insertItem(modo, itemdata);
+                    Common.insertItem(itemdata);
                 }
             } else {
                 itemdata = null;
@@ -166,7 +166,7 @@ public class Response {
                 
                 for (ExtendedObject ocontact : ocontacts) {
                     itemdata.object = ocontact;
-                    Common.insertItem(modo, itemdata);
+                    Common.insertItem(itemdata);
                 }
             }
             
@@ -194,7 +194,7 @@ public class Response {
                 
                 for (ExtendedObject oaddress : oaddresses) {
                     itemdata.object = oaddress;
-                    Common.insertItem(Common.SHOW, itemdata);
+                    Common.insertItem(itemdata);
                 }
                 
                 addresses.setVisible(true);
@@ -215,7 +215,7 @@ public class Response {
                 
                 for (ExtendedObject ocontact : ocontacts) {
                     itemdata.object = ocontact;
-                    Common.insertItem(Common.SHOW, itemdata);
+                    Common.insertItem(itemdata);
                 }
                 
                 contacts.setVisible(true);
