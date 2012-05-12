@@ -14,7 +14,7 @@ import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
-
+    
     /**
      * 
      * @param view
@@ -30,21 +30,35 @@ public class Request {
     
     /**
      * 
+     * @param contact
      * @param view
+     * @return
      */
-    public static final void addressmark(ViewData view) throws Exception {
-        Table addresses = view.getElement("addresses");
-        DataForm address = view.getElement("address");
-        Parameter index = view.getElement("index");
-        TableItem addressitem = addresses.get(
-                Integer.parseInt((String)index.get()));
-        ExtendedObject object = addressitem.getObject();
-        Link link = addressitem.get("LOGRADOURO");
+    public static final byte checkContactAddress(ExtendedObject contact,
+            ViewData view) {
+        Link link;
+        Table addresses;
+        long taddress, faddress = Common.getLong(contact.getValue("ADDRESS"));
         
-        object.setValue("LOGRADOURO", link.getText());
-        address.setObject(object);
+        if (faddress == 0)
+            return Common.NULL_ADDRESS;
+        
+        addresses = view.getElement("addresses");
+        if (addresses.length() == 0)
+            return Common.INVALID_ADDRESS;
+        
+        for (TableItem item : addresses.getItens()) {
+            link = item.get("CODIGO");
+            taddress = Long.parseLong(link.getText());
+            
+            if (faddress != taddress)
+                continue;
+            
+            return 0;
+        }
+        
+        return Common.INVALID_ADDRESS;
     }
-    
     /**
      * 
      * @param view
@@ -58,32 +72,48 @@ public class Request {
     /**
      * 
      * @param view
-     * @param address
+     * @param itens
+     * @param form
      * @throws Exception
      */
-    public static final void editaddress(ViewData view, DataForm address)
-            throws Exception {
-        Object value;
+    public static final void edititem(ViewData view, Table itens,
+            DataForm form) throws Exception {
+        Link link;
         long tcodigo, fcodigo;
-        Table addresses = view.getElement("addresses");
         
-        value = address.get("CODIGO").get();
-        fcodigo = (value == null)? 0l : (Long)value;
-        
+        fcodigo = Common.getLong(form.get("CODIGO").get());
         if (fcodigo == 0)
             return;
         
-        for (TableItem item : addresses.getItens()) {
-            tcodigo = ((InputComponent)item.get("CODIGO")).get();
+        for (TableItem item : itens.getItens()) {
+            link = item.get("CODIGO");
+            tcodigo = Long.parseLong(link.getText());
             
             if (fcodigo != tcodigo)
                 continue;
             
-            item.setObject(address.getObject());
-            ((Link)item.get("LOGRADOURO")).setText(
-                    (String)address.get("LOGRADOURO").get());
+            form.get("CODIGO").set(Long.parseLong(link.getText()));
+            item.setObject(form.getObject());
             break;
         }
+    }
+    
+    /**
+     * 
+     * @param view
+     * @param itens
+     * @param form
+     * @throws Exception
+     */
+    public static final void itemmark(ViewData view, Table itens,
+            DataForm form) throws Exception {
+        Parameter index = view.getElement("index");
+        TableItem item = itens.get(Integer.parseInt((String)index.get()));
+        ExtendedObject object = item.getObject();
+        Link link = item.get("CODIGO");
+        
+        object.setValue("CODIGO", Long.parseLong(link.getText()));
+        form.setObject(object);
     }
     
     /**
@@ -144,7 +174,7 @@ public class Request {
                 continue;
             }
             
-            link = item.get("LOGRADOURO");
+            link = item.get("CODIGO");
             link.setValue("index", i++);
         }
     }
@@ -156,10 +186,8 @@ public class Request {
      */
     public static final void save(ViewData view, Function function)
             throws Exception {
-        Link link;
         String query;
-        long item, codigo, i;
-        ExtendedObject ocontact, oaddress;
+        long codigo;
         Table itens;
         TabbedPane tpane = view.getElement("pane");
         DataForm identityform = tpane.get("identitytab").getContainer();
@@ -199,41 +227,39 @@ public class Request {
         }
         
         itens = view.getElement("addresses");
-        
-        for (TableItem address : itens.getItens()) {
-            oaddress = address.getObject();
-            
-            item = Common.getLong(oaddress.getValue("CODIGO"));
-            if (item < (codigo * 100))
-                item += (codigo * 100);
-            
-            oaddress.setValue("CODIGO", item);
-            oaddress.setValue("PARTNER_ID", codigo);
-            
-            link = address.get("LOGRADOURO");
-            oaddress.setValue("LOGRADOURO", link.getText());
-            
-            documents.save(oaddress);
-            
-            ((InputComponent)address.get("CODIGO")).set(item);
-            ((InputComponent)address.get("PARTNER_ID")).set(codigo);
-        }
+        for (TableItem address : itens.getItens())
+            saveItem(documents, address, codigo);
         
         itens = view.getElement("contacts");
-        i = (codigo * 100) + 1;
-        
-        for (TableItem contact : itens.getItens()) {
-            ocontact = contact.getObject();
-            ocontact.setValue("CODIGO", i);
-            ocontact.setValue("PARTNER_ID", codigo);
-            documents.save(ocontact);
-            
-            ((InputComponent)contact.get("CODIGO")).set(i++);
-            ((InputComponent)contact.get("PARTNER_ID")).set(codigo);
-        }
+        for (TableItem contact : itens.getItens())
+            saveItem(documents, contact, codigo);
         
         documents.commit();
         
         view.message(Const.STATUS, "partner.saved.successfuly");
+    }
+    
+    /**
+     * 
+     * @param documents
+     * @param item
+     * @param partner
+     * @throws Exception
+     */
+    private static final void saveItem(Documents documents, TableItem item,
+            long partner) throws Exception {
+        ExtendedObject object = item.getObject();
+        Link link = item.get("CODIGO");
+        long codigo = Long.parseLong(link.getText());
+        
+        if (codigo < (partner * 100))
+            codigo += (partner * 100);
+        
+        object.setValue("CODIGO", codigo);
+        object.setValue("PARTNER_ID", partner);
+        documents.save(object);
+        
+        link.setText(Long.toString(codigo));
+        ((InputComponent)item.get("PARTNER_ID")).set(partner);
     }
 }

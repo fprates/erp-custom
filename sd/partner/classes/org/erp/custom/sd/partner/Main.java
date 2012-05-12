@@ -2,10 +2,12 @@ package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
+import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.Button;
+import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
@@ -42,7 +44,7 @@ public class Main extends AbstractPage {
         itemdata.object = address.getObject();
         itemdata.partner = Common.getLong(identity.get("CODIGO").get());
         itemdata.container = view.getElement("addresscnt");
-        
+        itemdata.mark = "addressmark";
         itemdata.object.setValue("CODIGO", 0l);
         Request.additem(itemdata);
         
@@ -60,6 +62,19 @@ public class Main extends AbstractPage {
         DataForm identity = view.getElement("identity");
         DataForm contact = view.getElement("contact");
         Table itens = view.getElement("contacts");
+        ExtendedObject object = contact.getObject();
+        byte error = Request.checkContactAddress(object, view);
+        
+        switch (error) {
+        case Common.NULL_ADDRESS:
+            view.setFocus(contact.get("ADDRESS"));
+            view.message(Const.ERROR, "address.required");
+            return;
+        case Common.INVALID_ADDRESS:
+            view.setFocus(contact.get("ADDRESS"));
+            view.message(Const.ERROR, "invalid.address");
+            return;
+        }
         
         if (itens.length() == 0) {
             itens.setVisible(true);
@@ -72,10 +87,10 @@ public class Main extends AbstractPage {
         
         itemdata.view = view;
         itemdata.itens = itens;
-        itemdata.object = contact.getObject();
+        itemdata.object = object;
         itemdata.partner = Common.getLong(identity.get("CODIGO").get());
         itemdata.container = view.getElement("contactcnt");
-        
+        itemdata.mark = "contactmark";
         itemdata.object.setValue("CODIGO", 0l);
         Request.additem(itemdata);
         
@@ -88,7 +103,22 @@ public class Main extends AbstractPage {
      * @throws Exception
      */
     public final void addressmark(ViewData view) throws Exception {
-        Request.addressmark(view);
+        Table itens = view.getElement("addresses");
+        DataForm form = view.getElement("address");
+        
+        Request.itemmark(view, itens, form);
+    }
+    
+    /**
+     * 
+     * @param view
+     * @throws Exception
+     */
+    public final void contactmark(ViewData view) throws Exception {
+        Table itens = view.getElement("contacts");
+        DataForm form = view.getElement("contact");
+        
+        Request.itemmark(view, itens, form);
     }
     
     /**
@@ -105,11 +135,39 @@ public class Main extends AbstractPage {
      * @throws Exception
      */
     public final void editaddress(ViewData view) throws Exception {
+        Table addresses = view.getElement("addresses");
         DataForm address = view.getElement("address");
         
-        Request.editaddress(view, address);
+        Request.edititem(view, addresses, address);
         
         address.clearInputs();
+    }
+    
+    /**
+     * 
+     * @param view
+     * @throws Exception
+     */
+    public final void editcontact(ViewData view) throws Exception {
+        Table contacts = view.getElement("contacts");
+        DataForm contact = view.getElement("contact");
+        ExtendedObject object = contact.getObject();
+        byte error = Request.checkContactAddress(object, view);
+        
+        switch (error) {
+        case Common.NULL_ADDRESS:
+            view.setFocus(contact.get("ADDRESS"));
+            view.message(Const.ERROR, "address.required");
+            return;
+        case Common.INVALID_ADDRESS:
+            view.setFocus(contact.get("ADDRESS"));
+            view.message(Const.ERROR, "invalid.address");
+            return;
+        }
+        
+        Request.edititem(view, contacts, contact);
+        
+        contact.clearInputs();
     }
     
     /**

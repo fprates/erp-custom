@@ -3,6 +3,7 @@ package org.erp.custom.sd.partner;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Link;
 import org.iocaste.shell.common.Parameter;
+import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
@@ -15,12 +16,40 @@ public class Common {
     public final static byte IDENTITY = 0;
     public final static byte ADDRESS = 1;
     public final static byte CONTACT = 2;
+    public final static byte NULL_ADDRESS = 1;
+    public final static byte INVALID_ADDRESS = 2;
     
     public final static String[] TITLE = {
             "partner-display",
             "partner-create",
             "partner-update"
     };
+    
+    /**
+     * 
+     * @param itens
+     * @param columns
+     */
+    public static final void enableTableColumns(Table itens, String... columns)
+    {
+        String name;
+        
+        for (TableColumn column : itens.getColumns()) {
+            if (column.isMark())
+                continue;
+            
+            name = column.getName();
+            column.setVisible(false);
+            
+            for (String colname : columns) {
+                if (!colname.equals(name))
+                    continue;
+                    
+                column.setVisible(true);
+                break;
+            }
+        }
+    }
     
     /**
      * 
@@ -46,62 +75,58 @@ public class Common {
      * @param object
      */
     public static final void insertItem(byte mode, ItemData itemdata) {
-        int i;
         long codigo;
         Link link;
         InputComponent input;
+        String name;
         Parameter index = new Parameter(itemdata.container, "index");
         TableItem item = new TableItem(itemdata.itens);
-        String name, tablename = itemdata.itens.getName();
+        int i = itemdata.itens.length();
         
         for (TableColumn column : itemdata.itens.getColumns()) {
             if (column.isMark())
                 continue;
             
             name = column.getName();
-            if (tablename.equals("addresses") && name.equals("LOGRADOURO")) {
-                link = new Link(itemdata.itens, name, "addressmark");
-                link.setText((String)itemdata.object.getValue(name));
-                link.add(index, itemdata.itens.length() - 1);
-                
+            if (name.equals("CODIGO")) {
+                link = new Link(itemdata.itens, name, itemdata.mark);
                 item.add(link);
                 
                 continue;
             }
             
             input = new TextField(itemdata.itens, name);
-            input.setEnabled((mode == Common.SHOW)? false : true);
-            
             item.add(input);
             
-            if (tablename.equals("addresses"))
-                if (name.equals("TIPO_ENDERECO") || name.equals("CODIGO")) {
-                    input.setObligatory(false);
-                    input.setEnabled(false);
-                    
-                    continue;
-                }
+            if (column.isVisible())
+                continue;
             
-            if (tablename.equals("contacts"))
-                if (name.equals("COMMUNICATION"))
-                    input.setObligatory((mode == Common.SHOW)? false : true);
+            input.setObligatory(false);
+            input.setEnabled(false);
         }
         
         codigo = getLong(itemdata.object.getValue("CODIGO"));
         
         if (codigo == 0) {
-            i = itemdata.itens.length();
             if (i > 1) {
                 i -= 2;
-                input = itemdata.itens.get(i).get("CODIGO");
-                codigo = input.get();
+                link = itemdata.itens.get(i).get("CODIGO");
+                codigo = Long.parseLong(link.getText());
+                i += 2;
+            } else {
+                codigo = itemdata.partner * 100;
             }
             
-            itemdata.object.setValue("CODIGO", codigo + 1);
+            codigo++;
         }
         
-        if (itemdata.object != null)
-            item.setObject(itemdata.object);
+        i--;
+        itemdata.object.setValue("CODIGO", codigo);
+        link = itemdata.itens.get(i).get("CODIGO");
+        link.setText(Long.toString(codigo));
+        link.add(index, i);
+        
+        item.setObject(itemdata.object);
     }
 
 }

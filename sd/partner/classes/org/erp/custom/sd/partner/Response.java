@@ -15,7 +15,6 @@ import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
@@ -30,7 +29,7 @@ public class Response {
         ItemData itemdata;
         String name;
         DataItem dataitem;
-        DataForm partner, address;
+        DataForm partner, address, contact;
         Table contacts, addresses;
         TabbedPaneItem tab;
         Button save, editaddress, addaddress, removeaddress, addcontact,
@@ -41,7 +40,6 @@ public class Response {
         ExtendedObject opartner = view.getParameter("partner");
         ExtendedObject[] oaddresses = view.getParameter("addresses");
         ExtendedObject[] ocontacts = view.getParameter("contacts");
-        String[] columns = {"CODIGO", "TIPO_ENDERECO", "LOGRADOURO"};
         
         /*
          * Identity
@@ -76,6 +74,8 @@ public class Response {
         tab = new TabbedPaneItem(tabs, "identitytab");
         tab.setContainer(partner);
         
+        save = new Button(container, "save");
+        
         /*
          * Address
          */
@@ -90,23 +90,8 @@ public class Response {
         addresses.setVisible(false);
         addresses.setMark(true);
         
-        for (TableColumn column : addresses.getColumns()) {
-            if (column.isMark())
-                continue;
-            
-            name = column.getName();
-            column.setVisible(false);
-            
-            for (String colname : columns) {
-                if (!colname.equals(name))
-                    continue;
-                    
-                column.setVisible(true);
-                break;
-            }
-        }
-        
-        save = new Button(container, "save");
+        Common.enableTableColumns(addresses,
+                "CODIGO", "TIPO_ENDERECO", "LOGRADOURO");
         
         editaddress = new Button(addresscnt, "editaddress");
         addaddress = new Button(addresscnt, "addaddress");
@@ -119,13 +104,18 @@ public class Response {
          * Contacts
          */
         contactcnt = new StandardContainer(tabs, "contactscnt");
+        contact = new DataForm(contactcnt, "contact");
+        contact.importModel(models[Common.CONTACT]);
+        contact.get("CODIGO").setEnabled(false);
+        contact.get("PARTNER_ID").setVisible(false);
+        
         contacts = new Table(contactcnt, "contacts");
         contacts.importModel(models[Common.CONTACT]);
-        contacts.getColumn("CODIGO").setVisible(false);
         contacts.getColumn("PARTNER_ID").setVisible(false);
         contacts.setVisible(false);
         contacts.setMark(true);
-        
+
+        Common.enableTableColumns(contacts, "CODIGO", "PNOME", "UNOME");
 
         editcontact = new Button(contactcnt, "editcontact");
         addcontact = new Button(contactcnt, "addcontact");
@@ -154,6 +144,7 @@ public class Response {
                 itemdata = new ItemData();
                 itemdata.container = addresscnt;
                 itemdata.itens = addresses;
+                itemdata.mark = "addressmark";
                 addresses.setVisible(true);
                 
                 for (ExtendedObject oaddress : oaddresses) {
@@ -170,6 +161,8 @@ public class Response {
                 
                 itemdata.container = contactcnt;
                 itemdata.itens = contacts;
+                itemdata.mark = "contactmark";
+                contacts.setVisible(true);
                 
                 for (ExtendedObject ocontact : ocontacts) {
                     itemdata.object = ocontact;
@@ -197,6 +190,7 @@ public class Response {
                 itemdata = new ItemData();
                 itemdata.container = addresscnt;
                 itemdata.itens = addresses;
+                itemdata.mark = "addressmark";
                 
                 for (ExtendedObject oaddress : oaddresses) {
                     itemdata.object = oaddress;
@@ -217,11 +211,17 @@ public class Response {
                 
                 itemdata.container = contactcnt;
                 itemdata.itens = contacts;
+                itemdata.mark = "contactmark";
                 
                 for (ExtendedObject ocontact : ocontacts) {
                     itemdata.object = ocontact;
-                    Common.insertItem(modo, itemdata);
+                    Common.insertItem(Common.SHOW, itemdata);
                 }
+                
+                contacts.setVisible(true);
+                editcontact.setVisible(true);
+                addcontact.setVisible(true);
+                removecontact.setVisible(true);
             }
             
             break;

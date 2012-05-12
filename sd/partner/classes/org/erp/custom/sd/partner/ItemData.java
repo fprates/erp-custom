@@ -11,4 +11,5 @@ public class ItemData {
     public ExtendedObject object = null;
     public long partner = 0l;
     public Container container = null;
+    public String mark;
 }
