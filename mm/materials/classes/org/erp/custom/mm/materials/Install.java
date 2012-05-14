@@ -1,5 +1,8 @@
 package org.erp.custom.mm.materials;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.iocaste.documents.common.DataElement;
 import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.DocumentModel;
@@ -15,6 +18,7 @@ public class Install {
      * @return
      */
     public static final InstallData self() {
+        Map<String, String> messages;
         DataElement evalue, edate, ematid, element;
         DocumentModelItem imatid, item;
         SearchHelpData sh;
@@ -201,6 +205,40 @@ public class Install {
         data.add(sh);
         data.link("MATERIAL", "erp-custom-mm.materials");
         data.link("MM01", "erp-custom-mm.materials");
+        
+        messages = new HashMap<String, String>();
+        messages.put("material-selection", "Selecionar material");
+        messages.put("material", "Material");
+        messages.put("create", "Criar");
+        messages.put("show", "Exibir");
+        messages.put("update", "Atualizar");
+        messages.put("material-editor-create", "Criar material");
+        messages.put("basepane", "Dados básicos");
+        messages.put("save", "Salvar");
+        messages.put("ID", "Código");
+        messages.put("NAME", "Descrição");
+        messages.put("ACTIVE", "Ativo");
+        messages.put("pricespane", "Preços");
+        messages.put("VL_VENDA", "Preço venda");
+        messages.put("VL_CUSTO", "Preço custo");
+        messages.put("DT_INICIAL", "Data inicial");
+        messages.put("DT_FINAL", "Data final");
+        messages.put("addprice", "Adicionar");
+        messages.put("removeprice", "Remover");
+        messages.put("promotions", "Promoções");
+        messages.put("addpromo", "Adicionar");
+        messages.put("removepromo", "Remover");
+        messages.put("material.saved.successfully",
+                "Material salvo com sucesso.");
+        messages.put("vlcusto.gt.vlvenda",
+                "Valor de custo não pode ser maior que valor de venda.");
+        messages.put("dtini.gt.dtfin",
+                "Data final não pode ser maiorn que a data inicial");
+        messages.put("material.not.found", "Material não encontrado.");
+        messages.put("material-editor-update", "Atualizar material");
+        messages.put("material-editor-show", "Exibir material");
+        
+        data.setMessages("pt_BR", messages);
         
         return data;
     }
