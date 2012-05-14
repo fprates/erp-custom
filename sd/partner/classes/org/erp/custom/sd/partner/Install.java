@@ -1,5 +1,8 @@
 package org.erp.custom.sd.partner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.iocaste.documents.common.DataElement;
 import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.DocumentModel;
@@ -20,7 +23,7 @@ public class Install {
         DocumentModelItem item;
         DocumentModel addresstype = data.
                 getModel("CUSTOM_ADDRESS_TYPE", "CADDRTYPE", "");
-
+        
         element = new DataElement();
         element.setName("CUSTOM_ADDRESS_TYPE.CODIGO");
         element.setLength(3);
@@ -31,7 +34,6 @@ public class Install {
         item.setName("CODIGO");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
-        
         addresstype.add(item);
         addresstype.add(new DocumentModelKey(item));
         
@@ -499,6 +501,7 @@ public class Install {
      * @return
      */
     public static final InstallData self() {
+        Map<String, String> messages;
         SearchHelpData shdata;
         InstallData data = new InstallData();
         DocumentModel address, partner, partnertype, addresstype, communication;
@@ -551,6 +554,53 @@ public class Install {
         data.addNumberFactory("CUSTPARTNER");
         data.link("PARTNER", "erp-custom-sd.partner");
         data.link("XD01", "erp-custom-sd.partner");
+
+        messages = new HashMap<String, String>();
+        messages.put("partner", "Parceiro");
+        messages.put("show", "Exibir");
+        messages.put("create", "Criar");
+        messages.put("update", "Atualizar");
+        messages.put("partner-create", "Criar parceiro");
+        messages.put("partner-display", "Exibir parceiro");
+        messages.put("partner-update", "Atualizar parceiro");
+        messages.put("identitytab", "Identificação");
+        messages.put("addresstab", "Endereços");
+        messages.put("contacttab", "Contatos");
+        messages.put("save", "Salvar");
+        messages.put("CODIGO", "Código");
+        messages.put("DESCRICAO", "Descrição");
+        messages.put("RAZAO_SOCIAL", "Razão social");
+        messages.put("NOME_FANTASIA", "Nome fantasia");
+        messages.put("DOCUMENTO_FISCAL", "Documento fiscal");
+        messages.put("INSCR_ESTADUAL", "Inscrição estadual");
+        messages.put("INSCR_MUNICIPAL", "Inscrição municipal");
+        messages.put("TIPO_PESSOA", "Tipo de pessoa");
+        messages.put("TIPO_PARCEIRO", "Tipo de parceiro");
+        messages.put("TIPO_ENDERECO", "Tipo de endereço");
+        messages.put("LOGRADOURO", "Logradouro");
+        messages.put("CEP", "CEP");
+        messages.put("BAIRRO", "Bairro");
+        messages.put("CIDADE","Cidade");
+        messages.put("TELEFONE", "Telefone");
+        messages.put("EMAIL", "e-mail");
+        messages.put("WEB_PAGE", "Página web");
+        messages.put("addaddress", "Adicionar");
+        messages.put("editaddress", "Editar");
+        messages.put("removeaddress", "Remover");
+        messages.put("PNOME", "Nome");
+        messages.put("UNOME", "Sobrenome");
+        messages.put("ADDRESS", "Endereço");
+        messages.put("COMMUNICATION", "Comunicação");
+        messages.put("addcontact", "Adicionar");
+        messages.put("editcontact", "Editar");
+        messages.put("removecontact", "Remover");
+        messages.put("address.required", "Endereço obrigatório.");
+        messages.put("partner.saved.successfuly",
+                "Parceiro gravado com sucesso.");
+        messages.put("partner-selection", "Selecionar parceiro");
+        messages.put("invalid.partner", "Parceiro não encontrado.");
+        
+        data.setMessages("pt_BR", messages);
         
         return data;
     }
