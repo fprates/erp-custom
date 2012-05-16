@@ -9,6 +9,7 @@ import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
+import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
 
@@ -24,10 +25,12 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addaddress(ViewData view) throws Exception {
+        DataItem input;
         Button button;
         ItemData itemdata = new ItemData();
         DataForm identity = view.getElement("identity");
         DataForm address = view.getElement("address");
+        DataForm contact = view.getElement("contact");
         Table itens = view.getElement("addresses");
         
         if (itens.length() == 0) {
@@ -47,6 +50,9 @@ public class Main extends AbstractPage {
         itemdata.mark = "addressmark";
         itemdata.object.setValue("CODIGO", 0l);
         Common.insertItem(itemdata);
+
+        input = contact.get("ADDRESS");
+        Common.loadListFromTable(input, itens, "LOGRADOURO", "CODIGO");
         
         address.clearInputs();
     }

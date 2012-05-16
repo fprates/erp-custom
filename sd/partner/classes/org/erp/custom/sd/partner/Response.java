@@ -109,6 +109,10 @@ public class Response {
         contact.get("CODIGO").setEnabled(false);
         contact.get("PARTNER_ID").setVisible(false);
         
+        dataitem = contact.get("ADDRESS");
+        dataitem.getModelItem().setReference(null);
+        dataitem.setComponentType(Const.LIST_BOX);
+        
         contacts = new Table(contactcnt, "contacts");
         contacts.importModel(models[Common.CONTACT]);
         contacts.getColumn("PARTNER_ID").setVisible(false);
@@ -151,6 +155,10 @@ public class Response {
                     itemdata.object = oaddress;
                     Common.insertItem(itemdata);
                 }
+                
+                dataitem = contact.get("ADDRESS");
+                Common.loadListFromTable(dataitem, addresses, "CODIGO",
+                        "LOGRADOURO");
             } else {
                 itemdata = null;
             }
@@ -196,6 +204,10 @@ public class Response {
                     itemdata.object = oaddress;
                     Common.insertItem(itemdata);
                 }
+                
+                dataitem = contact.get("ADDRESS");
+                Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
+                        "CODIGO");
                 
                 addresses.setVisible(true);
                 editaddress.setVisible(true);

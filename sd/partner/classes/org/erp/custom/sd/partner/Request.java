@@ -1,5 +1,8 @@
 package org.erp.custom.sd.partner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
@@ -173,9 +176,12 @@ public class Request {
      */
     public static final void save(ViewData view, Function function)
             throws Exception {
+        InputComponent input;
         String query;
-        long codigo;
+        long codigo, addrfrom, addrto;
+        Link link;
         Table itens;
+        Map<Long, Long> addrtransl;
         TabbedPane tpane = view.getElement("pane");
         DataForm identityform = tpane.get("identitytab").getContainer();
         ExtendedObject opartner = identityform.getObject();
@@ -213,13 +219,41 @@ public class Request {
             break;
         }
         
+        if (modo == Common.CREATE)
+            addrtransl = new HashMap<Long, Long>();
+        else
+            addrtransl = null;
+        
+        addrfrom = 0;
+        addrto = 0;
+        link = null;
+        
         itens = view.getElement("addresses");
-        for (TableItem address : itens.getItens())
+        for (TableItem address : itens.getItens()) {
+            if (modo == Common.CREATE) {
+                link = (Link)address.get("CODIGO");
+                addrfrom = Long.parseLong(link.getText());
+            }
+            
             saveItem(documents, address, codigo);
+            
+            if (modo == Common.CREATE) {
+                addrto = Long.parseLong(link.getText());
+                addrtransl.put(addrfrom, addrto);
+            }
+        }
         
         itens = view.getElement("contacts");
-        for (TableItem contact : itens.getItens())
+        for (TableItem contact : itens.getItens()) {
+            if (modo == Common.CREATE) {
+                input = (InputComponent)contact.get("ADDRESS");
+                addrfrom = input.get();
+                addrto = addrtransl.get(addrfrom); 
+                input.set(addrto);
+            }
+            
             saveItem(documents, contact, codigo);
+        }
         
         documents.commit();
         

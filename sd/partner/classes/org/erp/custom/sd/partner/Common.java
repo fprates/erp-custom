@@ -1,5 +1,7 @@
 package org.erp.custom.sd.partner;
 
+import org.iocaste.shell.common.DataItem;
+import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Link;
 import org.iocaste.shell.common.Parameter;
@@ -71,6 +73,15 @@ public class Common {
     
     /**
      * 
+     * @param element
+     * @return
+     */
+    public static final <T> T getValue(Element element) {
+        return ((InputComponent)element).get();
+    }
+    
+    /**
+     * 
      * @param itens
      * @param object
      */
@@ -124,6 +135,20 @@ public class Common {
         link.add(index, i);
         
         item.setObject(itemdata.object);
+    }
+    
+    public static final void loadListFromTable(DataItem input,
+            Table itens, String display, String value) {
+        String codigo, lograd;
+        
+        input.clear();
+        
+        for (TableItem item : itens.getItens()) {
+            codigo = ((Link)item.get(value)).getText();
+            lograd = Common.getValue(item.get(display));
+            
+            input.add(lograd, Long.parseLong(codigo));
+        }
     }
 
 }
