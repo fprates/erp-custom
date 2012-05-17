@@ -11,6 +11,9 @@ import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableColumn;
+import org.iocaste.shell.common.TableItem;
+import org.iocaste.shell.common.TextField;
 import org.iocaste.shell.common.ViewData;
 
 
@@ -55,6 +58,32 @@ public class Main extends AbstractPage {
         Common.loadListFromTable(input, itens, "LOGRADOURO", "CODIGO");
         
         address.clearInputs();
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void addcommunic(ViewData view) {
+        TableItem item;
+        TextField tfield;
+        String name;
+        Table communics = view.getElement("communics");
+        
+        communics.setVisible(true);
+        
+        item = new TableItem(communics);
+        for (TableColumn column : communics.getColumns()) {
+            if (column.isMark())
+                continue;
+            
+            name = column.getName();
+            tfield = new TextField(communics, name);
+            tfield.setModelItem(column.getModelItem());
+            tfield.setEnabled((name.equals("COMMUNICATION"))? true : false);
+                
+            item.add(tfield);
+        }
     }
     
     /**
@@ -189,7 +218,7 @@ public class Main extends AbstractPage {
         models[Common.ADDRESS] = documents.getModel("CUSTOM_PARTNER_ADDRESS");
         models[Common.CONTACT] = documents.getModel("CUSTOM_PARTNER_CONTACT");
         
-        Response.identity(view, models);
+        Response.identity(view, models, this);
     }
     
     /**

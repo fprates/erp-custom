@@ -56,6 +56,11 @@ public class Install {
         return addresstype;
     }
     
+    /**
+     * 
+     * @param data
+     * @return
+     */
     private static final DocumentModel installCommunication(InstallData data) {
         DataElement element;
         DocumentModelItem item;
@@ -90,7 +95,10 @@ public class Install {
         
         model.add(item);
         
-        data.addValues(model, 0, "COMUNICAÇÃO 1");
+        data.addValues(model, 0, "TELEFONE");
+        data.addValues(model, 1, "CELULAR");
+        data.addValues(model, 2, "FAX");
+        data.addValues(model, 3, "E-MAIL");
         
         return model;
     }
@@ -330,7 +338,7 @@ public class Install {
         
         element = new DataElement();
         element.setName("CUSTOM_PARTNER_ADDRESS.EMAIL");
-        element.setLength(128);
+        element.setLength(80);
         element.setType(DataType.CHAR);
         element.setUpcase(false);
         data.add(element);
@@ -344,7 +352,7 @@ public class Install {
         
         element = new DataElement();
         element.setName("CUSTOM_PARTNER_ADDRESS.WEB_PAGE");
-        element.setLength(128);
+        element.setLength(80);
         element.setType(DataType.CHAR);
         element.setUpcase(false);
         data.add(element);
@@ -362,12 +370,14 @@ public class Install {
     /**
      * 
      * @param data
-     * @param partner
+     * @param address
+     * @param communication
+     * @return
      */
-    private static final void installPartnerContact(InstallData data,
+    private static final DocumentModel installPartnerContact(InstallData data,
             DocumentModel address, DocumentModel communication) {
         DataElement element;
-        DocumentModelItem item, communicationcode, addresscode;
+        DocumentModelItem item, addresscode;
         DocumentModel contact = data.getModel("CUSTOM_PARTNER_CONTACT",
                 "CPRTNRCNTCT", "");
         
@@ -423,16 +433,67 @@ public class Install {
         
         contact.add(item);
         
-        communicationcode = communication.getModelItem("CODIGO");
+        return contact;
+    }
+    
+    /**
+     * 
+     * @param data
+     * @param address
+     * @param communication
+     */
+    private static final void installContactCommunication(InstallData data,
+            DocumentModel contact, DocumentModel address,
+            DocumentModel communication) {
+        DataElement element;
+        DocumentModelItem item, code;
+        DocumentModel model = data.getModel("CUSTOM_PARTNER_COMM",
+                "CPARTNERCOMM", null);
+        
+        element = new DataElement();
+        element.setName("CUSTOM_PARTNER_COMM.CODIGO");
+        element.setLength(12);
+        element.setType(DataType.NUMC);
+        
+        item = new DocumentModelItem();
+        item.setName("CODIGO");
+        item.setTableFieldName("NRCOM");
+        item.setDataElement(element);
+        
+        model.add(item);
+        model.add(new DocumentModelKey(item));
+        
+        code = contact.getModelItem("CODIGO");
+        element = code.getDataElement();
+        
+        item = new DocumentModelItem();
+        item.setName("CONTACT_ID");
+        item.setTableFieldName("CNTCT");
+        item.setDataElement(element);
+        item.setReference(code);
+        
+        model.add(item);
+        
+        code = communication.getModelItem("CODIGO");
+        element = code.getDataElement();
+        
+        item = new DocumentModelItem();
+        item.setName("TP_COMMUNIC");
+        item.setTableFieldName("TPCOM");
+        item.setDataElement(element);
+        item.setReference(code);
+        item.setSearchHelp("SH_COMMUNICATION");
+        
+        model.add(item);
+        
+        element = address.getModelItem("WEB_PAGE").getDataElement();
+        
         item = new DocumentModelItem();
         item.setName("COMMUNICATION");
         item.setTableFieldName("COMMU");
-        item.setDataElement(communicationcode.getDataElement());
-        item.setReference(communicationcode);
-        item.setSearchHelp("SH_COMMUNICATION");
+        item.setDataElement(element);
         
-        contact.add(item);
-        
+        model.add(item);
     }
     
     /**
@@ -504,14 +565,16 @@ public class Install {
         Map<String, String> messages;
         SearchHelpData shdata;
         InstallData data = new InstallData();
-        DocumentModel address, partner, partnertype, addresstype, communication;
+        DocumentModel address, partner, partnertype, addresstype, contact,
+            communication;
         
         partnertype = installPartnerType(data);
         partner = installPartner(data, partnertype);
         addresstype = installAddressType(data);
         address = installPartnerAddress(data, partner, addresstype);
         communication = installCommunication(data);
-        installPartnerContact(data, address, communication);
+        contact = installPartnerContact(data, address, communication);
+        installContactCommunication(data, contact, address, communication);
         
         shdata = new SearchHelpData();
         shdata.add("CODIGO");
@@ -552,7 +615,6 @@ public class Install {
         data.add(shdata);
         
         data.addNumberFactory("CUSTPARTNER");
-        data.link("PARTNER", "erp-custom-sd.partner");
         data.link("XD01", "erp-custom-sd.partner");
 
         messages = new HashMap<String, String>();
@@ -599,6 +661,9 @@ public class Install {
                 "Parceiro gravado com sucesso.");
         messages.put("partner-selection", "Selecionar parceiro");
         messages.put("invalid.partner", "Parceiro não encontrado.");
+        messages.put("communicscnt.edge", "Comunicação");
+        messages.put("addcommunic", "Adicionar");
+        messages.put("TP_COMMUNIC", "Tipo comunic.");
         
         data.setMessages("pt_BR", messages);
         

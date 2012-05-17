@@ -10,6 +10,7 @@ import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
+import org.iocaste.shell.common.ExpandBar;
 import org.iocaste.shell.common.Form;
 import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
@@ -19,6 +20,12 @@ import org.iocaste.shell.common.ViewData;
 
 public class Response {
 
+    /**
+     * 
+     * @param tabs
+     * @param model
+     * @param view
+     */
     private static final void buildAddressTab(TabbedPane tabs,
             DocumentModel model, ViewData view) {
         ItemData itemdata;
@@ -58,23 +65,23 @@ public class Response {
         
         case Common.SHOW:
             addresses.setMark(false);
-
-            if (oaddresses != null) {
-                itemdata = new ItemData();
-                itemdata.container = addresscnt;
-                itemdata.itens = addresses;
-                itemdata.mark = "addressmark";
-                addresses.setVisible(true);
-                
-                for (ExtendedObject oaddress : oaddresses) {
-                    itemdata.object = oaddress;
-                    Common.insertItem(itemdata);
-                }
-            }
-            
             editaddress.setVisible(false);
             addaddress.setVisible(false);
             removeaddress.setVisible(false);
+
+            if (oaddresses == null)
+                break;
+            
+            itemdata = new ItemData();
+            itemdata.container = addresscnt;
+            itemdata.itens = addresses;
+            itemdata.mark = "addressmark";
+            addresses.setVisible(true);
+            
+            for (ExtendedObject oaddress : oaddresses) {
+                itemdata.object = oaddress;
+                Common.insertItem(itemdata);
+            }
             
             break;
             
@@ -102,14 +109,24 @@ public class Response {
         }
     }
     
+    /**
+     * 
+     * @param tabs
+     * @param model
+     * @param view
+     * @param function
+     * @throws Exception
+     */
     private static final void buildContactTab(TabbedPane tabs,
-            DocumentModel model, ViewData view) {
+            DocumentModel model, ViewData view, Function function)
+                    throws Exception {
         ItemData itemdata;
         TabbedPaneItem tab;
         DataItem dataitem;
-        Table contacts, addresses;
-        Button addcontact, removecontact, editcontact;
-        Container contactcnt = new StandardContainer(tabs, "contactscnt");
+        Table contacts, addresses, communics;
+        Button addcontact, removecontact, editcontact, addcommunic;
+        Container communicscnt, contactcnt =
+                new StandardContainer(tabs, "contactscnt");
         DataForm contact = new DataForm(contactcnt, "contact");
         byte modo = Common.getMode(view);
         ExtendedObject[] ocontacts = view.getParameter("contacts");
@@ -121,9 +138,14 @@ public class Response {
         dataitem = contact.get("ADDRESS");
         dataitem.getModelItem().setReference(null);
         dataitem.setComponentType(Const.LIST_BOX);
-//
-//        contactCommunication = new StandardContainer(
-//                contactcnt, "contact.communic");
+        
+        communicscnt = new ExpandBar(contactcnt, "communicscnt");
+        communics = new Table(communicscnt, "communics");
+        communics.importModel(new Documents(function).
+                getModel("CUSTOM_PARTNER_COMM"));
+        communics.getColumn("CONTACT_ID").setVisible(false);
+        
+        addcommunic = new Button(communicscnt, "addcommunic");
         
         editcontact = new Button(contactcnt, "editcontact");
         addcontact = new Button(contactcnt, "addcontact");
@@ -144,60 +166,64 @@ public class Response {
         case Common.CREATE:
             editcontact.setVisible(false);
             removecontact.setVisible(false);
+            communics.setVisible(false);
             
             break;
         
         case Common.SHOW:
             contacts.setMark(false);
             
-            if (ocontacts != null) {
-                itemdata = new ItemData();
-                itemdata.container = contactcnt;
-                itemdata.itens = contacts;
-                itemdata.mark = "contactmark";
-                contacts.setVisible(true);
-                
-                for (ExtendedObject ocontact : ocontacts) {
-                    itemdata.object = ocontact;
-                    Common.insertItem(itemdata);
-                }
-                
-                dataitem = contact.get("ADDRESS");
-                addresses = view.getElement("addresses");
-                Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
-                        "CODIGO");
-            }
-            
             editcontact.setVisible(false);
             addcontact.setVisible(false);
             removecontact.setVisible(false);
+            addcommunic.setVisible(false);
+            
+            if (ocontacts == null)
+                break;
+            
+            itemdata = new ItemData();
+            itemdata.container = contactcnt;
+            itemdata.itens = contacts;
+            itemdata.mark = "contactmark";
+            contacts.setVisible(true);
+            
+            for (ExtendedObject ocontact : ocontacts) {
+                itemdata.object = ocontact;
+                Common.insertItem(itemdata);
+            }
+            
+            dataitem = contact.get("ADDRESS");
+            addresses = view.getElement("addresses");
+            Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
+                    "CODIGO");
             
             break;
             
         case Common.UPDATE:
             contacts.setMark(true);
             
-            if (ocontacts != null) {
-                itemdata = new ItemData();
-                itemdata.container = contactcnt;
-                itemdata.itens = contacts;
-                itemdata.mark = "contactmark";
-                
-                for (ExtendedObject ocontact : ocontacts) {
-                    itemdata.object = ocontact;
-                    Common.insertItem(itemdata);
-                }
-                
-                dataitem = contact.get("ADDRESS");
-                addresses = view.getElement("addresses");
-                Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
-                        "CODIGO");
-                
-                contacts.setVisible(true);
-                editcontact.setVisible(true);
-                addcontact.setVisible(true);
-                removecontact.setVisible(true);
+            if (ocontacts == null)
+                break;
+            
+            itemdata = new ItemData();
+            itemdata.container = contactcnt;
+            itemdata.itens = contacts;
+            itemdata.mark = "contactmark";
+            
+            for (ExtendedObject ocontact : ocontacts) {
+                itemdata.object = ocontact;
+                Common.insertItem(itemdata);
             }
+            
+            dataitem = contact.get("ADDRESS");
+            addresses = view.getElement("addresses");
+            Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
+                    "CODIGO");
+            
+            contacts.setVisible(true);
+            editcontact.setVisible(true);
+            addcontact.setVisible(true);
+            removecontact.setVisible(true);
             
             break;
         }
@@ -261,8 +287,11 @@ public class Response {
      * @param view
      * @param identitymodel
      * @param addressmodel
+     * @param function
+     * @throws Exception
      */
-    public static final void identity(ViewData view, DocumentModel[] models) {
+    public static final void identity(ViewData view, DocumentModel[] models,
+            Function function) throws Exception {
         Container container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "pane");
         Button save = new Button(container, "save");
@@ -281,7 +310,7 @@ public class Response {
         /*
          * Contacts
          */
-        buildContactTab(tabs, models[Common.CONTACT], view);
+        buildContactTab(tabs, models[Common.CONTACT], view, function);
         
         switch (modo) {
         case Common.UPDATE:
