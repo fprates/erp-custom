@@ -137,6 +137,13 @@ public class Common {
         item.setObject(itemdata.object);
     }
     
+    /**
+     * 
+     * @param input
+     * @param itens
+     * @param display
+     * @param value
+     */
     public static final void loadListFromTable(DataItem input,
             Table itens, String display, String value) {
         String codigo, lograd;

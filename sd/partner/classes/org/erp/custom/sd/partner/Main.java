@@ -1,6 +1,7 @@
 package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.DocumentModel;
+import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.packagetool.common.InstallData;
@@ -10,6 +11,7 @@ import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
+import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
@@ -28,12 +30,10 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addaddress(ViewData view) throws Exception {
-        DataItem input;
         Button button;
         ItemData itemdata = new ItemData();
         DataForm identity = view.getElement("identity");
         DataForm address = view.getElement("address");
-        DataForm contact = view.getElement("contact");
         Table itens = view.getElement("addresses");
         
         if (itens.length() == 0) {
@@ -53,9 +53,8 @@ public class Main extends AbstractPage {
         itemdata.mark = "addressmark";
         itemdata.object.setValue("CODIGO", 0l);
         Common.insertItem(itemdata);
-
-        input = contact.get("ADDRESS");
-        Common.loadListFromTable(input, itens, "LOGRADOURO", "CODIGO");
+        
+        updatePartnerView(view);
         
         address.clearInputs();
     }
@@ -65,12 +64,18 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addcommunic(ViewData view) {
+        DataForm contact;
         TableItem item;
         TextField tfield;
         String name;
+        long codigo, contactid;
+        int i;
+        DocumentModelItem modelitem;
         Table communics = view.getElement("communics");
+        Button removecommunic = view.getElement("removecommunic");
         
         communics.setVisible(true);
+        removecommunic.setVisible(true);
         
         item = new TableItem(communics);
         for (TableColumn column : communics.getColumns()) {
@@ -78,12 +83,32 @@ public class Main extends AbstractPage {
                 continue;
             
             name = column.getName();
+            modelitem = column.getModelItem();
+            modelitem.setReference(null);
             tfield = new TextField(communics, name);
-            tfield.setModelItem(column.getModelItem());
-            tfield.setEnabled((name.equals("COMMUNICATION"))? true : false);
-                
+            tfield.setModelItem(modelitem);
+            tfield.setEnabled((name.equals("CODIGO"))? false : true);
+            
             item.add(tfield);
         }
+        
+        i = communics.length() - 1;
+        contact = view.getElement("contact");
+        contactid = Common.getLong(Common.getValue(contact.get("CODIGO")));
+        
+        if (i == 0) {
+            codigo = contactid * 100;
+        } else {
+            item = communics.get(i - 1);
+            codigo = Common.getLong(Common.getValue(item.get("CODIGO")));
+        }
+        
+        item = communics.get(i);
+        tfield = item.get("CODIGO");
+        tfield.set(codigo + 1);
+        
+        tfield = item.get("CONTACT_ID");
+        tfield.set(contactid);
     }
     
     /**
@@ -128,6 +153,9 @@ public class Main extends AbstractPage {
         itemdata.mark = "contactmark";
         itemdata.object.setValue("CODIGO", 0l);
         Common.insertItem(itemdata);
+        
+        contact.get("CODIGO").set(object.getValue("CODIGO"));
+        updatePartnerView(view);
         
         contact.clearInputs();
     }
@@ -174,6 +202,7 @@ public class Main extends AbstractPage {
         DataForm address = view.getElement("address");
         
         Request.edititem(view, addresses, address);
+        updatePartnerView(view);
         
         address.clearInputs();
     }
@@ -201,6 +230,8 @@ public class Main extends AbstractPage {
         }
         
         Request.edititem(view, contacts, contact);
+        
+        updatePartnerView(view);
         
         contact.clearInputs();
     }
@@ -260,7 +291,28 @@ public class Main extends AbstractPage {
         button = view.getElement("editaddress");
         button.setVisible(false);
         
+        updatePartnerView(view);
+        
         address.clearInputs();
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void removecommunic(ViewData view) {
+        Button removecommunic;
+        Table communics = view.getElement("communics");
+        
+        for (TableItem item : communics.getItens())
+            if (item.isSelected())
+                communics.remove(item);
+        
+        if (communics.length() > 0)
+            return;
+        
+        removecommunic = view.getElement("removecommunic");
+        removecommunic.setVisible(false);
     }
     
     /**
@@ -279,10 +331,12 @@ public class Main extends AbstractPage {
         
         itens.setVisible(false);
         
-        button = view.getElement("removecontact");
+        button = view.getElement("editcontact");
         button.setVisible(false);
         button = view.getElement("removecontact");
         button.setVisible(false);
+        
+        updatePartnerView(view);
         
         contact.clearInputs();
     }
@@ -311,5 +365,36 @@ public class Main extends AbstractPage {
      */
     public final void update(ViewData view) throws Exception {
         Request.load(view, this, Common.UPDATE);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    private final void updatePartnerView(ViewData view) {
+        long contactid;
+        DataItem dataitem;
+        InputComponent input;
+        ExtendedObject object;
+        Table itens = view.getElement("addresses");
+        DataForm form = view.getElement("contact");
+
+        dataitem = form.get("ADDRESS");
+        Common.loadListFromTable(dataitem, itens, "LOGRADOURO", "CODIGO");
+        
+        form = view.getElement("contact");
+        object = form.getObject();
+        
+        itens = view.getElement("communics");
+        for (TableItem item : itens.getItens()) {
+            input = item.get("CONTACT_ID");
+            
+            contactid = Common.getLong(Common.getValue(input));
+            if (contactid > 0)
+                continue;
+            
+            contactid = object.getValue("CODIGO");
+            input.set(contactid);
+        }
     }
 }

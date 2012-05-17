@@ -124,13 +124,17 @@ public class Response {
         TabbedPaneItem tab;
         DataItem dataitem;
         Table contacts, addresses, communics;
-        Button addcontact, removecontact, editcontact, addcommunic;
+        Button addcontact, removecontact, editcontact, addcommunic,
+                removecommunic;
         Container communicscnt, contactcnt =
                 new StandardContainer(tabs, "contactscnt");
         DataForm contact = new DataForm(contactcnt, "contact");
         byte modo = Common.getMode(view);
         ExtendedObject[] ocontacts = view.getParameter("contacts");
         
+        /*
+         * Detalhe do item
+         */
         contact.importModel(model);
         contact.get("CODIGO").setEnabled(false);
         contact.get("PARTNER_ID").setVisible(false);
@@ -139,16 +143,23 @@ public class Response {
         dataitem.getModelItem().setReference(null);
         dataitem.setComponentType(Const.LIST_BOX);
         
+        editcontact = new Button(contactcnt, "editcontact");
+        addcontact = new Button(contactcnt, "addcontact");
+        
+        /*
+         * itens de comunicação
+         */
         communicscnt = new ExpandBar(contactcnt, "communicscnt");
+        addcommunic = new Button(communicscnt, "addcommunic");
+        removecommunic = new Button(communicscnt, "removecommunic");
         communics = new Table(communicscnt, "communics");
         communics.importModel(new Documents(function).
                 getModel("CUSTOM_PARTNER_COMM"));
         communics.getColumn("CONTACT_ID").setVisible(false);
         
-        addcommunic = new Button(communicscnt, "addcommunic");
-        
-        editcontact = new Button(contactcnt, "editcontact");
-        addcontact = new Button(contactcnt, "addcontact");
+        /*
+         * itens de contato
+         */
         removecontact = new Button(contactcnt, "removecontact");
         
         contacts = new Table(contactcnt, "contacts");
@@ -166,17 +177,21 @@ public class Response {
         case Common.CREATE:
             editcontact.setVisible(false);
             removecontact.setVisible(false);
+            removecommunic.setVisible(false);
             communics.setVisible(false);
+            communics.setMark(true);
             
             break;
         
         case Common.SHOW:
             contacts.setMark(false);
+            communics.setMark(false);
             
             editcontact.setVisible(false);
             addcontact.setVisible(false);
             removecontact.setVisible(false);
             addcommunic.setVisible(false);
+            removecommunic.setVisible(false);
             
             if (ocontacts == null)
                 break;
@@ -201,6 +216,7 @@ public class Response {
             
         case Common.UPDATE:
             contacts.setMark(true);
+            communics.setMark(true);
             
             if (ocontacts == null)
                 break;

@@ -663,6 +663,7 @@ public class Install {
         messages.put("invalid.partner", "Parceiro não encontrado.");
         messages.put("communicscnt.edge", "Comunicação");
         messages.put("addcommunic", "Adicionar");
+        messages.put("removecommunic", "Remover");
         messages.put("TP_COMMUNIC", "Tipo comunic.");
         
         data.setMessages("pt_BR", messages);

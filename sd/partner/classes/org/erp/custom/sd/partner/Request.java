@@ -8,6 +8,7 @@ import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
+import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Link;
 import org.iocaste.shell.common.Parameter;
@@ -49,6 +50,7 @@ public class Request {
         
         return Common.INVALID_ADDRESS;
     }
+    
     /**
      * 
      * @param view
@@ -176,15 +178,16 @@ public class Request {
      */
     public static final void save(ViewData view, Function function)
             throws Exception {
+        DataItem dataitem;
         InputComponent input;
         String query;
-        long codigo, addrfrom, addrto;
+        long codigo, addrfrom, addrto, contactid, contactid_, itemcode;
         Link link;
-        Table itens;
+        Table itens, communics;
         Map<Long, Long> addrtransl;
         TabbedPane tpane = view.getElement("pane");
-        DataForm identityform = tpane.get("identitytab").getContainer();
-        ExtendedObject opartner = identityform.getObject();
+        DataForm form = tpane.get("identitytab").getContainer();
+        ExtendedObject opartner = form.getObject();
         byte modo = Common.getMode(view);
         Documents documents = new Documents(function);
         
@@ -198,7 +201,7 @@ public class Request {
                 return;
             }
             
-            identityform.get("CODIGO").set(codigo);
+            form.get("CODIGO").set(codigo);
             
             view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
@@ -243,16 +246,30 @@ public class Request {
             }
         }
         
+        form = view.getElement("contact");
+        dataitem = form.get("ADDRESS");
+        Common.loadListFromTable(dataitem, itens, "LOGRADOURO", "CODIGO");
+        
         itens = view.getElement("contacts");
         for (TableItem contact : itens.getItens()) {
+            contactid = Long.parseLong(((Link)contact.get("CODIGO")).getText());
             if (modo == Common.CREATE) {
-                input = (InputComponent)contact.get("ADDRESS");
+                input = contact.get("ADDRESS");
                 addrfrom = input.get();
                 addrto = addrtransl.get(addrfrom); 
                 input.set(addrto);
             }
             
-            saveItem(documents, contact, codigo);
+            itemcode = saveItem(documents, contact, codigo);
+            
+            communics = view.getElement("communics");
+            for (TableItem communic : communics.getItens()) {
+                contactid_ = Common.getValue(communic.get("CONTACT_ID"));
+                if (contactid != contactid_)
+                    continue;
+                
+                saveCommunicationItem(documents, communic, itemcode);
+            }
         }
         
         documents.commit();
@@ -264,10 +281,34 @@ public class Request {
      * 
      * @param documents
      * @param item
-     * @param partner
      * @throws Exception
      */
-    private static final void saveItem(Documents documents, TableItem item,
+    private static final void saveCommunicationItem(Documents documents,
+            TableItem item, long contactid) throws Exception {
+        InputComponent input;
+        long codigo = Common.getValue(item.get("CODIGO"));
+        
+        if (codigo < (contactid * 100)) {
+            codigo += (contactid * 100);
+            input = item.get("CODIGO");
+            input.set(codigo);
+        }
+        
+        input = item.get("CONTACT_ID");
+        input.set(contactid);
+        
+        documents.save(item.getObject());
+    }
+    
+    /**
+     * 
+     * @param documents
+     * @param item
+     * @param partner
+     * @return
+     * @throws Exception
+     */
+    private static final long saveItem(Documents documents, TableItem item,
             long partner) throws Exception {
         ExtendedObject object = item.getObject();
         Link link = item.get("CODIGO");
@@ -282,5 +323,7 @@ public class Request {
         
         link.setText(Long.toString(codigo));
         ((InputComponent)item.get("PARTNER_ID")).set(partner);
+        
+        return codigo;
     }
 }
