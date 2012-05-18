@@ -1,7 +1,6 @@
 package org.erp.custom.sd.partner;
 
 import org.iocaste.documents.common.DocumentModel;
-import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.packagetool.common.InstallData;
@@ -13,9 +12,7 @@ import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
-import org.iocaste.shell.common.TextField;
 import org.iocaste.shell.common.ViewData;
 
 
@@ -64,51 +61,13 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addcommunic(ViewData view) {
-        DataForm contact;
-        TableItem item;
-        TextField tfield;
-        String name;
-        long codigo, contactid;
-        int i;
-        DocumentModelItem modelitem;
         Table communics = view.getElement("communics");
         Button removecommunic = view.getElement("removecommunic");
         
         communics.setVisible(true);
         removecommunic.setVisible(true);
         
-        item = new TableItem(communics);
-        for (TableColumn column : communics.getColumns()) {
-            if (column.isMark())
-                continue;
-            
-            name = column.getName();
-            modelitem = column.getModelItem();
-            modelitem.setReference(null);
-            tfield = new TextField(communics, name);
-            tfield.setModelItem(modelitem);
-            tfield.setEnabled((name.equals("CODIGO"))? false : true);
-            
-            item.add(tfield);
-        }
-        
-        i = communics.length() - 1;
-        contact = view.getElement("contact");
-        contactid = Common.getLong(Common.getValue(contact.get("CODIGO")));
-        
-        if (i == 0) {
-            codigo = contactid * 100;
-        } else {
-            item = communics.get(i - 1);
-            codigo = Common.getLong(Common.getValue(item.get("CODIGO")));
-        }
-        
-        item = communics.get(i);
-        tfield = item.get("CODIGO");
-        tfield.set(codigo + 1);
-        
-        tfield = item.get("CONTACT_ID");
-        tfield.set(contactid);
+        Common.insertCommunic(communics, view, null);
     }
     
     /**
@@ -180,8 +139,13 @@ public class Main extends AbstractPage {
     public final void contactmark(ViewData view) throws Exception {
         Table itens = view.getElement("contacts");
         DataForm form = view.getElement("contact");
+        long contactid_, contactid = Request.itemmark(view, itens, form);
         
-        Request.itemmark(view, itens, form);
+        itens = view.getElement("communics");
+        for (TableItem item : itens.getItens()) {
+            contactid_ = Common.getValue(item.get("CONTACT_ID"));
+            item.setVisible((contactid == contactid_)? true : false);
+        }
     }
     
     /**

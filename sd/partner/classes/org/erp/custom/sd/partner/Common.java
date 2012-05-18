@@ -1,5 +1,8 @@
 package org.erp.custom.sd.partner;
 
+import org.iocaste.documents.common.DocumentModelItem;
+import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.InputComponent;
@@ -135,6 +138,55 @@ public class Common {
         link.add(index, i);
         
         item.setObject(itemdata.object);
+    }
+    
+    public static final void insertCommunic(Table communics, ViewData view,
+            ExtendedObject object) {
+        DataForm contact;
+        long codigo, contactid;
+        int i;
+        TextField tfield;
+        String name;
+        DocumentModelItem modelitem;
+        TableItem item = new TableItem(communics);
+        
+        for (TableColumn column : communics.getColumns()) {
+            if (column.isMark())
+                continue;
+            
+            name = column.getName();
+            modelitem = column.getModelItem();
+            modelitem.setReference(null);
+            tfield = new TextField(communics, name);
+            tfield.setModelItem(modelitem);
+            tfield.setEnabled((name.equals("CODIGO"))? false : true);
+            
+            item.add(tfield);
+        }
+        
+        if (object != null) {
+            item.setObject(object);
+            return;
+        }
+        
+        i = communics.length() - 1;
+        contact = view.getElement("contact");
+        contactid = Common.getLong(Common.getValue(contact.get("CODIGO")));
+        
+        if (i == 0) {
+            codigo = contactid * 100;
+        } else {
+            item = communics.get(i - 1);
+            codigo = Common.getLong(Common.getValue(item.get("CODIGO")));
+        }
+        
+        item = communics.get(i);
+        tfield = item.get("CODIGO");
+        tfield.set(codigo + 1);
+        
+        tfield = item.get("CONTACT_ID");
+        tfield.set(contactid);
+        
     }
     
     /**

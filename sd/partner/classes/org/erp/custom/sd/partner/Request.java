@@ -95,17 +95,21 @@ public class Request {
      * @param view
      * @param itens
      * @param form
+     * @return
      * @throws Exception
      */
-    public static final void itemmark(ViewData view, Table itens,
+    public static final long itemmark(ViewData view, Table itens,
             DataForm form) throws Exception {
         Parameter index = view.getElement("index");
         TableItem item = itens.get(Integer.parseInt((String)index.get()));
         ExtendedObject object = item.getObject();
         Link link = item.get("CODIGO");
+        long codigo = Long.parseLong(link.getText());
         
-        object.setValue("CODIGO", Long.parseLong(link.getText()));
+        object.setValue("CODIGO", codigo);
         form.setObject(object);
+        
+        return codigo;
     }
     
     /**
@@ -120,7 +124,7 @@ public class Request {
         String query;
         Documents documents;
         ExtendedObject partner;
-        ExtendedObject[] addresses, contacts;
+        ExtendedObject[] addresses, contacts, communics;
         DataForm form = view.getElement("selection");
         long ident = form.get("partner").get();
         
@@ -142,10 +146,14 @@ public class Request {
         query = "from CUSTOM_PARTNER_CONTACT where partner_id = ?";
         contacts = documents.select(query, ident);
 
+        query = "from CUSTOM_PARTNER_COMM where partner_id = ?";
+        communics = documents.select(query, ident);
+        
         view.clearParameters();
         view.export("partner", partner);
         view.export("addresses", addresses);
         view.export("contacts", contacts);
+        view.export("communics", communics);
         view.export("mode", mode);
         view.setReloadableView(true);
         view.redirect(null, "identity");
@@ -222,10 +230,7 @@ public class Request {
             break;
         }
         
-        if (modo == Common.CREATE)
-            addrtransl = new HashMap<Long, Long>();
-        else
-            addrtransl = null;
+        addrtransl = (modo == Common.CREATE)? new HashMap<Long, Long>() : null;
         
         addrfrom = 0;
         addrto = 0;
@@ -268,7 +273,7 @@ public class Request {
                 if (contactid != contactid_)
                     continue;
                 
-                saveCommunicationItem(documents, communic, itemcode);
+                saveCommunicationItem(documents, communic, itemcode, codigo);
             }
         }
         
@@ -284,7 +289,7 @@ public class Request {
      * @throws Exception
      */
     private static final void saveCommunicationItem(Documents documents,
-            TableItem item, long contactid) throws Exception {
+            TableItem item, long contactid, long partner) throws Exception {
         InputComponent input;
         long codigo = Common.getValue(item.get("CODIGO"));
         
@@ -296,6 +301,8 @@ public class Request {
         
         input = item.get("CONTACT_ID");
         input.set(contactid);
+        input = item.get("PARTNER_ID");
+        input.set(partner);
         
         documents.save(item.getObject());
     }

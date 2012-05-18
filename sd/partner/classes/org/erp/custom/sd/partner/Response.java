@@ -131,6 +131,7 @@ public class Response {
         DataForm contact = new DataForm(contactcnt, "contact");
         byte modo = Common.getMode(view);
         ExtendedObject[] ocontacts = view.getParameter("contacts");
+        ExtendedObject[] ocommunics = view.getParameter("communics");
         
         /*
          * Detalhe do item
@@ -156,6 +157,7 @@ public class Response {
         communics.importModel(new Documents(function).
                 getModel("CUSTOM_PARTNER_COMM"));
         communics.getColumn("CONTACT_ID").setVisible(false);
+        communics.setVisible(false);
         
         /*
          * itens de contato
@@ -166,7 +168,6 @@ public class Response {
         contacts.importModel(model);
         contacts.getColumn("PARTNER_ID").setVisible(false);
         contacts.setVisible(false);
-        contacts.setMark(true);
 
         Common.enableTableColumns(contacts, "CODIGO", "PNOME", "UNOME");
         
@@ -178,7 +179,6 @@ public class Response {
             editcontact.setVisible(false);
             removecontact.setVisible(false);
             removecommunic.setVisible(false);
-            communics.setVisible(false);
             communics.setMark(true);
             
             break;
@@ -196,11 +196,12 @@ public class Response {
             if (ocontacts == null)
                 break;
             
+            contacts.setVisible(true);
+            
             itemdata = new ItemData();
             itemdata.container = contactcnt;
             itemdata.itens = contacts;
             itemdata.mark = "contactmark";
-            contacts.setVisible(true);
             
             for (ExtendedObject ocontact : ocontacts) {
                 itemdata.object = ocontact;
@@ -212,6 +213,14 @@ public class Response {
             Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
                     "CODIGO");
             
+            if (ocommunics == null)
+                break;
+            
+            communics.setVisible(true);
+            
+            for (ExtendedObject ocommunic : ocommunics)
+                Common.insertCommunic(communics, view, ocommunic);
+            
             break;
             
         case Common.UPDATE:
@@ -220,6 +229,8 @@ public class Response {
             
             if (ocontacts == null)
                 break;
+            
+            contacts.setVisible(true);
             
             itemdata = new ItemData();
             itemdata.container = contactcnt;
@@ -240,6 +251,14 @@ public class Response {
             editcontact.setVisible(true);
             addcontact.setVisible(true);
             removecontact.setVisible(true);
+            
+            if (ocommunics == null)
+                break;
+            
+            communics.setVisible(true);
+            
+            for (ExtendedObject ocommunic : ocommunics)
+                Common.insertCommunic(communics, view, ocommunic);
             
             break;
         }
