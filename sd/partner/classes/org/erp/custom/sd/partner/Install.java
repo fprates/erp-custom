@@ -443,13 +443,16 @@ public class Install {
      * @param communication
      */
     private static final void installContactCommunication(InstallData data,
-            DocumentModel contact, DocumentModel address,
+            DocumentModel partner, DocumentModel contact, DocumentModel address,
             DocumentModel communication) {
         DataElement element;
-        DocumentModelItem item, code;
+        DocumentModelItem item, modelitem;
         DocumentModel model = data.getModel("CUSTOM_PARTNER_COMM",
                 "CPARTNERCOMM", null);
         
+        /*
+         * comunição do contato
+         */
         element = new DataElement();
         element.setName("CUSTOM_PARTNER_COMM.CODIGO");
         element.setLength(12);
@@ -457,35 +460,58 @@ public class Install {
         
         item = new DocumentModelItem();
         item.setName("CODIGO");
-        item.setTableFieldName("NRCOM");
+        item.setTableFieldName("IDENT");
         item.setDataElement(element);
         
         model.add(item);
         model.add(new DocumentModelKey(item));
         
-        code = contact.getModelItem("CODIGO");
-        element = code.getDataElement();
+        /*
+         * parceiro
+         */
+        modelitem = partner.getModelItem("CODIGO");
+        element = modelitem.getDataElement();
+        
+        item = new DocumentModelItem();
+        item.setName("PARTNER_ID");
+        item.setTableFieldName("PRTNR");
+        item.setDataElement(element);
+        item.setReference(modelitem);
+        
+        model.add(item);
+        
+        /*
+         * contato
+         */
+        modelitem = contact.getModelItem("CODIGO");
+        element = modelitem.getDataElement();
         
         item = new DocumentModelItem();
         item.setName("CONTACT_ID");
         item.setTableFieldName("CNTCT");
         item.setDataElement(element);
-        item.setReference(code);
+        item.setReference(modelitem);
         
         model.add(item);
         
-        code = communication.getModelItem("CODIGO");
-        element = code.getDataElement();
+        /*
+         * tipo de comunicação
+         */
+        modelitem = communication.getModelItem("CODIGO");
+        element = modelitem.getDataElement();
         
         item = new DocumentModelItem();
         item.setName("TP_COMMUNIC");
         item.setTableFieldName("TPCOM");
         item.setDataElement(element);
-        item.setReference(code);
+        item.setReference(modelitem);
         item.setSearchHelp("SH_COMMUNICATION");
         
         model.add(item);
         
+        /*
+         * descrição da comunicação
+         */
         element = address.getModelItem("WEB_PAGE").getDataElement();
         
         item = new DocumentModelItem();
@@ -574,7 +600,8 @@ public class Install {
         address = installPartnerAddress(data, partner, addresstype);
         communication = installCommunication(data);
         contact = installPartnerContact(data, address, communication);
-        installContactCommunication(data, contact, address, communication);
+        installContactCommunication(data, partner, contact, address,
+                communication);
         
         shdata = new SearchHelpData();
         shdata.add("CODIGO");
