@@ -219,10 +219,13 @@ public class Request {
             documents.modify(opartner);
             codigo = opartner.getValue("CODIGO");
             
-            query = "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?";
+            query = "delete from CUSTOM_PARTNER_COMM where PARTNER_ID = ?";
             documents.update(query, codigo);
             
             query = "delete from CUSTOM_PARTNER_CONTACT where PARTNER_ID = ?";
+            documents.update(query, codigo);
+            
+            query = "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?";
             documents.update(query, codigo);
             
             view.export("mode", Common.UPDATE);
