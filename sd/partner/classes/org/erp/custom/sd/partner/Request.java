@@ -69,7 +69,7 @@ public class Request {
      * @throws Exception
      */
     public static final void edititem(ViewData view, Table itens,
-            DataForm form) throws Exception {
+            DataForm form) {
         Link link;
         long tcodigo, fcodigo;
         
@@ -99,7 +99,7 @@ public class Request {
      * @throws Exception
      */
     public static final long itemmark(ViewData view, Table itens,
-            DataForm form) throws Exception {
+            DataForm form) {
         Parameter index = view.getElement("index");
         TableItem item = itens.get(Integer.parseInt((String)index.get()));
         ExtendedObject object = item.getObject();
