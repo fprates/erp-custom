@@ -137,8 +137,13 @@ public class Response {
          * Detalhe do item
          */
         contact.importModel(model);
-        contact.get("CODIGO").setEnabled(false);
         contact.get("PARTNER_ID").setVisible(false);
+        
+        for (Element element : contact.getElements())
+            if (element.getName().equals("CODIGO"))
+                element.setEnabled(false);
+            else
+                element.setEnabled((modo == Common.SHOW)? false : true);
         
         dataitem = contact.get("ADDRESS");
         dataitem.getModelItem().setReference(null);
@@ -146,6 +151,18 @@ public class Response {
         
         editcontact = new Button(contactcnt, "editcontact");
         addcontact = new Button(contactcnt, "addcontact");
+        
+        /*
+         * itens de contato
+         */
+        removecontact = new Button(contactcnt, "removecontact");
+        
+        contacts = new Table(contactcnt, "contacts");
+        contacts.importModel(model);
+        contacts.getColumn("PARTNER_ID").setVisible(false);
+        contacts.setVisible(false);
+
+        Common.enableTableColumns(contacts, "CODIGO", "PNOME", "UNOME");
         
         /*
          * itens de comunicação
@@ -161,18 +178,6 @@ public class Response {
         communics.getColumn("CONTACT_ID").setVisible(false);
         communics.getColumn("PARTNER_ID").setVisible(false);
         communics.setVisible(false);
-        
-        /*
-         * itens de contato
-         */
-        removecontact = new Button(contactcnt, "removecontact");
-        
-        contacts = new Table(contactcnt, "contacts");
-        contacts.importModel(model);
-        contacts.getColumn("PARTNER_ID").setVisible(false);
-        contacts.setVisible(false);
-
-        Common.enableTableColumns(contacts, "CODIGO", "PNOME", "UNOME");
         
         tab = new TabbedPaneItem(tabs, "contacttab");
         tab.setContainer(contactcnt);

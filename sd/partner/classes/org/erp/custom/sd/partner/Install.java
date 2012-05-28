@@ -690,7 +690,7 @@ public class Install {
                 "Parceiro gravado com sucesso.");
         messages.put("partner-selection", "Selecionar parceiro");
         messages.put("invalid.partner", "Parceiro não encontrado.");
-        messages.put("communicscnt.edge", "Comunicação");
+        messages.put("communicscnt", "Comunicação");
         messages.put("addcommunic", "Adicionar comunicação");
         messages.put("removecommunic", "Remover comunicação");
         messages.put("TP_COMMUNIC", "Tipo comunic.");
