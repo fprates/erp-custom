@@ -8,6 +8,7 @@ import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
+import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.InputComponent;
@@ -17,6 +18,7 @@ import org.iocaste.shell.common.ViewData;
 
 
 public class Main extends AbstractPage {
+    private static final boolean VISIBLE = true;
     
     public Main() {
         export("install", "install");
@@ -115,6 +117,7 @@ public class Main extends AbstractPage {
         
         contact.get("CODIGO").set(object.getValue("CODIGO"));
         updatePartnerView(view);
+        updateCommunicsView(view, !VISIBLE);
         
         contact.clearInputs();
     }
@@ -136,7 +139,8 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void contactmark(ViewData view) throws Exception {
+    public final void contactmark(ViewData view) {
+        Button button;
         Table itens = view.getElement("contacts");
         DataForm form = view.getElement("contact");
         long contactid_, contactid = Request.itemmark(view, itens, form);
@@ -146,6 +150,15 @@ public class Main extends AbstractPage {
             contactid_ = Common.getValue(item.get("CONTACT_ID"));
             item.setVisible((contactid == contactid_)? true : false);
         }
+        
+        itens.setVisible(true);
+        updateCommunicsView(view, VISIBLE);
+        
+        if (Common.getMode(view) == Common.SHOW)
+            return;
+        
+        button = view.getElement("removecommunic");
+        button.setVisible(true);
     }
     
     /**
@@ -161,7 +174,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void editaddress(ViewData view) throws Exception {
+    public final void editaddress(ViewData view) {
         Table addresses = view.getElement("addresses");
         DataForm address = view.getElement("address");
         
@@ -176,7 +189,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void editcontact(ViewData view) throws Exception {
+    public final void editcontact(ViewData view) {
         Table contacts = view.getElement("contacts");
         DataForm contact = view.getElement("contact");
         ExtendedObject object = contact.getObject();
@@ -334,6 +347,17 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
+     * @param visible
+     */
+    private final void updateCommunicsView(ViewData view, boolean visible) {
+        Container communicscnt = view.getElement("communicscnt");
+        
+        communicscnt.setVisible(visible);
+    }
+    
+    /**
+     * 
+     * @param view
      */
     private final void updatePartnerView(ViewData view) {
         long contactid;
@@ -357,7 +381,7 @@ public class Main extends AbstractPage {
             if (contactid > 0)
                 continue;
             
-            contactid = object.getValue("CODIGO");
+            contactid = Common.getLong(object.getValue("CODIGO"));
             input.set(contactid);
         }
     }

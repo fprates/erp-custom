@@ -10,8 +10,8 @@ import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
-import org.iocaste.shell.common.ExpandBar;
 import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.Frame;
 import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
@@ -126,8 +126,8 @@ public class Response {
         Table contacts, addresses, communics;
         Button addcontact, removecontact, editcontact, addcommunic,
                 removecommunic;
-        Container communicscnt, contactcnt =
-                new StandardContainer(tabs, "contactscnt");
+        Container communicscnt, contactcnt = new StandardContainer(
+                tabs, "contactscnt");
         DataForm contact = new DataForm(contactcnt, "contact");
         byte modo = Common.getMode(view);
         ExtendedObject[] ocontacts = view.getParameter("contacts");
@@ -150,13 +150,16 @@ public class Response {
         /*
          * itens de comunicação
          */
-        communicscnt = new ExpandBar(contactcnt, "communicscnt");
+        communicscnt = new Frame(contactcnt, "communicscnt");
         addcommunic = new Button(communicscnt, "addcommunic");
         removecommunic = new Button(communicscnt, "removecommunic");
+        removecommunic.setVisible(false);
+        
         communics = new Table(communicscnt, "communics");
         communics.importModel(new Documents(function).
                 getModel("CUSTOM_PARTNER_COMM"));
         communics.getColumn("CONTACT_ID").setVisible(false);
+        communics.getColumn("PARTNER_ID").setVisible(false);
         communics.setVisible(false);
         
         /*
@@ -178,7 +181,6 @@ public class Response {
         case Common.CREATE:
             editcontact.setVisible(false);
             removecontact.setVisible(false);
-            removecommunic.setVisible(false);
             communics.setMark(true);
             
             break;
@@ -191,7 +193,6 @@ public class Response {
             addcontact.setVisible(false);
             removecontact.setVisible(false);
             addcommunic.setVisible(false);
-            removecommunic.setVisible(false);
             
             if (ocontacts == null)
                 break;
@@ -215,8 +216,6 @@ public class Response {
             
             if (ocommunics == null)
                 break;
-            
-            communics.setVisible(true);
             
             for (ExtendedObject ocommunic : ocommunics)
                 Common.insertCommunic(communics, view, ocommunic);
@@ -254,8 +253,6 @@ public class Response {
             
             if (ocommunics == null)
                 break;
-            
-            communics.setVisible(true);
             
             for (ExtendedObject ocommunic : ocommunics)
                 Common.insertCommunic(communics, view, ocommunic);
