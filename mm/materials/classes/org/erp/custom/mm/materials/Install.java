@@ -10,6 +10,7 @@ import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.packagetool.common.SearchHelpData;
+import org.iocaste.protocol.user.Authorization;
 
 public class Install {
     
@@ -22,6 +23,7 @@ public class Install {
         DataElement evalue, edate, ematid, element;
         DocumentModelItem imatid, item;
         SearchHelpData sh;
+        Authorization authorization;
         InstallData data = new InstallData();
         DocumentModel promocaoMaterial, precoMaterial, material =
                 data.getModel("MATERIAL", "CMATERIAL", "");
@@ -71,12 +73,16 @@ public class Install {
         
         material.add(item);
         
+        /*
+         * Ajuda de pesquisa para material
+         */
         sh = new SearchHelpData();
         sh.setName("SH_MATERIAL");
         sh.setModel("MATERIAL");
         sh.setExport("ID");
         sh.add("ID");
         sh.add("NAME");
+        data.add(sh);
         
         /*
          * PRECO_MATERIAL
@@ -202,10 +208,24 @@ public class Install {
         
         promocaoMaterial.add(item);
         
-        data.add(sh);
+        /*
+         * autorizações
+         */
+        authorization = new Authorization("MATERIAL.EXECUTE");
+        authorization.setObject("APPLICATION");
+        authorization.setAction("EXECUTE");
+        authorization.add("APPNAME", "erp-custom-mm.materials");
+        data.add(authorization);
+        
+        /*
+         * links
+         */
         data.link("MATERIAL", "erp-custom-mm.materials");
         data.link("MM01", "erp-custom-mm.materials");
         
+        /*
+         * mensagens
+         */
         messages = new HashMap<String, String>();
         messages.put("material-selection", "Selecionar material");
         messages.put("material", "Material");
