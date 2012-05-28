@@ -8,6 +8,7 @@ import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Function;
+import org.iocaste.protocol.user.Authorization;
 
 public class Install {
     private static final String HEADER = "CUSTOM_SD_DOCUMENT";
@@ -16,6 +17,7 @@ public class Install {
     public static final InstallData self(Function function) throws Exception {
         DocumentModelItem materialid, partnercode, docid, item;
         DataElement edocid, element;
+        Authorization authorization;
         Documents documents = new Documents(function);
         InstallData data = new InstallData();
         DocumentModel docitem, dochead = data.getModel(HEADER, "CSDDOCHDR", "");
@@ -92,7 +94,23 @@ public class Install {
         
         docitem.add(item);
         
+        /*
+         * autorizações
+         */
+        authorization = new Authorization("DOCUMENTS.EXECUTE");
+        authorization.setObject("APPLICATION");
+        authorization.setAction("EXECUTE");
+        authorization.add("APPNAME", "erp-custom-sd.documents");
+        data.add(authorization);
+        
+        /*
+         * objeto de numeração
+         */
         data.addNumberFactory("SD_DOCUMENT");
+        
+        /*
+         * links
+         */
         data.link("VA01", "erp-custom-sd.documents");
         data.link("DOCUMENTS", "erp-custom-sd.documents");
         
