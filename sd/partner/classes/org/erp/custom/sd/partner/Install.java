@@ -10,6 +10,7 @@ import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.packagetool.common.SearchHelpData;
+import org.iocaste.protocol.user.Authorization;
 
 public class Install {
     
@@ -590,6 +591,7 @@ public class Install {
     public static final InstallData self() {
         Map<String, String> messages;
         SearchHelpData shdata;
+        Authorization authorization;
         InstallData data = new InstallData();
         DocumentModel address, partner, partnertype, addresstype, contact,
             communication;
@@ -680,19 +682,25 @@ public class Install {
         messages.put("UNOME", "Sobrenome");
         messages.put("ADDRESS", "Endereço");
         messages.put("COMMUNICATION", "Comunicação");
-        messages.put("addcontact", "Adicionar");
-        messages.put("editcontact", "Editar");
-        messages.put("removecontact", "Remover");
+        messages.put("addcontact", "Adicionar contato");
+        messages.put("editcontact", "Editar contato");
+        messages.put("removecontact", "Remover contato");
         messages.put("address.required", "Endereço obrigatório.");
         messages.put("partner.saved.successfuly",
                 "Parceiro gravado com sucesso.");
         messages.put("partner-selection", "Selecionar parceiro");
         messages.put("invalid.partner", "Parceiro não encontrado.");
         messages.put("communicscnt.edge", "Comunicação");
-        messages.put("addcommunic", "Adicionar");
-        messages.put("removecommunic", "Remover");
+        messages.put("addcommunic", "Adicionar comunicação");
+        messages.put("removecommunic", "Remover comunicação");
         messages.put("TP_COMMUNIC", "Tipo comunic.");
         
+        authorization = new Authorization("PARTNER.EXECUTE");
+        authorization.setAction("EXECUTE");
+        authorization.setObject("APPLICATION");
+        authorization.add("APPNAME", "erp-custom-sd.partner");
+        
+        data.add(authorization);
         data.setMessages("pt_BR", messages);
         
         return data;
