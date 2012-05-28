@@ -149,6 +149,7 @@ public class Common {
         String name;
         DocumentModelItem modelitem;
         TableItem item = new TableItem(communics);
+        byte mode = Common.getMode(view);
         
         for (TableColumn column : communics.getColumns()) {
             if (column.isMark())
@@ -159,7 +160,11 @@ public class Common {
             modelitem.setReference(null);
             tfield = new TextField(communics, name);
             tfield.setModelItem(modelitem);
-            tfield.setEnabled((name.equals("CODIGO"))? false : true);
+            
+            if (name.equals("CODIGO"))
+                tfield.setEnabled(false);
+            else
+                tfield.setEnabled((mode == Common.SHOW)? false : true);
             
             item.add(tfield);
         }
