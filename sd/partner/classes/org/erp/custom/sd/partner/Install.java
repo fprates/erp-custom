@@ -694,14 +694,16 @@ public class Install {
         messages.put("addcommunic", "Adicionar comunicação");
         messages.put("removecommunic", "Remover comunicação");
         messages.put("TP_COMMUNIC", "Tipo comunic.");
+        messages.put("XD01", "Cadastro de clientes");
+        data.setMessages("pt_BR", messages);
         
         authorization = new Authorization("PARTNER.EXECUTE");
         authorization.setAction("EXECUTE");
         authorization.setObject("APPLICATION");
         authorization.add("APPNAME", "erp-custom-sd.partner");
-        
         data.add(authorization);
-        data.setMessages("pt_BR", messages);
+        
+        data.addTaskGroup("ERP", "XD01");
         
         return data;
     }
