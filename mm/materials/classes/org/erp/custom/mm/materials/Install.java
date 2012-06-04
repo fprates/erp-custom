@@ -18,195 +18,16 @@ public class Install {
      * 
      * @return
      */
-    public static final InstallData self() {
+    public static final InstallData init() {
         Map<String, String> messages;
-        DataElement evalue, edate, ematid, element;
-        DocumentModelItem imatid, item;
-        SearchHelpData sh;
         Authorization authorization;
         InstallData data = new InstallData();
-        DocumentModel promocaoMaterial, precoMaterial, material =
-                data.getModel("MATERIAL", "CMATERIAL", "");
+        CData cdata = new CData();
         
-        /*
-         * MATERIAL
-         */
-        ematid = new DataElement();
-        ematid.setName("MATERIAL.ID");
-        ematid.setLength(20);
-        ematid.setType(DataType.CHAR);
-        ematid.setUpcase(true);
-        data.add(ematid);
-        
-        imatid = new DocumentModelItem();
-        imatid.setName("ID");
-        imatid.setTableFieldName("IDENT");
-        imatid.setDataElement(ematid);
-        imatid.setSearchHelp("SH_MATERIAL");
-        
-        material.add(imatid);
-        material.add(new DocumentModelKey(imatid));
-        
-        element = new DataElement();
-        element.setName("MATERIAL.NAME");
-        element.setLength(60);
-        element.setType(DataType.CHAR);
-        element.setUpcase(true);
-        data.add(element);
-        
-        item = new DocumentModelItem();
-        item.setName("NAME");
-        item.setTableFieldName("NAME1");
-        item.setDataElement(element);
-        
-        material.add(item);
-        
-        element = new DataElement();
-        element.setName("MATERIAL.ACTIVE");
-        element.setType(DataType.BOOLEAN);
-        data.add(element);
-        
-        item = new DocumentModelItem();
-        item.setName("ACTIVE");
-        item.setTableFieldName("ACTIV");
-        item.setDataElement(element);
-        
-        material.add(item);
-        
-        /*
-         * Ajuda de pesquisa para material
-         */
-        sh = new SearchHelpData();
-        sh.setName("SH_MATERIAL");
-        sh.setModel("MATERIAL");
-        sh.setExport("ID");
-        sh.add("ID");
-        sh.add("NAME");
-        data.add(sh);
-        
-        /*
-         * PRECO_MATERIAL
-         */
-        precoMaterial = data.getModel("PRECO_MATERIAL", "CMATPRICE", "");
-        
-        element = new DataElement();
-        element.setName("PRECO_MATERIAL.ID");
-        element.setLength(23);
-        element.setType(DataType.CHAR);
-        element.setUpcase(true);
-        data.add(element);
-        
-        item = new DocumentModelItem();
-        item.setName("ID");
-        item.setTableFieldName("IDENT");
-        item.setDataElement(element);
-        
-        precoMaterial.add(item);
-        precoMaterial.add(new DocumentModelKey(item));
-        
-        item = new DocumentModelItem();
-        item.setName("MATERIAL");
-        item.setTableFieldName("MATCD");
-        item.setDataElement(ematid);
-        item.setReference(imatid);
-        
-        precoMaterial.add(item);
-        
-        evalue = new DataElement();
-        evalue.setName("PRECO_MATERIAL.VALOR");
-        evalue.setDecimals(3);
-        evalue.setLength(12);
-        evalue.setType(DataType.DEC);
-        data.add(element);
-        
-        item = new DocumentModelItem();
-        item.setName("VL_VENDA");
-        item.setTableFieldName("VLVND");
-        item.setDataElement(evalue);
-        
-        precoMaterial.add(item);
-        
-        item = new DocumentModelItem();
-        item.setName("VL_CUSTO");
-        item.setTableFieldName("VLCST");
-        item.setDataElement(evalue);
-        
-        precoMaterial.add(item);
-        
-        edate = new DataElement();
-        edate.setName("PRECO_MATERIAL.DATA");
-        edate.setType(DataType.DATE);
-        data.add(element);
-        
-        item = new DocumentModelItem();
-        item.setName("DT_INICIAL");
-        item.setTableFieldName("DTINI");
-        item.setDataElement(edate);
-        
-        precoMaterial.add(item);
-        
-        item = new DocumentModelItem();
-        item.setName("DT_FINAL");
-        item.setTableFieldName("DTTRM");
-        item.setDataElement(edate);
-        
-        precoMaterial.add(item);
-        
-        /*
-         * PROMOCAO_MATERIAL
-         */
-        promocaoMaterial = data.getModel("PROMOCAO_MATERIAL", "CMATPROMO", "");
-        
-        element = new DataElement();
-        element.setName("PROMOCAO_MATERIAL.ID");
-        element.setType(DataType.CHAR);
-        element.setLength(23);
-        element.setUpcase(true);
-        data.add(element);
-        
-        item = new DocumentModelItem();
-        item.setName("ID");
-        item.setTableFieldName("IDENT");
-        item.setDataElement(element);
-        
-        promocaoMaterial.add(item);
-        promocaoMaterial.add(new DocumentModelKey(item));
-        
-        item = new DocumentModelItem();
-        item.setName("MATERIAL");
-        item.setDataElement(ematid);
-        item.setTableFieldName("MATCD");
-        item.setReference(imatid);
-
-        promocaoMaterial.add(item);
-        
-        item = new DocumentModelItem();
-        item.setName("VL_VENDA");
-        item.setTableFieldName("VLVND");
-        item.setDataElement(evalue);
-
-        promocaoMaterial.add(item);
-        
-        item = new DocumentModelItem();
-        item.setName("VL_CUSTO");
-        item.setTableFieldName("VLCST");
-        item.setDataElement(evalue);
-
-        promocaoMaterial.add(item);
-        
-        item = new DocumentModelItem();
-        item.setName("DT_INICIAL");
-        item.setTableFieldName("DTINI");
-        item.setDataElement(edate);
-
-        promocaoMaterial.add(item);
-        
-        item = new DocumentModelItem();
-        item.setName("DT_FINAL");
-        item.setTableFieldName("DTTRM");
-        item.setDataElement(edate);
-        
-        promocaoMaterial.add(item);
+        installBaseData(data, cdata);
+        installPrices(data, cdata);
+        installPromotions(data, cdata);
+        installSubMaterial(data, cdata);
         
         /*
          * autorizações
@@ -220,8 +41,8 @@ public class Install {
         /*
          * links
          */
-        data.link("MATERIAL", "erp-custom-mm.materials");
         data.link("MM01", "erp-custom-mm.materials");
+        data.addTaskGroup("ERP", "MM01");
         
         /*
          * mensagens
@@ -257,9 +78,254 @@ public class Install {
         messages.put("material.not.found", "Material não encontrado.");
         messages.put("material-editor-update", "Atualizar material");
         messages.put("material-editor-show", "Exibir material");
-        
+        messages.put("submaterials", "Sub-materiais");
+        messages.put("SUB_MATERIAL", "Material");
+        messages.put("addmaterial", "Adicionar");
+        messages.put("removematerial", "Remover");
+        messages.put("MM01", "Mestre de materiais");
         data.setMessages("pt_BR", messages);
         
         return data;
     }
+    
+    private static final void installBaseData(InstallData data, CData cdata) {
+    	DataElement element;
+    	DocumentModelItem item;
+        SearchHelpData sh;
+        DocumentModel model = data.getModel("MATERIAL", "CMATERIAL", null);
+        
+        /*
+         * MATERIAL
+         */
+        cdata.ematid = new DataElement();
+        cdata.ematid.setName("MATERIAL.ID");
+        cdata.ematid.setLength(20);
+        cdata.ematid.setType(DataType.CHAR);
+        cdata.ematid.setUpcase(true);
+        data.add(cdata.ematid);
+        
+        cdata.imatid = new DocumentModelItem();
+        cdata.imatid.setName("ID");
+        cdata.imatid.setTableFieldName("IDENT");
+        cdata.imatid.setDataElement(cdata.ematid);
+        cdata.imatid.setSearchHelp("SH_MATERIAL");
+        
+        model.add(cdata.imatid);
+        model.add(new DocumentModelKey(cdata.imatid));
+        
+        element = new DataElement();
+        element.setName("MATERIAL.NAME");
+        element.setLength(60);
+        element.setType(DataType.CHAR);
+        element.setUpcase(true);
+        data.add(element);
+        
+        item = new DocumentModelItem();
+        item.setName("NAME");
+        item.setTableFieldName("NAME1");
+        item.setDataElement(element);
+        
+        model.add(item);
+        
+        element = new DataElement();
+        element.setName("MATERIAL.ACTIVE");
+        element.setType(DataType.BOOLEAN);
+        data.add(element);
+        
+        item = new DocumentModelItem();
+        item.setName("ACTIVE");
+        item.setTableFieldName("ACTIV");
+        item.setDataElement(element);
+        
+        model.add(item);
+        
+        /*
+         * Ajuda de pesquisa para material
+         */
+        sh = new SearchHelpData();
+        sh.setName("SH_MATERIAL");
+        sh.setModel("MATERIAL");
+        sh.setExport("ID");
+        sh.add("ID");
+        sh.add("NAME");
+        data.add(sh);
+    }
+    
+    public static final void installPrices(InstallData data, CData cdata) {
+    	DataElement element;
+    	DocumentModelItem item;
+        DocumentModel model;
+        
+        model = data.getModel("PRECO_MATERIAL", "CMATPRICE", null);
+        
+        element = new DataElement();
+        element.setName("PRECO_MATERIAL.ID");
+        element.setLength(23);
+        element.setType(DataType.CHAR);
+        element.setUpcase(true);
+        data.add(element);
+        
+        item = new DocumentModelItem();
+        item.setName("ID");
+        item.setTableFieldName("IDENT");
+        item.setDataElement(element);
+        
+        model.add(item);
+        model.add(new DocumentModelKey(item));
+        
+        item = new DocumentModelItem();
+        item.setName("MATERIAL");
+        item.setTableFieldName("MATCD");
+        item.setDataElement(cdata.ematid);
+        item.setReference(cdata.imatid);
+        
+        model.add(item);
+        
+        cdata.evalue = new DataElement();
+        cdata.evalue.setName("PRECO_MATERIAL.VALOR");
+        cdata.evalue.setDecimals(3);
+        cdata.evalue.setLength(12);
+        cdata.evalue.setType(DataType.DEC);
+        data.add(element);
+        
+        item = new DocumentModelItem();
+        item.setName("VL_VENDA");
+        item.setTableFieldName("VLVND");
+        item.setDataElement(cdata.evalue);
+        
+        model.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("VL_CUSTO");
+        item.setTableFieldName("VLCST");
+        item.setDataElement(cdata.evalue);
+        
+        model.add(item);
+        
+        cdata.edate = new DataElement();
+        cdata.edate.setName("PRECO_MATERIAL.DATA");
+        cdata.edate.setType(DataType.DATE);
+        data.add(element);
+        
+        item = new DocumentModelItem();
+        item.setName("DT_INICIAL");
+        item.setTableFieldName("DTINI");
+        item.setDataElement(cdata.edate);
+        
+        model.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("DT_FINAL");
+        item.setTableFieldName("DTTRM");
+        item.setDataElement(cdata.edate);
+        
+        model.add(item);
+    }
+    
+    private static final void installPromotions(InstallData data, CData cdata) {
+    	DataElement element;
+    	DocumentModelItem item;
+        DocumentModel model;
+        
+        model = data.getModel("PROMOCAO_MATERIAL", "CMATPROMO", null);
+        
+        element = new DataElement();
+        element.setName("PROMOCAO_MATERIAL.ID");
+        element.setType(DataType.CHAR);
+        element.setLength(23);
+        element.setUpcase(true);
+        data.add(element);
+        
+        item = new DocumentModelItem();
+        item.setName("ID");
+        item.setTableFieldName("IDENT");
+        item.setDataElement(element);
+        
+        model.add(item);
+        model.add(new DocumentModelKey(item));
+        
+        item = new DocumentModelItem();
+        item.setName("MATERIAL");
+        item.setDataElement(cdata.ematid);
+        item.setTableFieldName("MATCD");
+        item.setReference(cdata.imatid);
+
+        model.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("VL_VENDA");
+        item.setTableFieldName("VLVND");
+        item.setDataElement(cdata.evalue);
+
+        model.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("VL_CUSTO");
+        item.setTableFieldName("VLCST");
+        item.setDataElement(cdata.evalue);
+
+        model.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("DT_INICIAL");
+        item.setTableFieldName("DTINI");
+        item.setDataElement(cdata.edate);
+
+        model.add(item);
+        
+        item = new DocumentModelItem();
+        item.setName("DT_FINAL");
+        item.setTableFieldName("DTTRM");
+        item.setDataElement(cdata.edate);
+        
+        model.add(item);
+    }
+    
+    private static final void installSubMaterial(InstallData data, CData cdata)
+    {
+    	DocumentModelItem item;
+    	DataElement element;
+    	DocumentModel model = data.getModel("SUB_MATERIAL", "CSUBMAT", null);
+    	
+    	// identificador
+    	element = new DataElement();
+    	element.setName("SUB_MATERIAL.ID");
+    	element.setLength(23);
+    	element.setType(DataType.CHAR);
+    	element.setUpcase(true);
+    	
+    	item = new DocumentModelItem();
+    	item.setName("ID");
+    	item.setTableFieldName("IDENT");
+    	item.setDataElement(element);
+    	
+    	model.add(item);
+    	model.add(new DocumentModelKey(item));
+    	
+    	// material referência
+    	item = new DocumentModelItem();
+    	item.setName("MATERIAL");
+    	item.setTableFieldName("MATID");
+    	item.setDataElement(cdata.ematid);
+    	item.setReference(cdata.imatid);
+    	
+    	model.add(item);
+    	
+    	// sub-material
+    	item = new DocumentModelItem();
+    	item.setName("SUB_MATERIAL");
+    	item.setTableFieldName("SUBMT");
+    	item.setDataElement(cdata.ematid);
+    	item.setReference(cdata.imatid);
+    	item.setSearchHelp("SH_MATERIAL");
+    	
+    	model.add(item);
+    	
+    }
+}
+
+class CData {
+    public DataElement evalue, edate, ematid;
+    public DocumentModelItem imatid, item;
+	
 }

@@ -10,7 +10,21 @@ import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
-
+    private static final byte PRICES = 0;
+    private static final byte PROMOS = 1;
+    private static final byte SUBMATS = 2;
+    private static final byte DEL_SUBMAT = 3;
+    private static final byte DEL_PRICES = 4;
+    private static final byte DEL_PROMOS = 5;
+    private static final String[] QUERIES = {
+        "from PRECO_MATERIAL where MATERIAL = ?",
+        "from PROMOCAO_MATERIAL where MATERIAL = ?",
+        "from SUB_MATERIAL where MATERIAL = ?",
+        "delete from SUB_MATERIAL where MATERIAL = ?",
+        "delete from PRECO_MATERIAL where MATERIAL = ?",
+        "delete from PROMOCAO_MATERIAL where MATERIAL = ?"
+    };
+    
     /**
      * 
      * @param view
@@ -53,7 +67,7 @@ public class Request {
      */
     private static final String getItemId(int i, String material) {
         return new StringBuilder(Integer.toString(i)).append(".").
-        append(material).toString();
+                append(material).toString();
     }
     
     /**
@@ -65,9 +79,9 @@ public class Request {
      */
     private static final void load(ViewData view, Function function, byte mode)
             throws Exception {
-        ExtendedObject[] prices, promos;
+        ExtendedObject[] objects;
         DataForm selection = view.getElement("selection");
-        String query, matid = selection.get("material").get();
+        String matid = selection.get("material").get();
         Documents documents = new Documents(function);
         ExtendedObject material = documents.getObject("MATERIAL", matid);
         
@@ -76,17 +90,18 @@ public class Request {
             return;
         }
         
-        query = "from PRECO_MATERIAL where MATERIAL = ?";
-        prices = documents.select(query, matid);
+        objects = documents.select(QUERIES[PRICES], matid);
+        view.export("prices", objects);
         
-        query = "from PROMOCAO_MATERIAL where MATERIAL = ?";
-        promos = documents.select(query, matid);
+        objects = documents.select(QUERIES[PROMOS], matid);
+        view.export("promos", objects);
+        
+        objects = documents.select(QUERIES[SUBMATS], matid);
+        view.export("submats", objects);
         
         view.setTitle(Common.TITLE[mode]);
         view.setReloadableView(true);
         view.export("material", material);
-        view.export("prices", prices);
-        view.export("promos", promos);
         view.export("mode", mode);
         view.redirect(null, "material");
     }
@@ -113,12 +128,9 @@ public class Request {
             throws Exception {
         Documents documents = new Documents(function);
         DataForm base = view.getElement("base");
-        Table prices = view.getElement("prices");
-        Table promos = view.getElement("promos");
-        ExtendedObject opromo, oprice, obase = base.getObject();
+        ExtendedObject obase = base.getObject();
         byte mode = Common.getMode(view);
-        int i = 0;
-        String itemid, material = obase.getValue("ID");
+        String material = obase.getValue("ID");
         
         if (mode == Common.CREATE) {
             view.setTitle(Common.TITLE[Common.UPDATE]);
@@ -126,38 +138,40 @@ public class Request {
             documents.save(obase);
         } else {
             documents.modify(obase);
-            documents.update("delete from PRECO_MATERIAL where MATERIAL = ?",
-                    material);
-            
-            documents.update("delete from PROMOCAO_MATERIAL where MATERIAL = ?",
-                    material);
+            documents.update(QUERIES[DEL_SUBMAT], material);
+            documents.update(QUERIES[DEL_PRICES], material);
+            documents.update(QUERIES[DEL_PROMOS], material);
         }
         
-        i = 0;
-        for (TableItem item : prices.getItens()) {
-            oprice = item.getObject();
-            itemid = getItemId(i, material);
-            i++;
-            oprice.setValue("ID", itemid);
-            oprice.setValue("MATERIAL", material);
-            documents.save(oprice);
-        }
-        
-        i = 0;
-        for (TableItem item : promos.getItens()) {
-            opromo = item.getObject();
-            itemid = getItemId(i, material);
-            i++;
-            opromo.setValue("ID", itemid);
-            opromo.setValue("MATERIAL", material);
-            documents.save(opromo);
-        }
-        
-        documents.commit();
+        saveItens((Table)view.getElement("prices"), material, documents);
+        saveItens((Table)view.getElement("promos"), material, documents);
+        saveItens((Table)view.getElement("submats"), material, documents);
         
         view.message(Const.STATUS, "material.saved.successfully");
     }
     
+    /**
+     * 
+     * @param table
+     * @param material
+     * @param documents
+     * @throws Exception
+     */
+    private static final void saveItens(Table table, String material,
+            Documents documents) throws Exception {
+        String itemid;
+        ExtendedObject object;
+        int i = 0;
+        
+        for (TableItem item : table.getItens()) {
+            object = item.getObject();
+            itemid = getItemId(i, material);
+            i++;
+            object.setValue("ID", itemid);
+            object.setValue("MATERIAL", material);
+            documents.save(object);
+        }
+    }
     /**
      * 
      * @param view

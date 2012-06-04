@@ -38,14 +38,20 @@ public class Common {
     public static final void insertItem(byte mode, Table itens, ViewData view,
             ExtendedObject object) {
         TextField tfield;
-        String name;
+        String name, tablename;
+        ValidatorConfig vlvalidatorcfg = null;
+        ValidatorConfig dtvalidatorcfg = null;
         TableItem item = new TableItem(itens);
         DocumentModel model = itens.getModel();
-        ValidatorConfig vlvalidatorcfg = new ValidatorConfig();
-        ValidatorConfig dtvalidatorcfg = new ValidatorConfig();
         
-        vlvalidatorcfg.setValidator(ValorCustoValidator.class);
-        dtvalidatorcfg.setValidator(DataInicialValidator.class);
+        tablename = itens.getName();
+        if (!tablename.equals("submats")) {
+            vlvalidatorcfg = new ValidatorConfig();
+            vlvalidatorcfg.setValidator(ValorCustoValidator.class);
+            
+            dtvalidatorcfg = new ValidatorConfig();
+            dtvalidatorcfg.setValidator(DataInicialValidator.class);
+        }
         
         for (DocumentModelItem modelitem : model.getItens()) {
             tfield = new TextField(itens, modelitem.getName());
@@ -53,6 +59,9 @@ public class Common {
             item.add(tfield);
             
             name = modelitem.getName();
+            if (tablename.equals("submats"))
+                continue;
+            
             if (name.equals("VL_CUSTO")) {
                 vlvalidatorcfg.add(tfield);
                 tfield.setValidatorConfig(vlvalidatorcfg);

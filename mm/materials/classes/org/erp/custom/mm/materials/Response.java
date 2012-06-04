@@ -14,9 +14,29 @@ import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.ViewData;
 
 public class Response {
+	
+	private static final void loadItens(ViewData view, byte mode) {
+        ExtendedObject[] objects;
+        Table itens;
+        ExtendedObject material = view.getParameter("material");
+        DataForm base = view.getElement("base");
+        
+        base.setObject(material);
+
+        for (String name : new String[] {"prices", "promos", "submats"}) {
+	        objects = view.getParameter(name);
+	        if (objects == null)
+	            continue;
+	        
+        	itens = view.getElement(name);
+            for (ExtendedObject oprice : objects)
+                Common.insertItem(mode, itens, view, oprice);
+        }
+	}
 
     /**
      * 
@@ -51,10 +71,11 @@ public class Response {
      */
     public static final void material(ViewData view, Function function)
             throws Exception {
+        Button save, addpromo, removepromo, addmaterial, removematerial;
+        Button addprice, removeprice;
         String matid, name;
-        ExtendedObject material;
-        ExtendedObject[] oprices, opromos;
         DataItem dataitem;
+        Table prices, promos, submat;
         byte mode = Common.getMode(view);
         Container container = new Form(view, "main");
         TabbedPane tabs = new TabbedPane(container, "tabs");
@@ -62,8 +83,7 @@ public class Response {
         DataForm base = new DataForm(tabs, "base");
         StandardContainer pricescnt = new StandardContainer(tabs, "pricescnt");
         StandardContainer promocnt = new StandardContainer(tabs, "promocnt");
-        Table prices = new Table(pricescnt, "prices");
-        Table promos = new Table(promocnt, "promos");
+        StandardContainer submatcnt = new StandardContainer(tabs, "submatcnt");
         Documents documents = new Documents(function);
         
         /*
@@ -90,86 +110,79 @@ public class Response {
         /*
          * Prices
          */
-        tabitem = new TabbedPaneItem(tabs, "pricespane");
-        tabitem.setContainer(pricescnt);
-        
+        addprice = new Button(pricescnt, "addprice");
+        removeprice = new Button(pricescnt, "removeprice");
+        prices = new Table(pricescnt, "prices");
+        prices.setMark(true);
         prices.importModel(documents.getModel("PRECO_MATERIAL"));
         prices.getColumn("MATERIAL").setVisible(false);
         prices.getColumn("ID").setVisible(false);
         
+        tabitem = new TabbedPaneItem(tabs, "pricespane");
+        tabitem.setContainer(pricescnt);
+        
         /*
          * Promotion
          */
-        tabitem = new TabbedPaneItem(tabs, "promotions");
-        tabitem.setContainer(promocnt);
-        
+        addpromo = new Button(promocnt, "addpromo");
+        removepromo = new Button(promocnt, "removepromo");
+        promos = new Table(promocnt, "promos");
+        promos.setMark(true);
         promos.importModel(documents.getModel("PROMOCAO_MATERIAL"));
         promos.getColumn("MATERIAL").setVisible(false);
         promos.getColumn("ID").setVisible(false);
+        
+        tabitem = new TabbedPaneItem(tabs, "promotions");
+        tabitem.setContainer(promocnt);
+        
+        /*
+         * Sub-materials
+         */
+        addmaterial = new Button(submatcnt, "addmaterial");
+        removematerial = new Button(submatcnt, "removematerial");
+        submat = new Table(submatcnt, "submats");
+        submat.setMark(true);
+        submat.importModel(documents.getModel("SUB_MATERIAL"));
+        
+        for (TableColumn column : submat.getColumns())
+            if (!column.isMark())
+                column.setVisible(column.getName().equals("SUB_MATERIAL"));
+            
+        tabitem = new TabbedPaneItem(tabs, "submaterials");
+        tabitem.setContainer(submatcnt);
+        
+        save = new Button(container, "save");
         
         switch (mode) {
         case Common.CREATE:
             matid = view.getParameter("matid");
             base.get("ID").set(matid);
             
-            prices.setMark(true);
             Common.insertItem(mode, prices, view, null);
-            
-            promos.setMark(true);
             Common.insertItem(mode, promos, view, null);
-            
-            new Button(pricescnt, "addprice");
-            new Button(pricescnt, "removeprice");
-            
-            new Button(promocnt, "addpromo");
-            new Button(promocnt, "removepromo");
-            
-            new Button(container, "save");
+            Common.insertItem(mode, submat, view, null);
             
             break;
+            
         case Common.UPDATE:
-            material = view.getParameter("material");
-            oprices = view.getParameter("prices");
-            opromos = view.getParameter("promos");
-            
-            base.setObject(material);
-            prices.setMark(true);
-            
-            if (oprices != null)
-                for (ExtendedObject oprice : oprices)
-                    Common.insertItem(mode, prices, view, oprice);
-
-            promos.setMark(true);
-            
-            if (opromos != null)
-                for (ExtendedObject opromo : opromos)
-                    Common.insertItem(mode, promos, view, opromo);
-            
-            new Button(pricescnt, "addprice");
-            new Button(pricescnt, "removeprice");
-            
-            new Button(promocnt, "addpromo");
-            new Button(promocnt, "removepromo");
-            
-            new Button(container, "save");
+            loadItens(view, mode);
             
             break;
             
         case Common.SHOW:
-            material = view.getParameter("material");
-            oprices = view.getParameter("prices");
-            opromos = view.getParameter("promos");
+        	save.setVisible(false);
+        	addprice.setVisible(false);
+        	removeprice.setVisible(false);
+        	addpromo.setVisible(false);
+        	removepromo.setVisible(false);
+        	addmaterial.setVisible(false);
+        	removematerial.setVisible(false);
             
-            base.setObject(material);
             prices.setMark(false);
+            promos.setMark(false);
+            submat.setMark(false);
             
-            if (oprices != null)
-                for (ExtendedObject oprice : oprices)
-                    Common.insertItem(mode, prices, view, oprice);
-            
-            if (opromos != null)
-                for (ExtendedObject opromo : opromos)
-                    Common.insertItem(mode, promos, view, opromo);
+            loadItens(view, mode);
             
             break;
         }

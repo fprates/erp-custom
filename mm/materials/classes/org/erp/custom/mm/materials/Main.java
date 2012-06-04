@@ -11,10 +11,26 @@ public class Main extends AbstractPage {
         export("install", "install");
     }
     
+    /**
+     * 
+     * @param view
+     */
+    public final void addmaterial(ViewData view) {
+    	Request.additem(view, "submats");
+    }
+    
+    /**
+     * 
+     * @param view
+     */
     public final void addprice(ViewData view) {
         Request.additem(view, "prices");
     }
     
+    /**
+     * 
+     * @param view
+     */
     public final void addpromo(ViewData view) {
         Request.additem(view, "promos");
     }
@@ -34,7 +50,7 @@ public class Main extends AbstractPage {
      * @return
      */
     public final InstallData install(Message message) {
-        return Install.self();
+        return Install.init();
     }
     
     /**
@@ -53,6 +69,14 @@ public class Main extends AbstractPage {
      */
     public final void material(ViewData view) throws Exception {
         Response.material(view, this);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void removematerial(ViewData view) {
+    	Request.removeitem(view, "submats");
     }
     
     /**
