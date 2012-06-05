@@ -31,8 +31,8 @@ public class Main extends AbstractPage {
         return Install.init(this);
     }
     
-    public final void main(ViewData view) {
-        Response.main(view);
+    public final void main(ViewData view) throws Exception {
+        Response.main(view, this);
     }
     
     public final void remove(ViewData view) {

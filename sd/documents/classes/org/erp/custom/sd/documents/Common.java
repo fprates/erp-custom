@@ -39,8 +39,8 @@ public class Common {
             
             i++;
         } else {
-            i = (Long)object.getValue("ITEM_NUMBER");
-            docid = (Long)object.getValue("DOCUMENT_ID");
+            i = object.getValue("ITEM_NUMBER");
+            docid = object.getValue("DOCUMENT_ID");
         }
         
         item = new TableItem(itens);
@@ -67,10 +67,11 @@ public class Common {
                 continue;
             }
             
-            if (name.equals("MATERIAL") && view != null)
+            if (name.equals("MATERIAL")) {
                 view.setFocus(tfield);
+                tfield.setObligatory((mode == SHOW)? false: true);
+            }
             
-            tfield.setObligatory((mode == SHOW)? false: true);
             tfield.setEnabled((mode == SHOW)? false : true);
             
             if (object != null)

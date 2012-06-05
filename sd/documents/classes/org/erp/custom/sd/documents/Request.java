@@ -11,48 +11,71 @@ import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
-
+    private static final byte DEL_ITENS = 0;
+    private static final byte ITENS = 1;
+    private static final String[] QUERIES = {
+        "delete custom_document_item where document_id = ?",
+        "from custom_sd_document_item where document_id = ?"
+    };
+    
+    /**
+     * 
+     * @param view
+     */
     public static final void add(ViewData view) {
         Table itens = view.getElement("itens");
         
         Common.insertItem(Common.getMode(view), itens, view, null);
     }
     
+    /**
+     * 
+     * @param view
+     */
     public static final void create(ViewData view) {
         view.setReloadableView(true);
         view.export("mode", Common.CREATE);
         view.redirect(null, "document");
     }
     
+    /**
+     * 
+     * @param view
+     * @param function
+     * @throws Exception
+     */
     public static final void display(ViewData view, Function function)
             throws Exception {
         load(view, function, Common.SHOW);
     }
     
+    /**
+     * 
+     * @param view
+     * @param function
+     * @param mode
+     * @throws Exception
+     */
     private static final void load(ViewData view, Function function, byte mode)
             throws Exception {
         ExtendedObject header;
         ExtendedObject[] itens;
-        long ident;
         Documents documents = new Documents(function);
         DataForm form = view.getElement("selection");
-        String query, sident = form.get("document").get();
+        long ident = form.get("ID").get();
         
-        if (sident == null || sident.equals("")) {
+        if (ident == 0) {
             view.message(Const.ERROR, "document.number.required");
             return;
         }
         
-        ident = Long.parseLong(sident);
         header = documents.getObject("CUSTOM_SD_DOCUMENT", ident);
-        
         if (header == null) {
             view.message(Const.ERROR, "invalid.sd.document");
             return;
         }
         
-        query = "from custom_sd_document_item where document_id = ?";
-        itens = documents.select(query, ident);
+        itens = documents.select(QUERIES[ITENS], ident);
         
         view.setReloadableView(true);
         view.export("mode", mode);
@@ -61,6 +84,10 @@ public class Request {
         view.redirect(null, "document");
     }
     
+    /**
+     * 
+     * @param view
+     */
     public static final void remove(ViewData view) {
         Table itens = view.getElement("itens");
         
@@ -69,9 +96,14 @@ public class Request {
                 itens.remove(item);
     }
     
+    /**
+     * 
+     * @param view
+     * @param function
+     * @throws Exception
+     */
     public static final void save(ViewData view, Function function)
             throws Exception {
-        String query;
         long docid, itemnr;
         DataForm header = view.getElement("header");
         Table itens = view.getElement("itens");
@@ -83,44 +115,44 @@ public class Request {
             docid = documents.getNextNumber("SD_DOCUMENT");
             oheader.setValue("ID", docid);
             header.get("ID").set(docid);
+            view.setTitle(Common.TITLE[Common.UPDATE]);
+            view.export("mode", Common.UPDATE);
             
-            documents.save(oheader);
+            if (documents.save(oheader) == 0) {
+                view.message(Const.ERROR, "invalid.document.header");
+                return;
+            }
+            
         } else {
-            docid = (Long)oheader.getValue("ID");
-            
             documents.modify(oheader);
-            
-            query = "delete custom_document_item where document_id = ?";
-            documents.update(query, docid);
+
+            docid = oheader.getValue("ID");
+            documents.update(QUERIES[DEL_ITENS], docid);
         }
         
         for (TableItem item : itens.getItens()) {
             oitem = item.getObject();
             
-            if (mode == Common.CREATE) {
-                itemnr = ((Long)oitem.getValue("ITEM_NUMBER")) +
-                        (docid * 100000);
-                
+            itemnr = oitem.getValue("ITEM_NUMBER");
+            if (itemnr < (docid * 100000)) {
+                itemnr += (docid * 100000);
                 oitem.setValue("ITEM_NUMBER", itemnr);
-            
                 ((InputComponent)item.get("ITEM_NUMBER")).set(itemnr);
             }
             
             oitem.setValue("DOCUMENT_ID", docid);
-            
             documents.save(oitem);
-        }
-        
-        documents.commit();
-        
-        if (mode == Common.CREATE) {
-            view.setTitle(Common.TITLE[Common.UPDATE]);
-            view.export("mode", Common.UPDATE);
         }
         
         view.message(Const.STATUS, "document.saved.successfully");
     }
     
+    /**
+     * 
+     * @param view
+     * @param function
+     * @throws Exception
+     */
     public static final void update(ViewData view, Function function)
             throws Exception {
         load(view, function, Common.UPDATE);

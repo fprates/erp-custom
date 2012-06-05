@@ -5,11 +5,11 @@ import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
-import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
-import org.iocaste.shell.common.DataItem;
+import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.ViewData;
 
@@ -25,6 +25,7 @@ public class Response {
             throws Exception {
         Button add, remove, save;
         Table itens;
+        InputComponent receiver;
         ExtendedObject oheader = view.getParameter("header");
         ExtendedObject[] oitens = view.getParameter("itens");
         Container container = new Form(view, "main");
@@ -36,6 +37,9 @@ public class Response {
         header.importModel(model);
         header.get("ID").setEnabled(false);
         header.get("SENDER").setVisible(false);
+        
+        receiver = header.get("RECEIVER");
+        receiver.setObligatory(true);
         
         add = new Button(container, "add");
         remove = new Button(container, "remove");
@@ -50,19 +54,18 @@ public class Response {
         
         switch (mode) {
         case Common.CREATE:
-            Common.insertItem(mode, itens, null, null);
+            Common.insertItem(mode, itens, view, null);
             
             break;
         case Common.SHOW:
             add.setVisible(false);
             remove.setVisible(false);
             save.setVisible(false);
-            
-            header.get("SENDER").setEnabled(false);
-            header.get("RECEIVER").setEnabled(false);
-            header.setObject(oheader);
-            
             itens.setMark(false);
+            receiver.setObligatory(false);
+            receiver.setEnabled(false);
+            
+            header.setObject(oheader);
             
             for (ExtendedObject oitem : oitens)
                 Common.insertItem(mode, itens, view, oitem);
@@ -77,25 +80,35 @@ public class Response {
             break;
         }
         
-        view.setFocus("SENDER");
+        view.setFocus("RECEIVER");
         view.setTitle(Common.TITLE[mode]);
+        view.setNavbarActionEnabled("home", true);
         view.setNavbarActionEnabled("back", true);
     }
     
     /**
      * 
      * @param view
+     * @param function
+     * @throws Exception
      */
-    public static final void main(ViewData view) {
+    public static final void main(ViewData view, Function function)
+            throws Exception {
         Container container = new Form(view, "main");
         DataForm form = new DataForm(container, "selection");
         
-        new DataItem(form, Const.TEXT_FIELD, "document");
+        form.importModel(new Documents(function).
+                getModel("CUSTOM_SD_DOCUMENT"));
+        
+        for (Element element : form.getElements())
+            if (element.isDataStorable() && !element.getName().equals("ID"))
+                element.setVisible(false);
+        
         new Button(container, "display");
         new Button(container, "create");
         new Button(container, "update");
         
-        view.setFocus("document");
+        view.setFocus("ID");
         view.setNavbarActionEnabled("back", true);
         view.setTitle("document-selection");
     }
