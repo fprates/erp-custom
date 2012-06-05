@@ -14,9 +14,9 @@ public class Common {
     public static final byte UPDATE = 2;
     
     public static final String[] TITLE = {
-        "erp-custom-documents-create",
-        "erp-custom-documents-display",
-        "erp-custom-documents-update"
+        "document-create",
+        "document-display",
+        "document-update"
     };
     
     public static final byte getMode(ViewData view) {

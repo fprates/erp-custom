@@ -23,36 +23,41 @@ public class Response {
      */
     public static final void document(ViewData view, Function function)
             throws Exception {
+        Button add, remove, save;
+        Table itens;
         ExtendedObject oheader = view.getParameter("header");
         ExtendedObject[] oitens = view.getParameter("itens");
         Container container = new Form(view, "main");
         DataForm header = new DataForm(container, "header");
-        Table itens = new Table(container, "itens");
         Documents documents = new Documents(function);
         DocumentModel model = documents.getModel("CUSTOM_SD_DOCUMENT");
         byte mode = Common.getMode(view);
         
         header.importModel(model);
         header.get("ID").setEnabled(false);
-         
+        header.get("SENDER").setVisible(false);
+        
+        add = new Button(container, "add");
+        remove = new Button(container, "remove");
+        
         model = documents.getModel("CUSTOM_SD_DOCUMENT_ITEM");
+        itens = new Table(container, "itens");
         itens.importModel(model);
         itens.getColumn("DOCUMENT_ID").setVisible(false);
         itens.setMark(true);
         
+        save = new Button(container, "save");
+        
         switch (mode) {
         case Common.CREATE:
-            header.get("SENDER").setObligatory(true);
-            header.get("RECEIVER").setObligatory(true);
-            
             Common.insertItem(mode, itens, null, null);
-            
-            new Button(container, "save");
-            new Button(container, "add");
-            new Button(container, "remove");
             
             break;
         case Common.SHOW:
+            add.setVisible(false);
+            remove.setVisible(false);
+            save.setVisible(false);
+            
             header.get("SENDER").setEnabled(false);
             header.get("RECEIVER").setEnabled(false);
             header.setObject(oheader);
@@ -64,16 +69,10 @@ public class Response {
             
             break;
         case Common.UPDATE:
-            header.get("SENDER").setObligatory(true);
-            header.get("RECEIVER").setObligatory(true);
             header.setObject(oheader);
             
             for (ExtendedObject oitem : oitens)
                 Common.insertItem(mode, itens, view, oitem);
-
-            new Button(container, "save");
-            new Button(container, "add");
-            new Button(container, "remove");
             
             break;
         }

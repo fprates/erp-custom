@@ -28,7 +28,7 @@ public class Main extends AbstractPage {
     }
     
     public final InstallData install(Message message) throws Exception {
-        return Install.self(this);
+        return Install.init(this);
     }
     
     public final void main(ViewData view) {
