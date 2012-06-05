@@ -10,6 +10,7 @@ import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.packagetool.common.InstallData;
+import org.iocaste.packagetool.common.SearchHelpData;
 import org.iocaste.protocol.Function;
 import org.iocaste.protocol.user.Authorization;
 
@@ -54,8 +55,12 @@ public class Install {
         messages.put("document-display", "Exibir documento");
         messages.put("document-update", "Editar documento");
         messages.put("document.number.required",
-                "Número do documento obrigatório");
-        messages.put("document", "Documento");
+                "Número do documento obrigatório.");
+        messages.put("document.saved.successfully",
+                "Documento salvo com sucesso.");
+        messages.put("invalid.sd.document", "Documento inválido.");
+        messages.put("invalid.document.header",
+                "Cabeçalho do documento inválido.");
         messages.put("display", "Exibir");
         messages.put("create", "Criar");
         messages.put("update", "Atualizar");
@@ -63,6 +68,7 @@ public class Install {
         messages.put("ITEM_NUMBER", "Item");
         messages.put("MATERIAL", "Produto");
         messages.put("RECEIVER", "Recebedor");
+        messages.put("QUANTITY", "Quantidade");
         messages.put("save", "Salvar");
         messages.put("add", "Adicionar");
         messages.put("remove", "Remover");
@@ -84,6 +90,7 @@ public class Install {
         DocumentModel model;
         DocumentModelItem item, partnercode;
         DataElement element;
+        SearchHelpData sh;
         
         model = data.getModel("CUSTOM_SD_DOCUMENT", "CSDDOCHDR", null);
         
@@ -98,6 +105,7 @@ public class Install {
         cdata.docid.setName("ID");
         cdata.docid.setTableFieldName("IDENT");
         cdata.docid.setDataElement(element);
+        cdata.docid.setSearchHelp("SH_SD_DOC");
         
         model.add(cdata.docid);
         model.add(new DocumentModelKey(cdata.docid));
@@ -125,6 +133,15 @@ public class Install {
         item.setSearchHelp(partnercode.getSearchHelp());
         
         model.add(item);
+        
+        sh = new SearchHelpData();
+        sh.setModel("CUSTOM_SD_DOCUMENT");
+        sh.setExport("ID");
+        sh.setName("SH_SD_DOC");
+        sh.add("ID");
+        sh.add("RECEIVER");
+        
+        data.add(sh);
     }
     
     /**
@@ -178,6 +195,20 @@ public class Install {
         item.setDataElement(element);
         item.setReference(materialid);
         item.setSearchHelp("SH_MATERIAL");
+        
+        model.add(item);
+        
+        // quantidade
+        element = new DataElement();
+        element.setName("CUSTOM_SD_DOCUMENT_ITEM.QUANTITY");
+        element.setDecimals(3);
+        element.setLength(12);
+        element.setType(DataType.DEC);
+        
+        item = new DocumentModelItem();
+        item.setName("QUANTITY");
+        item.setTableFieldName("QUANT");
+        item.setDataElement(element);
         
         model.add(item);
     }
