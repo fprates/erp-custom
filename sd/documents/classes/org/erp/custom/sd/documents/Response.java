@@ -15,6 +15,25 @@ import org.iocaste.shell.common.ViewData;
 
 public class Response {
     
+    public static final void condform(ViewData view, Function function)
+            throws Exception {
+        Container container = new Form(view, "main");
+        Documents documents = new Documents(function);
+        Table conditions;
+        
+        new Button(container, "condadd");
+        new Button(container, "condremove");
+        
+        conditions = new Table(container, "conditions");
+        conditions.setMark(true);
+        conditions.importModel(documents.getModel("CUSTOM_SD_CONDITIONS"));
+        
+        new Button(container, "condapply");
+        new Button(container, "condcancel");
+        
+        view.setTitle(Common.TITLE[Common.CONDITIONS]);
+    }
+    
     /**
      * 
      * @param view
@@ -26,14 +45,17 @@ public class Response {
         Button add, remove, save;
         Table itens;
         InputComponent receiver;
+        DataForm header;
         ExtendedObject oheader = view.getParameter("header");
         ExtendedObject[] oitens = view.getParameter("itens");
         Container container = new Form(view, "main");
-        DataForm header = new DataForm(container, "header");
         Documents documents = new Documents(function);
         DocumentModel model = documents.getModel("CUSTOM_SD_DOCUMENT");
         byte mode = Common.getMode(view);
+
+        new Button(container, "conditions");
         
+        header = new DataForm(container, "header");
         header.importModel(model);
         header.get("ID").setEnabled(false);
         header.get("SENDER").setVisible(false);

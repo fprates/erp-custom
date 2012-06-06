@@ -22,9 +22,10 @@ public class Install {
         InstallData data = new InstallData();
         Documents documents = new Documents(function);
         CData cdata = new CData();
-        
+
         installHeader(data, cdata, documents);
         installItens(data, cdata, documents);
+        installConditions(data, cdata);
         
         /*
          * autorizações
@@ -54,6 +55,7 @@ public class Install {
         messages.put("document-create", "Criar documento");
         messages.put("document-display", "Exibir documento");
         messages.put("document-update", "Editar documento");
+        messages.put("document-conditions", "Condições de preço");
         messages.put("document.number.required",
                 "Número do documento obrigatório.");
         messages.put("document.saved.successfully",
@@ -69,13 +71,127 @@ public class Install {
         messages.put("MATERIAL", "Produto");
         messages.put("RECEIVER", "Recebedor");
         messages.put("QUANTITY", "Quantidade");
+        messages.put("DATA_CRIACAO", "Criado em");
+        messages.put("PRECO_UNITARIO", "Preço unitário");
+        messages.put("PRECO_TOTAL", "Preço total");
+        messages.put("CONDICAO", "Condição");
+        messages.put("VALOR", "Valor");
         messages.put("save", "Salvar");
         messages.put("add", "Adicionar");
         messages.put("remove", "Remover");
+        messages.put("condadd", "Adicionar");
+        messages.put("condremove", "Remover");
+        messages.put("condapply", "Aplicar");
+        messages.put("condcancel", "Cancelar");
+        messages.put("conditions", "Condições");
         messages.put("VA01", "Emissão de documento de venda");
         data.setMessages("pt_BR", messages);
         
         return data;
+    }
+    
+    private static final void installConditions(InstallData data, CData cdata) {
+        DocumentModelItem item, condid;
+        DocumentModel model;
+        DataElement element;
+        SearchHelpData sh;
+        
+        /*
+         * Condição
+         */
+        model = data.getModel("CUSTOM_CONDITION", "CCONDITION", null);
+        
+        // identificador
+        element = new DataElement();
+        element.setName("CUSTOM_CONDITION.ID");
+        element.setType(DataType.NUMC);
+        element.setLength(2);
+        
+        condid = new DocumentModelItem();
+        condid.setName("ID");
+        condid.setTableFieldName("IDENT");
+        condid.setDataElement(element);
+        
+        model.add(condid);
+        model.add(new DocumentModelKey(condid));
+        
+        // descrição
+        element = new DataElement();
+        element.setName("CUSTOM_CONDITION.TEXT");
+        element.setType(DataType.CHAR);
+        element.setLength(12);
+        element.setUpcase(true);
+        
+        item = new DocumentModelItem();
+        item.setName("TEXT");
+        item.setTableFieldName("TEXT");
+        item.setDataElement(element);
+        
+        model.add(item);
+        
+        // valores
+        data.addValues(model, 0, "no.condition");
+        data.addValues(model, 1, "increase");
+        data.addValues(model, 2, "discount");
+        
+        // ajuda de pesquisa
+        sh = new SearchHelpData();
+        sh.setName("SH_SD_CONDITION");
+        sh.setModel("CUSTOM_CONDITION");
+        sh.setExport("ID");
+        sh.add("ID");
+        sh.add("TEXT");
+        data.add(sh);
+        
+        /*
+         * Condições para o documento
+         */
+        model = data.getModel("CUSTOM_SD_CONDITIONS", "CSDCONDITION", null);
+        
+        // identificador
+        element = new DataElement();
+        element.setName("CUSTOM_SD_CONDITIONS.ID");
+        element.setLength(13);
+        element.setType(DataType.NUMC);
+        
+        item = new DocumentModelItem();
+        item.setName("ID");
+        item.setTableFieldName("IDENT");
+        item.setDataElement(element);
+        
+        model.add(item);
+        model.add(new DocumentModelKey(item));
+        
+        // documento
+        element = cdata.docid.getDataElement();
+        
+        item = new DocumentModelItem();
+        item.setName("DOCUMENT");
+        item.setTableFieldName("DOCID");
+        item.setDataElement(element);
+        item.setReference(cdata.docid);
+        
+        model.add(item);
+        
+        // tipo condição
+        element = condid.getDataElement();
+        
+        item = new DocumentModelItem();
+        item.setName("CONDICAO");
+        item.setTableFieldName("TPCON");
+        item.setDataElement(element);
+        item.setReference(condid);
+        item.setSearchHelp("SH_SD_CONDITION");
+        
+        model.add(item);
+        
+        // valor
+        item = new DocumentModelItem();
+        item.setName("VALOR");
+        item.setTableFieldName("VLCON");
+        item.setDataElement(cdata.eprice);
+        
+        model.add(item);
     }
     
     /**
@@ -131,6 +247,18 @@ public class Install {
         item.setDataElement(element);
         item.setReference(partnercode);
         item.setSearchHelp(partnercode.getSearchHelp());
+        
+        model.add(item);
+        
+        // data de criação
+        element = new DataElement();
+        element.setName("CUSTOM_SD_DOCUMENT.DATA_CRIACAO");
+        element.setType(DataType.DATE);
+        
+        item = new DocumentModelItem();
+        item.setName("DATA_CRIACAO");
+        item.setTableFieldName("DTREG");
+        item.setDataElement(element);
         
         model.add(item);
         
@@ -211,9 +339,32 @@ public class Install {
         item.setDataElement(element);
         
         model.add(item);
+        
+        // preço unitário
+        cdata.eprice = new DataElement();
+        cdata.eprice.setName("CUSTOM_SD_DOCUMENT_ITEM.PRECO");
+        cdata.eprice.setDecimals(3);
+        cdata.eprice.setLength(15);
+        cdata.eprice.setType(DataType.DEC);
+        
+        item = new DocumentModelItem();
+        item.setName("PRECO_UNITARIO");
+        item.setTableFieldName("PUNIT");
+        item.setDataElement(cdata.eprice);
+        
+        model.add(item);
+        
+        // preço total
+        item = new DocumentModelItem();
+        item.setName("PRECO_TOTAL");
+        item.setTableFieldName("PTOTA");
+        item.setDataElement(cdata.eprice);
+        
+        model.add(item);
     }
 }
 
 class CData {
     public DocumentModelItem docid;
+    public DataElement eprice;
 }

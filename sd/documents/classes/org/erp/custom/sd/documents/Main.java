@@ -15,6 +15,31 @@ public class Main extends AbstractPage {
         Request.add(view);
     }
     
+    public final void condadd(ViewData view) {
+        Request.condadd(view);
+    }
+    
+    public final void condapply(ViewData view) throws Exception {
+        Request.condapply(view);
+        back(view);
+    }
+    
+    public final void condcancel(ViewData view) throws Exception {
+        back(view);
+    }
+    
+    public final void condform(ViewData view) throws Exception {
+        Response.condform(view, this);
+    }
+    
+    public final void conditions(ViewData view) {
+        Request.conditions(view);
+    }
+    
+    public final void condremove(ViewData view) {
+        Request.condremove(view);
+    }
+    
     public final void create(ViewData view) {
         Request.create(view);
     }

@@ -1,3 +1,5 @@
+drop table CSDCONDITION if exists;
+drop table CCONDITION if exists;
 drop table csddocitm if exists;
 drop table csddochdr if exists;
 drop table CSUBMAT if exists;

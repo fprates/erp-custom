@@ -1,5 +1,8 @@
 package org.erp.custom.sd.documents;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
@@ -7,7 +10,9 @@ import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
+import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
+import org.iocaste.shell.common.TextField;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
@@ -26,6 +31,48 @@ public class Request {
         Table itens = view.getElement("itens");
         
         Common.insertItem(Common.getMode(view), itens, view, null);
+    }
+    
+    public static final void condapply(ViewData view) {
+        Table conditions = view.getElement("conditions");
+        List<ExtendedObject> oconditions = new ArrayList<ExtendedObject>();
+        
+        for (TableItem item : conditions.getItens())
+            oconditions.add(item.getObject());
+        
+        view.export("conditions", oconditions);
+    }
+    
+    public static final void condadd(ViewData view) {
+        TextField tfield;
+        Table conditions = view.getElement("conditions");
+        TableItem item = new TableItem(conditions);
+        
+        for (TableColumn column : conditions.getColumns()) {
+            if (column.isMark())
+                continue;
+            
+            tfield = new TextField(conditions, column.getName());
+            tfield.setModelItem(column.getModelItem());
+            
+            item.add(tfield);
+        }
+    }
+    
+    public static final void conditions(ViewData view) {
+        List<ExtendedObject> oldcond = new ArrayList<ExtendedObject>();
+        
+        view.setReloadableView(true);
+        view.export("oldcond", oldcond);
+        view.redirect(null, "condform");
+    }
+    
+    public static final void condremove(ViewData view) {
+        Table conditions = view.getElement("conditions");
+        
+        for (TableItem item :  conditions.getItens())
+            if (item.isSelected())
+                conditions.remove(item);
     }
     
     /**

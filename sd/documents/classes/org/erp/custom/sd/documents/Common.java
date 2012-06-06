@@ -12,11 +12,13 @@ public class Common {
     public static final byte CREATE = 0;
     public static final byte SHOW = 1;
     public static final byte UPDATE = 2;
+    public static final byte CONDITIONS = 3;
     
     public static final String[] TITLE = {
         "document-create",
         "document-display",
-        "document-update"
+        "document-update",
+        "document-conditions"
     };
     
     public static final byte getMode(ViewData view) {
