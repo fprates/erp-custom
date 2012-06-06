@@ -618,7 +618,6 @@ public class Install {
         shdata.add("CODIGO");
         shdata.add("SIGLA");
         shdata.add("DESCRICAO");
-        shdata.add("DOCUMENTO_FISCAL");
         shdata.setName("SH_PARTNER_TYPE");
         shdata.setModel("CUSTOM_PARTNER_TYPE");
         shdata.setExport("CODIGO");
