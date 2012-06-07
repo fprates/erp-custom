@@ -115,16 +115,25 @@ public class Common {
             if (name.equals("MATERIAL")) {
                 view.setFocus(tfield);
                 tfield.setObligatory(mode != SHOW);
+                tfield.setEnabled(mode != SHOW);
+                continue;
             }
             
-            tfield.setEnabled(mode != SHOW);
+            if (name.equals("QUANTITY")) {
+                tfield.setEnabled(mode != SHOW);
+                continue;
+            }
             
-            if (object != null)
-                tfield.set(object.getValue(name));
+            tfield.setEnabled(false);
         }
         
         tfield = item.get("MATERIAL");
         tfield.setValidator(MaterialValidator.class);
-        tfield.addValidatorInput((InputComponent)item.get("PRECO_UNITARIO"));
+        for (String tfname : new String[] {
+                "PRECO_UNITARIO", "PRECO_TOTAL", "QUANTITY"})
+            tfield.addValidatorInput((InputComponent)item.get(tfname));
+        
+        if (object != null)
+            item.setObject(object);
     }
 }

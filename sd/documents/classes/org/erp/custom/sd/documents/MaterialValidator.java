@@ -18,7 +18,7 @@ public class MaterialValidator extends AbstractValidator {
      */
     @Override
     public final void validate(ValidatorConfig config) throws Exception {
-        BigDecimal uprice;
+        double uprice, quantity;
         Documents documents;
         ExtendedObject[] objects;
         String query;
@@ -33,8 +33,10 @@ public class MaterialValidator extends AbstractValidator {
         if (objects == null)
             return;
         
-        uprice = objects[0].getValue("VL_VENDA");
-        config.set("PRECO_UNITARIO", uprice.floatValue());
+        uprice = ((BigDecimal)objects[0].getValue("VL_VENDA")).doubleValue();
+        config.set("PRECO_UNITARIO", uprice);
+        quantity = config.get("QUANTITY");
+        config.set("PRECO_TOTAL", quantity * uprice);
     }
 
 }
