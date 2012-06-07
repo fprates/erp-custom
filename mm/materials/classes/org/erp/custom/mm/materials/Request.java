@@ -53,6 +53,7 @@ public class Request {
             return;
         }
         
+        view.clearParameters();
         view.setReloadableView(true);
         view.export("matid", matid);
         view.export("mode", Common.CREATE);
@@ -90,6 +91,7 @@ public class Request {
             return;
         }
         
+        view.clearParameters();
         objects = documents.select(QUERIES[PRICES], matid);
         view.export("prices", objects);
         
