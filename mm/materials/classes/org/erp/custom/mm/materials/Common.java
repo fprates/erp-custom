@@ -3,10 +3,10 @@ package org.erp.custom.mm.materials;
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
-import org.iocaste.shell.common.ValidatorConfig;
 import org.iocaste.shell.common.ViewData;
 
 public class Common {
@@ -39,52 +39,35 @@ public class Common {
             ExtendedObject object) {
         TextField tfield;
         String name, tablename;
-        ValidatorConfig vlvalidatorcfg = null;
-        ValidatorConfig dtvalidatorcfg = null;
         TableItem item = new TableItem(itens);
         DocumentModel model = itens.getModel();
         
-        tablename = itens.getName();
-        if (!tablename.equals("submats")) {
-            vlvalidatorcfg = new ValidatorConfig();
-            vlvalidatorcfg.setValidator(ValorCustoValidator.class);
-            
-            dtvalidatorcfg = new ValidatorConfig();
-            dtvalidatorcfg.setValidator(DataInicialValidator.class);
-        }
-        
+        tablename = itens.getName();        
         for (DocumentModelItem modelitem : model.getItens()) {
-            tfield = new TextField(itens, modelitem.getName());
-            tfield.setEnabled((mode == Common.SHOW)? false : true);
+            name = modelitem.getName();
+            tfield = new TextField(itens, name);
+            tfield.setEnabled(mode != Common.SHOW);
             item.add(tfield);
             
-            name = modelitem.getName();
-            if (tablename.equals("submats"))
+            if (tablename.equals("submats") && !name.equals("VL_VENDA"))
                 continue;
             
-            if (name.equals("VL_CUSTO")) {
-                vlvalidatorcfg.add(tfield);
-                tfield.setValidatorConfig(vlvalidatorcfg);
-            }
-            
-            if (name.equals("VL_VENDA")) {
-                if (view.getFocus() == null)
-                    view.setFocus(tfield);
-                
-                vlvalidatorcfg.add(tfield);
-            }
-            
-            if (name.equals("DT_INICIAL")) {
-                tfield.setValidatorConfig(dtvalidatorcfg);
-                dtvalidatorcfg.add(tfield);
-            }
-            
-            if (name.equals("DT_FINAL"))
-                dtvalidatorcfg.add(tfield);
+            if (view.getFocus() == null)
+                view.setFocus(tfield);
         }
         
         if (object != null)
             item.setObject(object);
         
+        if (tablename.equals("submats"))
+            return;
+        
+        tfield = (TextField)item.get("VL_CUSTO");
+        tfield.setValidator(ValorCustoValidator.class);
+        tfield.addValidatorInput((InputComponent)item.get("VL_VENDA"));
+
+        tfield = (TextField)item.get("DT_INICIAL");
+        tfield.setValidator(DataInicialValidator.class);
+        tfield.addValidatorInput((InputComponent)item.get("DT_FINAL"));
     }
 }

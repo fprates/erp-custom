@@ -12,14 +12,12 @@ public class ValorCustoValidator extends AbstractValidator {
      *     org.iocaste.shell.common.ValidatorConfig)
      */
     @Override
-    public final String validate(ValidatorConfig config) throws Exception {
+    public final void validate(ValidatorConfig config) throws Exception {
         double vlcusto = config.get("VL_CUSTO");
         double vlvenda = config.get("VL_VENDA");
         
         if (vlcusto > vlvenda)
-            return "vlcusto.gt.vlvenda";
-        
-        return null;
+            config.setMessage("vlcusto.gt.vlvenda");
     }
 
 }
