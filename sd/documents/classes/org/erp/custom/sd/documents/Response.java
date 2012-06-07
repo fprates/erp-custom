@@ -1,5 +1,7 @@
 package org.erp.custom.sd.documents;
 
+import java.util.List;
+
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
@@ -17,19 +19,31 @@ public class Response {
     
     public static final void condform(ViewData view, Function function)
             throws Exception {
+        Button condadd, condremove, condapply;
         Container container = new Form(view, "main");
         Documents documents = new Documents(function);
+        List<ExtendedObject> oconditions = view.getParameter("conditions");
         Table conditions;
         
-        new Button(container, "condadd");
-        new Button(container, "condremove");
+        condadd = new Button(container, "condadd");
+        condremove = new Button(container, "condremove");
         
         conditions = new Table(container, "conditions");
         conditions.setMark(true);
         conditions.importModel(documents.getModel("CUSTOM_SD_CONDITIONS"));
         
-        new Button(container, "condapply");
+        condapply = new Button(container, "condapply");
         new Button(container, "condcancel");
+        
+        if (oconditions != null) {
+            for (ExtendedObject ocondition : oconditions)
+                Common.insertCondition(conditions, ocondition);
+        } else {
+            conditions.setVisible(false);
+            condadd.setVisible(true);
+            condremove.setVisible(false);
+            condapply.setVisible(false);
+        }
         
         view.setTitle(Common.TITLE[Common.CONDITIONS]);
     }
@@ -129,7 +143,7 @@ public class Response {
         new Button(container, "display");
         new Button(container, "create");
         new Button(container, "update");
-        
+
         view.setFocus("ID");
         view.setNavbarActionEnabled("back", true);
         view.setTitle("document-selection");

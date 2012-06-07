@@ -25,6 +25,25 @@ public class Common {
         return (Byte)view.getParameter("mode");
     }
     
+    public static final void insertCondition(Table itens,
+            ExtendedObject object) {
+        TextField tfield;
+        TableItem item = new TableItem(itens);
+        
+        for (TableColumn column : itens.getColumns()) {
+            if (column.isMark())
+                continue;
+            
+            tfield = new TextField(itens, column.getName());
+            tfield.setModelItem(column.getModelItem());
+            
+            item.add(tfield);
+        }
+        
+        if (object != null)
+            item.setObject(object);
+    }
+    
     public static final void insertItem(byte mode, Table itens, ViewData view,
             ExtendedObject object) {
         String name;

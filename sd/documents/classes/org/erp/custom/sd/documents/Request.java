@@ -10,9 +10,7 @@ import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
-import org.iocaste.shell.common.TextField;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
@@ -44,26 +42,17 @@ public class Request {
     }
     
     public static final void condadd(ViewData view) {
-        TextField tfield;
         Table conditions = view.getElement("conditions");
-        TableItem item = new TableItem(conditions);
         
-        for (TableColumn column : conditions.getColumns()) {
-            if (column.isMark())
-                continue;
-            
-            tfield = new TextField(conditions, column.getName());
-            tfield.setModelItem(column.getModelItem());
-            
-            item.add(tfield);
-        }
+        view.getElement("condremove").setVisible(true);
+        view.getElement("condapply").setVisible(true);
+        conditions.setVisible(true);
+        
+        Common.insertCondition(conditions, null);
     }
     
     public static final void conditions(ViewData view) {
-        List<ExtendedObject> oldcond = new ArrayList<ExtendedObject>();
-        
         view.setReloadableView(true);
-        view.export("oldcond", oldcond);
         view.redirect(null, "condform");
     }
     
@@ -73,6 +62,12 @@ public class Request {
         for (TableItem item :  conditions.getItens())
             if (item.isSelected())
                 conditions.remove(item);
+        
+        if (conditions.length() > 0)
+            return;
+        
+        view.getElement("condremove").setVisible(false);
+        conditions.setVisible(false);
     }
     
     /**
@@ -80,6 +75,7 @@ public class Request {
      * @param view
      */
     public static final void create(ViewData view) {
+        view.clearParameters();
         view.setReloadableView(true);
         view.export("mode", Common.CREATE);
         view.redirect(null, "document");
@@ -124,6 +120,7 @@ public class Request {
         
         itens = documents.select(QUERIES[ITENS], ident);
         
+        view.clearParameters();
         view.setReloadableView(true);
         view.export("mode", mode);
         view.export("header", header);
