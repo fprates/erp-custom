@@ -290,6 +290,7 @@ public class Main extends AbstractPage {
         
         removecommunic = view.getElement("removecommunic");
         removecommunic.setVisible(false);
+        communics.setVisible(false);
     }
     
     /**
