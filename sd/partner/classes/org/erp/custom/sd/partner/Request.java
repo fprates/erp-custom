@@ -18,6 +18,20 @@ import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.ViewData;
 
 public class Request {
+    private static final byte ADDRESSES = 0;
+    private static final byte CONTACTS = 1;
+    private static final byte COMMUNICS = 2;
+    private static final byte DEL_COMMUNICS = 3;
+    private static final byte DEL_CONTACTS = 4;
+    private static final byte DEL_ADDRESSES = 5;
+    private static final String[] QUERIES = {
+        "from CUSTOM_PARTNER_ADDRESS where partner_id = ?",
+        "from CUSTOM_PARTNER_CONTACT where partner_id = ?",
+        "from CUSTOM_PARTNER_COMM where partner_id = ?",
+        "delete from CUSTOM_PARTNER_COMM where PARTNER_ID = ?",
+        "delete from CUSTOM_PARTNER_CONTACT where PARTNER_ID = ?",
+        "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?"
+    };
     
     /**
      * 
@@ -56,6 +70,7 @@ public class Request {
      * @param view
      */
     public static final void create(ViewData view) {
+        view.clearParameters();
         view.export("mode", Common.CREATE);
         view.setReloadableView(true);
         view.redirect(null, "identity");
@@ -121,10 +136,9 @@ public class Request {
      */
     public static final void load(ViewData view, Function function, byte mode)
             throws Exception {
-        String query;
         Documents documents;
         ExtendedObject partner;
-        ExtendedObject[] addresses, contacts, communics;
+        ExtendedObject[] objects;
         DataForm form = view.getElement("selection");
         long ident = form.get("partner").get();
         
@@ -140,20 +154,18 @@ public class Request {
             return;
         }
         
-        query = "from CUSTOM_PARTNER_ADDRESS where partner_id = ?";
-        addresses = documents.select(query, ident);
-        
-        query = "from CUSTOM_PARTNER_CONTACT where partner_id = ?";
-        contacts = documents.select(query, ident);
-
-        query = "from CUSTOM_PARTNER_COMM where partner_id = ?";
-        communics = documents.select(query, ident);
-        
         view.clearParameters();
+        
+        objects = documents.select(QUERIES[ADDRESSES], ident);
+        view.export("addresses", objects);
+        
+        objects = documents.select(QUERIES[CONTACTS], ident);
+        view.export("contacts", objects);
+
+        objects = documents.select(QUERIES[COMMUNICS], ident);
+        view.export("communics", objects);
+        
         view.export("partner", partner);
-        view.export("addresses", addresses);
-        view.export("contacts", contacts);
-        view.export("communics", communics);
         view.export("mode", mode);
         view.setReloadableView(true);
         view.redirect(null, "identity");
@@ -188,7 +200,6 @@ public class Request {
             throws Exception {
         DataItem dataitem;
         InputComponent input;
-        String query;
         long codigo, addrfrom, addrto, contactid, contactid_, itemcode;
         Link link;
         Table itens, communics;
@@ -219,14 +230,9 @@ public class Request {
             documents.modify(opartner);
             codigo = opartner.getValue("CODIGO");
             
-            query = "delete from CUSTOM_PARTNER_COMM where PARTNER_ID = ?";
-            documents.update(query, codigo);
-            
-            query = "delete from CUSTOM_PARTNER_CONTACT where PARTNER_ID = ?";
-            documents.update(query, codigo);
-            
-            query = "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?";
-            documents.update(query, codigo);
+            documents.update(QUERIES[DEL_COMMUNICS], codigo);
+            documents.update(QUERIES[DEL_CONTACTS], codigo);
+            documents.update(QUERIES[DEL_ADDRESSES], codigo);
             
             view.export("mode", Common.UPDATE);
             
@@ -279,8 +285,6 @@ public class Request {
                 saveCommunicationItem(documents, communic, itemcode, codigo);
             }
         }
-        
-        documents.commit();
         
         view.message(Const.STATUS, "partner.saved.successfuly");
     }
