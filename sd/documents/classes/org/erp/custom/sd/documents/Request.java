@@ -32,7 +32,7 @@ public class Request {
     public static final void add(ViewData view) {
         Table itens = view.getElement("itens");
         
-        Common.insertItem(Common.getMode(view), itens, view, null);
+        Common.insertItem(itens, view, null);
     }
     
     public static final void condapply(ViewData view) {

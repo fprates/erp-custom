@@ -108,7 +108,7 @@ public class Response {
         
         switch (mode) {
         case Common.CREATE:
-            Common.insertItem(mode, itens, view, null);
+            Common.insertItem(itens, view, null);
             
             break;
         case Common.SHOW:
@@ -122,14 +122,14 @@ public class Response {
             header.setObject(oheader);
             
             for (ExtendedObject oitem : oitens)
-                Common.insertItem(mode, itens, view, oitem);
+                Common.insertItem(itens, view, oitem);
             
             break;
         case Common.UPDATE:
             header.setObject(oheader);
             
             for (ExtendedObject oitem : oitens)
-                Common.insertItem(mode, itens, view, oitem);
+                Common.insertItem(itens, view, oitem);
             
             break;
         }

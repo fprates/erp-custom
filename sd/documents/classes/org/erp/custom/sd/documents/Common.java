@@ -62,17 +62,24 @@ public class Common {
         item.setObject(object);
     }
     
-    public static final void insertItem(byte mode, Table itens, ViewData view,
+    /**
+     * 
+     * @param mode
+     * @param itens
+     * @param view
+     * @param object
+     */
+    public static final void insertItem(Table itens, ViewData view,
             ExtendedObject object) {
         String name;
         TextField tfield;
         TableItem item;
+        byte mode = getMode(view);
         long docid = 0, i = 0;
         
         if (object == null) {
             for (TableItem item_ : itens.getItens()) {
                 i = ((InputComponent)item_.get("ITEM_NUMBER")).get();
-            
                 docid = ((InputComponent)item_.get("DOCUMENT_ID")).get(); 
             }
             
@@ -89,7 +96,6 @@ public class Common {
                 continue;
             
             name = column.getName();
-            
             tfield = new TextField(itens, name);
             tfield.setModelItem(column.getModelItem());
             item.add(tfield);
@@ -108,13 +114,17 @@ public class Common {
             
             if (name.equals("MATERIAL")) {
                 view.setFocus(tfield);
-                tfield.setObligatory((mode == SHOW)? false: true);
+                tfield.setObligatory(mode != SHOW);
             }
             
-            tfield.setEnabled((mode == SHOW)? false : true);
+            tfield.setEnabled(mode != SHOW);
             
             if (object != null)
                 tfield.set(object.getValue(name));
         }
+        
+        tfield = item.get("MATERIAL");
+        tfield.setValidator(MaterialValidator.class);
+        tfield.addValidatorInput((InputComponent)item.get("PRECO_UNITARIO"));
     }
 }
