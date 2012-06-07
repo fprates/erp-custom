@@ -1,7 +1,5 @@
 package org.erp.custom.sd.documents;
 
-import java.util.List;
-
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
@@ -22,7 +20,7 @@ public class Response {
         Button condadd, condremove, condapply;
         Container container = new Form(view, "main");
         Documents documents = new Documents(function);
-        List<ExtendedObject> oconditions = view.getParameter("conditions");
+        ExtendedObject[] oconditions = view.getParameter("conditions");
         Table conditions;
         
         condadd = new Button(container, "condadd");
@@ -31,6 +29,7 @@ public class Response {
         conditions = new Table(container, "conditions");
         conditions.setMark(true);
         conditions.importModel(documents.getModel("CUSTOM_SD_CONDITIONS"));
+        conditions.getColumn("DOCUMENT").setVisible(false);
         
         condapply = new Button(container, "condapply");
         new Button(container, "condcancel");

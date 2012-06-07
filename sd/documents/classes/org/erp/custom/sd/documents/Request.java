@@ -16,9 +16,13 @@ import org.iocaste.shell.common.ViewData;
 public class Request {
     private static final byte DEL_ITENS = 0;
     private static final byte ITENS = 1;
+    private static final byte DEL_CONDITIONS = 2;
+    private static final byte CONDITIONS = 3;
     private static final String[] QUERIES = {
         "delete custom_document_item where document_id = ?",
-        "from custom_sd_document_item where document_id = ?"
+        "from custom_sd_document_item where document_id = ?",
+        "delete custom_sd_conditions where document = ?",
+        "from custom_sd_conditions where document = ?"
     };
     
     /**
@@ -38,7 +42,7 @@ public class Request {
         for (TableItem item : conditions.getItens())
             oconditions.add(item.getObject());
         
-        view.export("conditions", oconditions);
+        view.export("conditions", oconditions.toArray());
     }
     
     public static final void condadd(ViewData view) {
@@ -102,7 +106,7 @@ public class Request {
     private static final void load(ViewData view, Function function, byte mode)
             throws Exception {
         ExtendedObject header;
-        ExtendedObject[] itens;
+        ExtendedObject[] objects;
         Documents documents = new Documents(function);
         DataForm form = view.getElement("selection");
         long ident = form.get("ID").get();
@@ -118,13 +122,17 @@ public class Request {
             return;
         }
         
-        itens = documents.select(QUERIES[ITENS], ident);
-        
         view.clearParameters();
+        
+        objects = documents.select(QUERIES[ITENS], ident);
+        view.export("itens", objects);
+        
+        objects = documents.select(QUERIES[CONDITIONS], ident);
+        view.export("conditions", objects);
+        
         view.setReloadableView(true);
         view.export("mode", mode);
         view.export("header", header);
-        view.export("itens", itens);
         view.redirect(null, "document");
     }
     
@@ -149,31 +157,38 @@ public class Request {
     public static final void save(ViewData view, Function function)
             throws Exception {
         long docid, itemnr;
+        Table itens;
+        List<ExtendedObject> conditions;
         DataForm header = view.getElement("header");
-        Table itens = view.getElement("itens");
         Documents documents = new Documents(function);
         ExtendedObject oitem, oheader = header.getObject();
         byte mode = Common.getMode(view);
         
-        if (mode == Common.CREATE) {
+        switch (mode) {
+        case Common.CREATE:
             docid = documents.getNextNumber("SD_DOCUMENT");
             oheader.setValue("ID", docid);
             header.get("ID").set(docid);
             view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
             
-            if (documents.save(oheader) == 0) {
-                view.message(Const.ERROR, "invalid.document.header");
-                return;
-            }
+            if (documents.save(oheader) != 0)
+                break;
             
-        } else {
+            view.message(Const.ERROR, "invalid.document.header");
+            return;
+            
+        default:
             documents.modify(oheader);
 
             docid = oheader.getValue("ID");
+            documents.update(QUERIES[DEL_CONDITIONS], docid);
             documents.update(QUERIES[DEL_ITENS], docid);
+            
+            break;
         }
-        
+
+        itens = view.getElement("itens");
         for (TableItem item : itens.getItens()) {
             oitem = item.getObject();
             
@@ -187,6 +202,19 @@ public class Request {
             oitem.setValue("DOCUMENT_ID", docid);
             documents.save(oitem);
         }
+        
+        conditions = view.getParameter("conditions");
+        if (conditions != null)
+            for (ExtendedObject condition : conditions) {
+                itemnr = condition.getValue("ID");
+                if (itemnr < (docid * 1000)) {
+                    itemnr += (docid * 1000);
+                    condition.setValue("ID", itemnr);
+                }
+                
+                condition.setValue("DOCUMENT", docid);
+                documents.save(condition);
+            }
         
         view.message(Const.STATUS, "document.saved.successfully");
     }
