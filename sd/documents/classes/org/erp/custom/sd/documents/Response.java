@@ -18,10 +18,11 @@ public class Response {
     public static final void condform(ViewData view, Function function)
             throws Exception {
         Button condadd, condremove, condapply;
+        Table conditions;
         Container container = new Form(view, "main");
         Documents documents = new Documents(function);
         ExtendedObject[] oconditions = view.getParameter("conditions");
-        Table conditions;
+        byte mode = Common.getMode(view);
         
         condadd = new Button(container, "condadd");
         condremove = new Button(container, "condremove");
@@ -34,14 +35,33 @@ public class Response {
         condapply = new Button(container, "condapply");
         new Button(container, "condcancel");
         
-        if (oconditions != null) {
-            for (ExtendedObject ocondition : oconditions)
-                Common.insertCondition(conditions, ocondition);
-        } else {
-            conditions.setVisible(false);
-            condadd.setVisible(true);
+        switch (mode) {
+        case Common.UPDATE:
+        case Common.CREATE:
+            if (oconditions != null) {
+                for (ExtendedObject ocondition : oconditions)
+                    Common.insertCondition(conditions, ocondition, mode);
+            } else {
+                conditions.setVisible(false);
+                condadd.setVisible(true);
+                condremove.setVisible(false);
+                condapply.setVisible(false);
+            }
+            
+            break;
+            
+        case Common.SHOW:
+            condadd.setVisible(false);
             condremove.setVisible(false);
             condapply.setVisible(false);
+            
+            if (oconditions != null)
+                for (ExtendedObject ocondition : oconditions)
+                    Common.insertCondition(conditions, ocondition, mode);
+            else
+                conditions.setVisible(false);
+            
+            break;
         }
         
         view.setTitle(Common.TITLE[Common.CONDITIONS]);
@@ -71,7 +91,6 @@ public class Response {
         header = new DataForm(container, "header");
         header.importModel(model);
         header.get("ID").setEnabled(false);
-        header.get("SENDER").setVisible(false);
         
         receiver = header.get("RECEIVER");
         receiver.setObligatory(true);

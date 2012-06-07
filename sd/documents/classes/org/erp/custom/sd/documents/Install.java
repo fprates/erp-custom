@@ -226,21 +226,11 @@ public class Install {
         model.add(cdata.docid);
         model.add(new DocumentModelKey(cdata.docid));
         
-        // código do emissor
+        // código do recebedor
         partnercode = documents.getModel("CUSTOM_PARTNER").
                 getModelItem("CODIGO");
         element = partnercode.getDataElement();
         
-        item = new DocumentModelItem();
-        item.setName("SENDER");
-        item.setTableFieldName("SENDR");
-        item.setDataElement(element);
-        item.setReference(partnercode);
-        item.setSearchHelp(partnercode.getSearchHelp());
-        
-        model.add(item);
-        
-        // código do recebedor
         item = new DocumentModelItem();
         item.setName("RECEIVER");
         item.setTableFieldName("RECVR");
