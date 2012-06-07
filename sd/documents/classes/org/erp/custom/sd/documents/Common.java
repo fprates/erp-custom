@@ -28,6 +28,9 @@ public class Common {
     public static final void insertCondition(Table itens,
             ExtendedObject object) {
         TextField tfield;
+        long l = 0;
+        int i = itens.length();
+        ExtendedObject last = (i == 0)? null : itens.get(i - 1).getObject();
         TableItem item = new TableItem(itens);
         
         for (TableColumn column : itens.getColumns()) {
@@ -40,8 +43,16 @@ public class Common {
             item.add(tfield);
         }
         
-        if (object != null)
-            item.setObject(object);
+        if (object == null) {
+            object = item.getObject();
+            
+            if (last != null)
+                l = last.getValue("ID");
+            
+            object.setValue("ID", l + 1);
+        }
+        
+        item.setObject(object);
     }
     
     public static final void insertItem(byte mode, Table itens, ViewData view,
