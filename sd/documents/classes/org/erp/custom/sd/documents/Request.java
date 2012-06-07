@@ -19,9 +19,9 @@ public class Request {
     private static final byte DEL_CONDITIONS = 2;
     private static final byte CONDITIONS = 3;
     private static final String[] QUERIES = {
-        "delete custom_document_item where document_id = ?",
+        "delete from custom_sd_document_item where document_id = ?",
         "from custom_sd_document_item where document_id = ?",
-        "delete custom_sd_conditions where document = ?",
+        "delete from custom_sd_conditions where document = ?",
         "from custom_sd_conditions where document = ?"
     };
     
@@ -42,17 +42,18 @@ public class Request {
         for (TableItem item : conditions.getItens())
             oconditions.add(item.getObject());
         
-        view.export("conditions", oconditions.toArray());
+        view.export("conditions", oconditions.toArray(new ExtendedObject[0]));
     }
     
     public static final void condadd(ViewData view) {
         Table conditions = view.getElement("conditions");
+        byte mode = Common.getMode(view);
         
         view.getElement("condremove").setVisible(true);
         view.getElement("condapply").setVisible(true);
         conditions.setVisible(true);
         
-        Common.insertCondition(conditions, null);
+        Common.insertCondition(conditions, null, mode);
     }
     
     public static final void conditions(ViewData view) {
@@ -158,7 +159,7 @@ public class Request {
             throws Exception {
         long docid, itemnr;
         Table itens;
-        List<ExtendedObject> conditions;
+        ExtendedObject[] conditions;
         DataForm header = view.getElement("header");
         Documents documents = new Documents(function);
         ExtendedObject oitem, oheader = header.getObject();

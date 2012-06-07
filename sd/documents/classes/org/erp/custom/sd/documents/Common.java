@@ -22,11 +22,12 @@ public class Common {
     };
     
     public static final byte getMode(ViewData view) {
-        return (Byte)view.getParameter("mode");
+        return view.getParameter("mode");
     }
     
     public static final void insertCondition(Table itens,
-            ExtendedObject object) {
+            ExtendedObject object, byte mode) {
+        String name;
         TextField tfield;
         long l = 0;
         int i = itens.length();
@@ -37,8 +38,10 @@ public class Common {
             if (column.isMark())
                 continue;
             
-            tfield = new TextField(itens, column.getName());
+            name = column.getName();
+            tfield = new TextField(itens, name);
             tfield.setModelItem(column.getModelItem());
+            tfield.setEnabled(name.equals("ID")? false : (mode != Common.SHOW));
             
             item.add(tfield);
         }
