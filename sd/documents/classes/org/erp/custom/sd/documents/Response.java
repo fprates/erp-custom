@@ -40,7 +40,7 @@ public class Response {
         case Common.CREATE:
             if (oconditions != null) {
                 for (ExtendedObject ocondition : oconditions)
-                    Common.insertCondition(conditions, ocondition, mode);
+                    Common.insertCondition(conditions, ocondition, view);
             } else {
                 conditions.setVisible(false);
                 condadd.setVisible(true);
@@ -57,7 +57,7 @@ public class Response {
             
             if (oconditions != null)
                 for (ExtendedObject ocondition : oconditions)
-                    Common.insertCondition(conditions, ocondition, mode);
+                    Common.insertCondition(conditions, ocondition, view);
             else
                 conditions.setVisible(false);
             

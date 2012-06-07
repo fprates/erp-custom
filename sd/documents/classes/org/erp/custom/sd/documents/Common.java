@@ -26,13 +26,14 @@ public class Common {
     }
     
     public static final void insertCondition(Table itens,
-            ExtendedObject object, byte mode) {
+            ExtendedObject object, ViewData view) {
         String name;
         TextField tfield;
         long l = 0;
         int i = itens.length();
         ExtendedObject last = (i == 0)? null : itens.get(i - 1).getObject();
         TableItem item = new TableItem(itens);
+        byte mode = getMode(view);
         
         for (TableColumn column : itens.getColumns()) {
             if (column.isMark())
@@ -41,7 +42,10 @@ public class Common {
             name = column.getName();
             tfield = new TextField(itens, name);
             tfield.setModelItem(column.getModelItem());
-            tfield.setEnabled(name.equals("ID")? false : (mode != Common.SHOW));
+            tfield.setEnabled(name.equals("ID")? false : mode != Common.SHOW);
+            
+            if (name.equals("CONDICAO"))
+                view.setFocus(tfield);
             
             item.add(tfield);
         }

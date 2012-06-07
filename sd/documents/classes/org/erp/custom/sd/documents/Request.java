@@ -47,13 +47,12 @@ public class Request {
     
     public static final void condadd(ViewData view) {
         Table conditions = view.getElement("conditions");
-        byte mode = Common.getMode(view);
         
         view.getElement("condremove").setVisible(true);
         view.getElement("condapply").setVisible(true);
         conditions.setVisible(true);
         
-        Common.insertCondition(conditions, null, mode);
+        Common.insertCondition(conditions, null, view);
     }
     
     public static final void conditions(ViewData view) {
