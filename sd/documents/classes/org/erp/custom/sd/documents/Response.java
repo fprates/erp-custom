@@ -75,7 +75,7 @@ public class Response {
      */
     public static final void document(ViewData view, Function function)
             throws Exception {
-        Button add, remove, save;
+        Button add, remove, save, validate;
         Table itens;
         InputComponent receiver;
         DataForm header;
@@ -104,6 +104,9 @@ public class Response {
         itens.getColumn("DOCUMENT_ID").setVisible(false);
         itens.setMark(true);
         
+        validate = new Button(container, "validate");
+        validate.setSubmit(true);
+        
         save = new Button(container, "save");
         
         switch (mode) {
@@ -115,6 +118,7 @@ public class Response {
             add.setVisible(false);
             remove.setVisible(false);
             save.setVisible(false);
+            validate.setVisible(false);
             itens.setMark(false);
             receiver.setObligatory(false);
             receiver.setEnabled(false);

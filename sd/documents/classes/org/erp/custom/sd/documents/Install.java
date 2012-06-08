@@ -84,6 +84,7 @@ public class Install {
         messages.put("condapply", "Aplicar");
         messages.put("condcancel", "Cancelar");
         messages.put("conditions", "Condições");
+        messages.put("validate", "Validar");
         messages.put("VA01", "Emissão de documento de venda");
         data.setMessages("pt_BR", messages);
         

@@ -71,4 +71,6 @@ public class Main extends AbstractPage {
     public final void update(ViewData view) throws Exception {
         Request.update(view, this);
     }
+    
+    public final void validate(ViewData view) { }
 }
