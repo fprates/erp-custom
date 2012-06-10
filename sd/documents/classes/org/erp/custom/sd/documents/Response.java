@@ -78,9 +78,9 @@ public class Response {
             throws Exception {
         Button add, remove, save, validate;
         Table itens;
-        InputComponent receiver;
+        InputComponent receiver, tipo;
         DataForm header;
-        ExtendedObject oheader = view.getParameter("header");
+        ExtendedObject doctype, partner, oheader = view.getParameter("header");
         ExtendedObject[] oitens = view.getParameter("itens");
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
@@ -105,6 +105,12 @@ public class Response {
         receiver.setObligatory(true);
         receiver.setValidator(PartnerValidator.class);
         
+        tipo = header.get("TIPO");
+        tipo.setValidator(DocTypeValidator.class);
+        tipo.setObligatory(true);
+        
+        header.get("VALOR").setEnabled(false);
+        
         add = new Button(container, "add");
         remove = new Button(container, "remove");
         
@@ -122,8 +128,8 @@ public class Response {
         switch (mode) {
         case Common.CREATE:
             Common.insertItem(itens, view, null);
-            
             break;
+            
         case Common.SHOW:
             add.setVisible(false);
             remove.setVisible(false);
@@ -133,13 +139,13 @@ public class Response {
             receiver.setObligatory(false);
             receiver.setEnabled(false);
             
-            header.setObject(oheader);
-            
-            for (ExtendedObject oitem : oitens)
-                Common.insertItem(itens, view, oitem);
-            
-            break;
         case Common.UPDATE:
+            partner = view.getParameter("partner");
+            receiver.setText((String)partner.getValue("RAZAO_SOCIAL"));
+            
+            doctype = view.getParameter("doctype");
+            tipo.setText((String)doctype.getValue("TEXT"));
+            
             header.setObject(oheader);
             
             for (ExtendedObject oitem : oitens)
@@ -164,7 +170,7 @@ public class Response {
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
         
-        pagecontrol.add("back");
+        pagecontrol.add("home");
         form.importModel(new Documents(function).
                 getModel("CUSTOM_SD_DOCUMENT"));
         
