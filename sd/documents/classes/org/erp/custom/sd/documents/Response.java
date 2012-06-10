@@ -5,7 +5,6 @@ import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
-import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
@@ -20,10 +19,12 @@ public class Response {
             throws Exception {
         Button condadd, condremove, condapply;
         Table conditions;
-        Container container = new Form(view, "main");
+        Form container = new Form(view, "main");
         Documents documents = new Documents(function);
         ExtendedObject[] oconditions = view.getParameter("conditions");
         byte mode = Common.getMode(view);
+
+        new PageControl(container);
         
         condadd = new Button(container, "condadd");
         condremove = new Button(container, "condremove");
@@ -138,6 +139,8 @@ public class Response {
             itens.setMark(false);
             receiver.setObligatory(false);
             receiver.setEnabled(false);
+            tipo.setObligatory(false);
+            tipo.setEnabled(false);
             
         case Common.UPDATE:
             partner = view.getParameter("partner");
@@ -153,8 +156,8 @@ public class Response {
             
             break;
         }
-        
-        view.setFocus("RECEIVER");
+
+        view.setFocus(receiver);
         view.setTitle(Common.TITLE[mode]);
     }
     
@@ -175,14 +178,16 @@ public class Response {
                 getModel("CUSTOM_SD_DOCUMENT"));
         
         for (Element element : form.getElements())
-            if (element.isDataStorable() && !element.getName().equals("ID"))
-                element.setVisible(false);
+            if (element.getName().equals("ID"))
+                view.setFocus(element);
+            else
+                if (element.isDataStorable())
+                    element.setVisible(false);
         
         new Button(container, "display");
         new Button(container, "create");
         new Button(container, "update");
 
-        view.setFocus("ID");
         view.setTitle("document-selection");
     }
 
