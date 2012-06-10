@@ -1,6 +1,7 @@
 package org.erp.custom.sd.documents;
 
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
@@ -76,6 +77,8 @@ public class Common {
         TableItem item;
         byte mode = getMode(view);
         long docid = 0, i = 0;
+        InputComponent headvalue = ((DataForm)view.getElement("header")).
+                get("VALOR");
         
         if (object == null) {
             for (TableItem item_ : itens.getItens()) {
@@ -129,6 +132,8 @@ public class Common {
         
         tfield = item.get("MATERIAL");
         tfield.setValidator(MaterialValidator.class);
+        tfield.addValidatorInput(headvalue);
+        
         for (String tfname : new String[] {
                 "PRECO_UNITARIO", "PRECO_TOTAL", "QUANTITY"})
             tfield.addValidatorInput((InputComponent)item.get(tfname));
