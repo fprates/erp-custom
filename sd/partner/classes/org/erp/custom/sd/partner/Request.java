@@ -43,7 +43,7 @@ public class Request {
             View view) {
         Link link;
         Table addresses;
-        long taddress, faddress = Common.getLong(contact.getValue("ADDRESS"));
+        long taddress, faddress = contact.getValue("ADDRESS");
         
         if (faddress == 0)
             return Common.NULL_ADDRESS;
@@ -88,7 +88,7 @@ public class Request {
         Link link;
         long tcodigo, fcodigo;
         
-        fcodigo = Common.getLong(form.get("CODIGO").get());
+        fcodigo = form.get("CODIGO").get();
         if (fcodigo == 0)
             return;
         
@@ -164,6 +164,11 @@ public class Request {
 
         objects = documents.select(QUERIES[COMMUNICS], ident);
         view.export("communics", objects);
+        
+        objects = new ExtendedObject[1];
+        objects[0] = documents.getObject("CUSTOM_PARTNER_TYPE",
+                partner.getValue("TIPO_PARCEIRO"));
+        view.export("partnertype", objects[0]);
         
         view.export("partner", partner);
         view.export("mode", mode);
