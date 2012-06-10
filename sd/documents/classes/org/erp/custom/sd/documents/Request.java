@@ -129,6 +129,15 @@ public class Request {
         
         objects = documents.select(QUERIES[CONDITIONS], ident);
         view.export("conditions", objects);
+
+        objects = new ExtendedObject[1];
+        objects[0] = documents.getObject("CUSTOM_PARTNER",
+                header.getValue("RECEIVER"));
+        view.export("partner", objects[0]);
+        
+        objects[0] = documents.getObject("CUSTOM_SD_DOCTYPE",
+                header.getValue("TIPO"));
+        view.export("doctype", objects[0]);
         
         view.setReloadableView(true);
         view.export("mode", mode);
