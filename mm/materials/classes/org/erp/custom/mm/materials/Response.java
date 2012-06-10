@@ -50,7 +50,8 @@ public class Response {
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
         DataItem item = new DataItem(form, Const.TEXT_FIELD, "material");
-        
+
+        view.setFocus(item);
         pagecontrol.add("back");
         
         item.setModelItem(new Documents(function).getModel("MATERIAL").
@@ -61,7 +62,6 @@ public class Response {
         new Button(container, "show");
         new Button(container, "update");
         
-        view.setFocus("material");
         view.setTitle("material-selection");
     }
     
@@ -109,7 +109,7 @@ public class Response {
             if (name.equals("ACTIVE"))
                 dataitem.setComponentType(Const.CHECKBOX);
             
-            dataitem.setEnabled((mode == Common.SHOW)? false : true);
+            dataitem.setEnabled(mode != Common.SHOW);
         }
         
         /*
