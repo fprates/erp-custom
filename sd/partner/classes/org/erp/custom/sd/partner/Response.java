@@ -32,18 +32,21 @@ public class Response {
         ItemData itemdata;
         TabbedPaneItem tab;
         Table addresses;
+        DataForm address;
         Button editaddress, addaddress, removeaddress;
         Container addresscnt = new StandardContainer(tabs, "addresscnt");
-        DataForm address = new DataForm(addresscnt, "address");
         byte modo = Common.getMode(view);
         ExtendedObject[] oaddresses = view.getParameter("addresses");
+
+        editaddress = new Button(addresscnt, "editaddress");
+        addaddress = new Button(addresscnt, "addaddress");
         
+        address = new DataForm(addresscnt, "address");
         address.importModel(model);
         address.get("CODIGO").setEnabled(false);
         address.get("PARTNER_ID").setVisible(false);
+        address.get("TIPO_ENDERECO").setValidator(AddressTypeValidator.class);
         
-        editaddress = new Button(addresscnt, "editaddress");
-        addaddress = new Button(addresscnt, "addaddress");
         removeaddress = new Button(addresscnt, "removeaddress");
         
         addresses = new Table(addresscnt, "addresses");
@@ -87,8 +90,11 @@ public class Response {
             break;
             
         case Common.UPDATE:
-            if (oaddresses == null)
+            if (oaddresses == null) {
+                editaddress.setVisible(false);
+                removeaddress.setVisible(false);
                 break;
+            }
             
             addresses.setMark(true);
             itemdata = new ItemData();
@@ -125,11 +131,11 @@ public class Response {
         TabbedPaneItem tab;
         DataItem dataitem;
         Table contacts, addresses, communics;
+        DataForm contact;
         Button addcontact, removecontact, editcontact, addcommunic,
                 removecommunic;
         Container communicscnt, contactcnt = new StandardContainer(
                 tabs, "contactscnt");
-        DataForm contact = new DataForm(contactcnt, "contact");
         byte modo = Common.getMode(view);
         ExtendedObject[] ocontacts = view.getParameter("contacts");
         ExtendedObject[] ocommunics = view.getParameter("communics");
@@ -137,6 +143,11 @@ public class Response {
         /*
          * Detalhe do item
          */
+        
+        editcontact = new Button(contactcnt, "editcontact");
+        addcontact = new Button(contactcnt, "addcontact");
+        
+        contact = new DataForm(contactcnt, "contact");
         contact.importModel(model);
         contact.get("PARTNER_ID").setVisible(false);
         
@@ -144,14 +155,11 @@ public class Response {
             if (element.getName().equals("CODIGO"))
                 element.setEnabled(false);
             else
-                element.setEnabled((modo == Common.SHOW)? false : true);
+                element.setEnabled(modo != Common.SHOW);
         
         dataitem = contact.get("ADDRESS");
         dataitem.getModelItem().setReference(null);
         dataitem.setComponentType(Const.LIST_BOX);
-        
-        editcontact = new Button(contactcnt, "editcontact");
-        addcontact = new Button(contactcnt, "addcontact");
         
         /*
          * itens de contato
@@ -162,6 +170,8 @@ public class Response {
         contacts.importModel(model);
         contacts.getColumn("PARTNER_ID").setVisible(false);
         contacts.setVisible(false);
+        contacts.setMark(true);
+        
 
         Common.enableTableColumns(contacts, "CODIGO", "PNOME", "UNOME");
         
@@ -179,6 +189,7 @@ public class Response {
         communics.getColumn("CONTACT_ID").setVisible(false);
         communics.getColumn("PARTNER_ID").setVisible(false);
         communics.setVisible(false);
+        communics.setMark(true);
         
         tab = new TabbedPaneItem(tabs, "contacttab");
         tab.setContainer(contactcnt);
@@ -187,53 +198,24 @@ public class Response {
         case Common.CREATE:
             editcontact.setVisible(false);
             removecontact.setVisible(false);
-            communics.setMark(true);
             
             break;
-        
+            
         case Common.SHOW:
             contacts.setMark(false);
             communics.setMark(false);
-            
+
             editcontact.setVisible(false);
-            addcontact.setVisible(false);
             removecontact.setVisible(false);
+            addcontact.setVisible(false);
             addcommunic.setVisible(false);
             
-            if (ocontacts == null)
-                break;
-            
-            contacts.setVisible(true);
-            
-            itemdata = new ItemData();
-            itemdata.container = contactcnt;
-            itemdata.itens = contacts;
-            itemdata.mark = "contactmark";
-            
-            for (ExtendedObject ocontact : ocontacts) {
-                itemdata.object = ocontact;
-                Common.insertItem(itemdata);
-            }
-            
-            dataitem = contact.get("ADDRESS");
-            addresses = view.getElement("addresses");
-            Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
-                    "CODIGO");
-            
-            if (ocommunics == null)
-                break;
-            
-            for (ExtendedObject ocommunic : ocommunics)
-                Common.insertCommunic(communics, view, ocommunic);
-            
-            break;
-            
         case Common.UPDATE:
-            contacts.setMark(true);
-            communics.setMark(true);
-            
-            if (ocontacts == null)
+            if (ocontacts == null) {
+                editcontact.setVisible(false);
+                removecontact.setVisible(false);
                 break;
+            }
             
             contacts.setVisible(true);
             
@@ -253,12 +235,13 @@ public class Response {
                     "CODIGO");
             
             contacts.setVisible(true);
-            editcontact.setVisible(true);
             addcontact.setVisible(true);
-            removecontact.setVisible(true);
             
-            if (ocommunics == null)
+            if (ocommunics == null) {
+                communics.setVisible(false);
+                removecommunic.setVisible(false);
                 break;
+            }
             
             for (ExtendedObject ocommunic : ocommunics)
                 Common.insertCommunic(communics, view, ocommunic);
@@ -276,10 +259,10 @@ public class Response {
     private static final void buildIdentityTab(TabbedPane tabs,
             DocumentModel model, View view) {
         TabbedPaneItem tab;
-        DataItem dataitem;
+        DataItem dataitem, partnertype = null;
         String name;
         DataForm partner = new DataForm(tabs, "identity");
-        ExtendedObject opartner = view.getParameter("partner");
+        ExtendedObject object, opartner = view.getParameter("partner");
         byte modo = Common.getMode(view);
         
         partner.importModel(model);
@@ -289,6 +272,7 @@ public class Response {
                 continue;
             
             dataitem = (DataItem)element;
+            dataitem.setEnabled(modo != Common.SHOW);
             name = dataitem.getName();
             
             if (name.equals("CODIGO")) {
@@ -296,16 +280,23 @@ public class Response {
                 continue;
             }
             
-            if (name.equals("RAZAO_SOCIAL"))
-                view.setFocus(name);
+            if (name.equals("RAZAO_SOCIAL")) {
+                view.setFocus(dataitem);
+                continue;
+            }
             
             if (name.equals("TIPO_PESSOA")) {
                 dataitem.setComponentType(Const.LIST_BOX);
                 dataitem.add("fis", 0);
                 dataitem.add("jur", 1);
+                continue;
             }
             
-            dataitem.setEnabled((modo == Common.SHOW)? false : true);
+            if (name.equals("TIPO_PARCEIRO")) {
+                partnertype = dataitem;
+                partnertype.setValidator(PartnerTypeValidator.class);
+                continue;
+            }
         }
         
         tab = new TabbedPaneItem(tabs, "identitytab");
@@ -314,6 +305,8 @@ public class Response {
         switch (modo) {
         case Common.UPDATE:
         case Common.SHOW:
+            object = view.getParameter("partnertype");
+            partnertype.setText((String)object.getValue("DESCRICAO"));
             partner.setObject(opartner);
             
             break;
@@ -332,8 +325,11 @@ public class Response {
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "pane");
+        Button validate = new Button(container, "validate");
         Button save = new Button(container, "save");
         byte modo = Common.getMode(view);
+        
+        validate.setSubmit(true);
         
         pagecontrol.add("home");
         pagecontrol.add("back");
@@ -343,13 +339,8 @@ public class Response {
         buildContactTab(tabs, models[Common.CONTACT], view, function);
         
         switch (modo) {
-        case Common.UPDATE:
-        case Common.CREATE:
-            save.setVisible(true);
-            
-            break;
-        
         case Common.SHOW:
+            validate.setVisible(false);
             save.setVisible(false);
             
             break;
@@ -379,7 +370,7 @@ public class Response {
         new Button(container, "create");
         new Button(container, "update");
         
-        view.setFocus("partner");
+        view.setFocus(partner);
         view.setTitle("partner-selection");
     }
 }

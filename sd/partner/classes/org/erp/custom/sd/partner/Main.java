@@ -47,7 +47,7 @@ public class Main extends AbstractPage {
         itemdata.view = view;
         itemdata.itens = itens;
         itemdata.object = address.getObject();
-        itemdata.partner = Common.getLong(identity.get("CODIGO").get());
+        itemdata.partner = identity.get("CODIGO").get();
         itemdata.container = view.getElement("addresscnt");
         itemdata.mark = "addressmark";
         itemdata.object.setValue("CODIGO", 0l);
@@ -109,7 +109,7 @@ public class Main extends AbstractPage {
         itemdata.view = view;
         itemdata.itens = itens;
         itemdata.object = object;
-        itemdata.partner = Common.getLong(identity.get("CODIGO").get());
+        itemdata.partner = identity.get("CODIGO").get();
         itemdata.container = view.getElement("contactcnt");
         itemdata.mark = "contactmark";
         itemdata.object.setValue("CODIGO", 0l);
@@ -378,12 +378,14 @@ public class Main extends AbstractPage {
         for (TableItem item : itens.getItens()) {
             input = item.get("CONTACT_ID");
             
-            contactid = Common.getLong(Common.getValue(input));
+            contactid = Common.getValue(input);
             if (contactid > 0)
                 continue;
             
-            contactid = Common.getLong(object.getValue("CODIGO"));
+            contactid = object.getValue("CODIGO");
             input.set(contactid);
         }
     }
+    
+    public final void validate(View view) { }
 }

@@ -692,8 +692,9 @@ public class Install {
         messages.put("communicscnt", "Comunicação");
         messages.put("addcommunic", "Adicionar comunicação");
         messages.put("removecommunic", "Remover comunicação");
+        messages.put("validate", "Validar");
         messages.put("TP_COMMUNIC", "Tipo comunic.");
-        messages.put("XD01", "Cadastro de clientes");
+        messages.put("XD01", "Cadastro de parceiros");
         data.setMessages("pt_BR", messages);
         
         authorization = new Authorization("PARTNER.EXECUTE");

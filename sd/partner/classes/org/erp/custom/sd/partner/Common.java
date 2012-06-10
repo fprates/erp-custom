@@ -58,15 +58,6 @@ public class Common {
     
     /**
      * 
-     * @param value
-     * @return
-     */
-    public static final long getLong(Object value) {
-        return (value == null)? 0l : (Long)value;
-    }
-    
-    /**
-     * 
      * @param view
      * @return
      */
@@ -116,7 +107,7 @@ public class Common {
             item.add(input);
         }
         
-        codigo = getLong(itemdata.object.getValue("CODIGO"));
+        codigo = itemdata.object.getValue("CODIGO");
         
         if (codigo == 0) {
             if (i > 1) {
@@ -160,13 +151,17 @@ public class Common {
             modelitem.setReference(null);
             tfield = new TextField(communics, name);
             tfield.setModelItem(modelitem);
-            
-            if (name.equals("CODIGO"))
-                tfield.setEnabled(false);
-            else
-                tfield.setEnabled((mode == Common.SHOW)? false : true);
+            tfield.setEnabled(mode != Common.SHOW);
             
             item.add(tfield);
+            
+            if (name.equals("CODIGO")) {
+                tfield.setEnabled(false);
+                continue;
+            }
+            
+            if (name.equals("TP_COMMUNIC"))
+                tfield.setValidator(CommunicTypeValidator.class);
         }
         
         if (object != null) {
@@ -176,13 +171,13 @@ public class Common {
         
         i = communics.length() - 1;
         contact = view.getElement("contact");
-        contactid = Common.getLong(Common.getValue(contact.get("CODIGO")));
+        contactid = Common.getValue(contact.get("CODIGO"));
         
         if (i == 0) {
             codigo = contactid * 100;
         } else {
             item = communics.get(i - 1);
-            codigo = Common.getLong(Common.getValue(item.get("CODIGO")));
+            codigo = Common.getValue(item.get("CODIGO"));
         }
         
         item = communics.get(i);
