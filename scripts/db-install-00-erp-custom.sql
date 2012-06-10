@@ -2,6 +2,7 @@ drop table CSDCONDITION if exists;
 drop table CCONDITION if exists;
 drop table csddocitm if exists;
 drop table csddochdr if exists;
+drop table csddoctype if exists;
 drop table CSUBMAT if exists;
 drop table cmatprice if exists;
 drop table cmatpromo if exists;

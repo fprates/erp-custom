@@ -23,6 +23,9 @@ public class Install {
         Documents documents = new Documents(function);
         CData cdata = new CData();
 
+        data.setDependencies("erp-custom-mm.materials",
+                "erp-custom-sd.partner");
+                
         installHeader(data, cdata, documents);
         installItens(data, cdata, documents);
         installConditions(data, cdata);
@@ -205,10 +208,58 @@ public class Install {
     private static final void installHeader(InstallData data, CData cdata,
             Documents documents) throws Exception {
         DocumentModel model;
-        DocumentModelItem item, partnercode;
+        DocumentModelItem item, partnercode, doctype;
         DataElement element;
         SearchHelpData sh;
         
+        /*
+         * Tipo de documento
+         */
+        model = data.getModel("CUSTOM_SD_DOCTYPE", "CSDDOCTYPE", null);
+        
+        // identificador
+        element = new DataElement();
+        element.setName("CUSTOM_SD_DOCTYPE.ID");
+        element.setLength(4);
+        element.setType(DataType.CHAR);
+        element.setUpcase(true);
+        
+        doctype = new DocumentModelItem();
+        doctype.setName("ID");
+        doctype.setTableFieldName("IDENT");
+        doctype.setDataElement(element);
+        
+        model.add(doctype);
+        model.add(new DocumentModelKey(doctype));
+        
+        // descrição
+        element = new DataElement();
+        element.setName("CUSTOM_SD_DOCTYPE.TEXT");
+        element.setLength(30);
+        element.setType(DataType.CHAR);
+        element.setUpcase(false);
+        
+        item = new DocumentModelItem();
+        item.setName("TEXT");
+        item.setTableFieldName("TEXT");
+        item.setDataElement(element);
+        
+        model.add(item);
+        
+        data.addValues(model, "SERV", "service.order");
+        data.addValues(model, "QUOT", "quotation");
+        
+        sh = new SearchHelpData();
+        sh.setModel("CUSTOM_SD_DOCTYPE");
+        sh.setExport("ID");
+        sh.setName("SH_SD_DOCTYPE");
+        sh.add("ID");
+        sh.add("TEXT");
+        data.add(sh);
+        
+        /*
+         * Cabeçalho do documento
+         */
         model = data.getModel("CUSTOM_SD_DOCUMENT", "CSDDOCHDR", null);
         
         // identificador
@@ -250,6 +301,32 @@ public class Install {
         item.setName("DATA_CRIACAO");
         item.setTableFieldName("DTREG");
         item.setDataElement(element);
+        
+        model.add(item);
+        
+        // tipo de documento
+        element = doctype.getDataElement();
+        
+        item = new DocumentModelItem();
+        item.setName("TIPO");
+        item.setTableFieldName("TPDOC");
+        item.setDataElement(element);
+        item.setReference(doctype);
+        item.setSearchHelp("SH_SD_DOCTYPE");
+        
+        model.add(item);
+        
+        // total do documento
+        cdata.eprice = new DataElement();
+        cdata.eprice.setName("CUSTOM_SD_DOCUMENT.PRECO");
+        cdata.eprice.setDecimals(3);
+        cdata.eprice.setLength(15);
+        cdata.eprice.setType(DataType.DEC);
+        
+        item = new DocumentModelItem();
+        item.setName("VALOR");
+        item.setTableFieldName("VLTOT");
+        item.setDataElement(cdata.eprice);
         
         model.add(item);
         
@@ -332,12 +409,6 @@ public class Install {
         model.add(item);
         
         // preço unitário
-        cdata.eprice = new DataElement();
-        cdata.eprice.setName("CUSTOM_SD_DOCUMENT_ITEM.PRECO");
-        cdata.eprice.setDecimals(3);
-        cdata.eprice.setLength(15);
-        cdata.eprice.setType(DataType.DEC);
-        
         item = new DocumentModelItem();
         item.setName("PRECO_UNITARIO");
         item.setTableFieldName("PUNIT");
