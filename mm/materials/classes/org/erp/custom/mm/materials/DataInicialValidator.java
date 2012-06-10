@@ -15,8 +15,8 @@ public class DataInicialValidator extends AbstractValidator {
      */
     @Override
     public final void validate(ValidatorConfig config) throws Exception {
-        Date dtini = (Date)config.get("DT_INICIAL");
-        Date dtfin = (Date)config.get("DT_FINAL");
+        Date dtini = config.getInput("DT_INICIAL").get();
+        Date dtfin = config.getInput("DT_FINAL").get();
         
         if (dtini == null || dtfin == null)
             return;

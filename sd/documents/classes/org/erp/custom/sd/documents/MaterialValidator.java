@@ -22,7 +22,7 @@ public class MaterialValidator extends AbstractValidator {
         Documents documents;
         ExtendedObject[] objects;
         String query;
-        String material = config.get("MATERIAL");
+        String material = config.getInput("MATERIAL").get();
         
         if (Shell.isInitial(material))
             return;
@@ -35,7 +35,7 @@ public class MaterialValidator extends AbstractValidator {
         
         uprice = ((BigDecimal)objects[0].getValue("VL_VENDA")).doubleValue();
         config.set("PRECO_UNITARIO", uprice);
-        quantity = config.get("QUANTITY");
+        quantity = config.getInput("QUANTITY").get();
         config.set("PRECO_TOTAL", quantity * uprice);
     }
 

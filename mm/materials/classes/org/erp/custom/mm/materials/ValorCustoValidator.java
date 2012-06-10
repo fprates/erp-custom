@@ -13,8 +13,8 @@ public class ValorCustoValidator extends AbstractValidator {
      */
     @Override
     public final void validate(ValidatorConfig config) throws Exception {
-        double vlcusto = config.get("VL_CUSTO");
-        double vlvenda = config.get("VL_VENDA");
+        double vlcusto = config.getInput("VL_CUSTO").get();
+        double vlvenda = config.getInput("VL_VENDA").get();
         
         if (vlcusto > vlvenda)
             config.setMessage("vlcusto.gt.vlvenda");
