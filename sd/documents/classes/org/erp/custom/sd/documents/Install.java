@@ -79,6 +79,7 @@ public class Install {
         messages.put("PRECO_TOTAL", "Preço total");
         messages.put("CONDICAO", "Condição");
         messages.put("VALOR", "Valor");
+        messages.put("TIPO", "Tipo documento");
         messages.put("save", "Salvar");
         messages.put("add", "Adicionar");
         messages.put("remove", "Remover");
