@@ -14,7 +14,7 @@ import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 
 public class Main extends AbstractPage {
@@ -28,7 +28,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void addaddress(ViewData view) throws Exception {
+    public final void addaddress(View view) throws Exception {
         Button button;
         ItemData itemdata = new ItemData();
         DataForm identity = view.getElement("identity");
@@ -62,7 +62,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void addcommunic(ViewData view) {
+    public final void addcommunic(View view) {
         Table communics = view.getElement("communics");
         Button removecommunic = view.getElement("removecommunic");
         
@@ -77,7 +77,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void addcontact(ViewData view) throws Exception {
+    public final void addcontact(View view) throws Exception {
         Button button;
         ItemData itemdata = new ItemData();
         DataForm identity = view.getElement("identity");
@@ -127,7 +127,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void addressmark(ViewData view) throws Exception {
+    public final void addressmark(View view) throws Exception {
         Table itens = view.getElement("addresses");
         DataForm form = view.getElement("address");
         
@@ -139,7 +139,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void contactmark(ViewData view) {
+    public final void contactmark(View view) {
         Button button;
         Table itens = view.getElement("contacts");
         DataForm form = view.getElement("contact");
@@ -165,7 +165,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void create(ViewData view) {
+    public final void create(View view) {
         Request.create(view);
     }
     
@@ -174,7 +174,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void editaddress(ViewData view) {
+    public final void editaddress(View view) {
         Table addresses = view.getElement("addresses");
         DataForm address = view.getElement("address");
         
@@ -189,7 +189,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void editcontact(ViewData view) {
+    public final void editcontact(View view) {
         Table contacts = view.getElement("contacts");
         DataForm contact = view.getElement("contact");
         ExtendedObject object = contact.getObject();
@@ -218,7 +218,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void identity(ViewData view) throws Exception {
+    public final void identity(View view) throws Exception {
         Documents documents = new Documents(this);
         DocumentModel[] models = new DocumentModel[3];
         
@@ -243,7 +243,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void main(ViewData view) throws Exception {
+    public final void main(View view) throws Exception {
         Response.main(view, this);
     }
     
@@ -251,7 +251,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void removeaddress(ViewData view) {
+    public final void removeaddress(View view) {
         Button button;
         Table itens = view.getElement("addresses");
         DataForm address = view.getElement("address");
@@ -277,7 +277,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void removecommunic(ViewData view) {
+    public final void removecommunic(View view) {
         Button removecommunic;
         Table communics = view.getElement("communics");
         
@@ -297,7 +297,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void removecontact(ViewData view) {
+    public final void removecontact(View view) {
         Button button;
         Table itens = view.getElement("contacts");
         DataForm contact = view.getElement("contact");
@@ -323,7 +323,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void save(ViewData view) throws Exception {
+    public final void save(View view) throws Exception {
         Request.save(view, this);
     }
     
@@ -332,7 +332,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void show(ViewData view) throws Exception {
+    public final void show(View view) throws Exception {
         Request.load(view, this, Common.SHOW);
     }
 
@@ -341,7 +341,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void update(ViewData view) throws Exception {
+    public final void update(View view) throws Exception {
         Request.load(view, this, Common.UPDATE);
     }
     
@@ -350,7 +350,7 @@ public class Main extends AbstractPage {
      * @param view
      * @param visible
      */
-    private final void updateCommunicsView(ViewData view, boolean visible) {
+    private final void updateCommunicsView(View view, boolean visible) {
         Container communicscnt = view.getElement("communicscnt");
         
         communicscnt.setVisible(visible);
@@ -360,7 +360,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    private final void updatePartnerView(ViewData view) {
+    private final void updatePartnerView(View view) {
         long contactid;
         DataItem dataitem;
         InputComponent input;

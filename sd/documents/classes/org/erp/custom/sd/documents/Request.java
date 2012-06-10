@@ -11,7 +11,7 @@ import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Request {
     private static final byte DEL_ITENS = 0;
@@ -29,13 +29,13 @@ public class Request {
      * 
      * @param view
      */
-    public static final void add(ViewData view) {
+    public static final void add(View view) {
         Table itens = view.getElement("itens");
         
         Common.insertItem(itens, view, null);
     }
     
-    public static final void condapply(ViewData view) {
+    public static final void condapply(View view) {
         Table conditions = view.getElement("conditions");
         List<ExtendedObject> oconditions = new ArrayList<ExtendedObject>();
         
@@ -45,7 +45,7 @@ public class Request {
         view.export("conditions", oconditions.toArray(new ExtendedObject[0]));
     }
     
-    public static final void condadd(ViewData view) {
+    public static final void condadd(View view) {
         Table conditions = view.getElement("conditions");
         
         view.getElement("condremove").setVisible(true);
@@ -55,12 +55,12 @@ public class Request {
         Common.insertCondition(conditions, null, view);
     }
     
-    public static final void conditions(ViewData view) {
+    public static final void conditions(View view) {
         view.setReloadableView(true);
         view.redirect(null, "condform");
     }
     
-    public static final void condremove(ViewData view) {
+    public static final void condremove(View view) {
         Table conditions = view.getElement("conditions");
         
         for (TableItem item :  conditions.getItens())
@@ -78,7 +78,7 @@ public class Request {
      * 
      * @param view
      */
-    public static final void create(ViewData view) {
+    public static final void create(View view) {
         view.clearParameters();
         view.setReloadableView(true);
         view.export("mode", Common.CREATE);
@@ -91,7 +91,7 @@ public class Request {
      * @param function
      * @throws Exception
      */
-    public static final void display(ViewData view, Function function)
+    public static final void display(View view, Function function)
             throws Exception {
         load(view, function, Common.SHOW);
     }
@@ -103,7 +103,7 @@ public class Request {
      * @param mode
      * @throws Exception
      */
-    private static final void load(ViewData view, Function function, byte mode)
+    private static final void load(View view, Function function, byte mode)
             throws Exception {
         ExtendedObject header;
         ExtendedObject[] objects;
@@ -140,7 +140,7 @@ public class Request {
      * 
      * @param view
      */
-    public static final void remove(ViewData view) {
+    public static final void remove(View view) {
         Table itens = view.getElement("itens");
         
         for (TableItem item : itens.getItens())
@@ -154,7 +154,7 @@ public class Request {
      * @param function
      * @throws Exception
      */
-    public static final void save(ViewData view, Function function)
+    public static final void save(View view, Function function)
             throws Exception {
         long docid, itemnr;
         Table itens;
@@ -225,7 +225,7 @@ public class Request {
      * @param function
      * @throws Exception
      */
-    public static final void update(ViewData view, Function function)
+    public static final void update(View view, Function function)
             throws Exception {
         load(view, function, Common.UPDATE);
     }

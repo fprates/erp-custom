@@ -10,12 +10,13 @@ import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
 import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.PageControl;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Response {
     
-    public static final void condform(ViewData view, Function function)
+    public static final void condform(View view, Function function)
             throws Exception {
         Button condadd, condremove, condapply;
         Table conditions;
@@ -73,7 +74,7 @@ public class Response {
      * @param function
      * @throws Exception
      */
-    public static final void document(ViewData view, Function function)
+    public static final void document(View view, Function function)
             throws Exception {
         Button add, remove, save, validate;
         Table itens;
@@ -81,19 +82,28 @@ public class Response {
         DataForm header;
         ExtendedObject oheader = view.getParameter("header");
         ExtendedObject[] oitens = view.getParameter("itens");
-        Container container = new Form(view, "main");
+        Form container = new Form(view, "main");
+        PageControl pagecontrol = new PageControl(container);
         Documents documents = new Documents(function);
         DocumentModel model = documents.getModel("CUSTOM_SD_DOCUMENT");
         byte mode = Common.getMode(view);
 
+        pagecontrol.add("home");
+        pagecontrol.add("back");
+        
         new Button(container, "conditions");
         
         header = new DataForm(container, "header");
         header.importModel(model);
         header.get("ID").setEnabled(false);
+        header.setColumns((byte)2);
+        header.addLine("ID", "TIPO");
+        header.addLine("RECEIVER", "VALOR");
+        header.addLine("DATA_CRIACAO", null);
         
         receiver = header.get("RECEIVER");
         receiver.setObligatory(true);
+        receiver.setValidator(PartnerValidator.class);
         
         add = new Button(container, "add");
         remove = new Button(container, "remove");
@@ -140,8 +150,6 @@ public class Response {
         
         view.setFocus("RECEIVER");
         view.setTitle(Common.TITLE[mode]);
-        view.setNavbarActionEnabled("home", true);
-        view.setNavbarActionEnabled("back", true);
     }
     
     /**
@@ -150,11 +158,13 @@ public class Response {
      * @param function
      * @throws Exception
      */
-    public static final void main(ViewData view, Function function)
+    public static final void main(View view, Function function)
             throws Exception {
-        Container container = new Form(view, "main");
+        Form container = new Form(view, "main");
+        PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
         
+        pagecontrol.add("back");
         form.importModel(new Documents(function).
                 getModel("CUSTOM_SD_DOCUMENT"));
         
@@ -167,7 +177,6 @@ public class Response {
         new Button(container, "update");
 
         view.setFocus("ID");
-        view.setNavbarActionEnabled("back", true);
         view.setTitle("document-selection");
     }
 

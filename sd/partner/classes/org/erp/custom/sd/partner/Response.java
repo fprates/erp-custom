@@ -12,11 +12,12 @@ import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
 import org.iocaste.shell.common.Frame;
+import org.iocaste.shell.common.PageControl;
 import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Response {
 
@@ -27,7 +28,7 @@ public class Response {
      * @param view
      */
     private static final void buildAddressTab(TabbedPane tabs,
-            DocumentModel model, ViewData view) {
+            DocumentModel model, View view) {
         ItemData itemdata;
         TabbedPaneItem tab;
         Table addresses;
@@ -118,7 +119,7 @@ public class Response {
      * @throws Exception
      */
     private static final void buildContactTab(TabbedPane tabs,
-            DocumentModel model, ViewData view, Function function)
+            DocumentModel model, View view, Function function)
                     throws Exception {
         ItemData itemdata;
         TabbedPaneItem tab;
@@ -273,7 +274,7 @@ public class Response {
      * @param view
      */
     private static final void buildIdentityTab(TabbedPane tabs,
-            DocumentModel model, ViewData view) {
+            DocumentModel model, View view) {
         TabbedPaneItem tab;
         DataItem dataitem;
         String name;
@@ -295,7 +296,7 @@ public class Response {
                 continue;
             }
             
-            if (name.equals("NOME_RAZAO"))
+            if (name.equals("RAZAO_SOCIAL"))
                 view.setFocus(name);
             
             if (name.equals("TIPO_PESSOA")) {
@@ -326,26 +327,19 @@ public class Response {
      * @param function
      * @throws Exception
      */
-    public static final void identity(ViewData view, DocumentModel[] models,
+    public static final void identity(View view, DocumentModel[] models,
             Function function) throws Exception {
-        Container container = new Form(view, "main");
+        Form container = new Form(view, "main");
+        PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "pane");
         Button save = new Button(container, "save");
         byte modo = Common.getMode(view);
         
-        /*
-         * Identity
-         */
+        pagecontrol.add("home");
+        pagecontrol.add("back");
+        
         buildIdentityTab(tabs, models[Common.IDENTITY], view);
-        
-        /*
-         * Address
-         */
         buildAddressTab(tabs, models[Common.ADDRESS], view);
-        
-        /*
-         * Contacts
-         */
         buildContactTab(tabs, models[Common.CONTACT], view, function);
         
         switch (modo) {
@@ -361,7 +355,6 @@ public class Response {
             break;
         }
         
-        view.setNavbarActionEnabled("back", true);
         view.setTitle(Common.TITLE[modo]);
     }
     
@@ -371,11 +364,14 @@ public class Response {
      * @param function
      * @throws Exception
      */
-    public static final void main(ViewData view, Function function)
+    public static final void main(View view, Function function)
             throws Exception {
-        Container container = new Form(view, "main");
+        Form container = new Form(view, "main");
+        PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
         DataItem partner = new DataItem(form, Const.TEXT_FIELD, "partner");
+        
+        pagecontrol.add("home");
         
         partner.setModelItem(new Documents(function).getModel("CUSTOM_PARTNER").
                 getModelItem("CODIGO"));
@@ -384,7 +380,6 @@ public class Response {
         new Button(container, "update");
         
         view.setFocus("partner");
-        view.setNavbarActionEnabled("back", true);
         view.setTitle("partner-selection");
     }
 }

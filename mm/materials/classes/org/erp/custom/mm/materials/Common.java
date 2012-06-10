@@ -7,7 +7,7 @@ import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Common {
 
@@ -25,7 +25,7 @@ public class Common {
      * @param view
      * @return
      */
-    public static final byte getMode(ViewData view) {
+    public static final byte getMode(View view) {
         return view.getParameter("mode");
     }
     
@@ -35,7 +35,7 @@ public class Common {
      * @param view
      * @param object
      */
-    public static final void insertItem(byte mode, Table itens, ViewData view,
+    public static final void insertItem(byte mode, Table itens, View view,
             ExtendedObject object) {
         TextField tfield;
         String name, tablename;

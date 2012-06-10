@@ -6,7 +6,7 @@ import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Common {
     public static final byte CREATE = 0;
@@ -21,12 +21,12 @@ public class Common {
         "document-conditions"
     };
     
-    public static final byte getMode(ViewData view) {
+    public static final byte getMode(View view) {
         return view.getParameter("mode");
     }
     
     public static final void insertCondition(Table itens,
-            ExtendedObject object, ViewData view) {
+            ExtendedObject object, View view) {
         String name;
         TextField tfield;
         long l = 0;
@@ -69,7 +69,7 @@ public class Common {
      * @param view
      * @param object
      */
-    public static final void insertItem(Table itens, ViewData view,
+    public static final void insertItem(Table itens, View view,
             ExtendedObject object) {
         String name;
         TextField tfield;

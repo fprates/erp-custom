@@ -7,7 +7,7 @@ import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Request {
     private static final byte PRICES = 0;
@@ -29,7 +29,7 @@ public class Request {
      * 
      * @param view
      */
-    public static final void additem(ViewData view, String tablename) {
+    public static final void additem(View view, String tablename) {
         Table itens = view.getElement(tablename);
         byte mode = Common.getMode(view);
         
@@ -42,7 +42,7 @@ public class Request {
      * @param function
      * @throws Exception
      */
-    public static final void create(ViewData view, Function function)
+    public static final void create(View view, Function function)
             throws Exception {
         DataForm selection = view.getElement("selection");
         String matid = selection.get("material").get();
@@ -78,7 +78,7 @@ public class Request {
      * @param mode
      * @throws Exception
      */
-    private static final void load(ViewData view, Function function, byte mode)
+    private static final void load(View view, Function function, byte mode)
             throws Exception {
         ExtendedObject[] objects;
         DataForm selection = view.getElement("selection");
@@ -112,7 +112,7 @@ public class Request {
      * 
      * @param view
      */
-    public static final void removeitem(ViewData view, String tablename) {
+    public static final void removeitem(View view, String tablename) {
         Table itens = view.getElement(tablename);
         
         for (TableItem item : itens.getItens())
@@ -126,7 +126,7 @@ public class Request {
      * @param function
      * @throws Exception
      */
-    public static final void save(ViewData view, Function function)
+    public static final void save(View view, Function function)
             throws Exception {
         Documents documents = new Documents(function);
         DataForm base = view.getElement("base");
@@ -180,7 +180,7 @@ public class Request {
      * @param function
      * @throws Exception
      */
-    public static final void show(ViewData view, Function function)
+    public static final void show(View view, Function function)
             throws Exception {
         load(view, function, Common.SHOW);
     }
@@ -191,7 +191,7 @@ public class Request {
      * @param function
      * @throws Exception
      */
-    public static final void update(ViewData view, Function function)
+    public static final void update(View view, Function function)
             throws Exception {
         load(view, function, Common.UPDATE);
     }

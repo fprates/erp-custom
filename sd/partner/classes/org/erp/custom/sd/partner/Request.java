@@ -15,7 +15,7 @@ import org.iocaste.shell.common.Parameter;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Request {
     private static final byte ADDRESSES = 0;
@@ -40,7 +40,7 @@ public class Request {
      * @return
      */
     public static final byte checkContactAddress(ExtendedObject contact,
-            ViewData view) {
+            View view) {
         Link link;
         Table addresses;
         long taddress, faddress = Common.getLong(contact.getValue("ADDRESS"));
@@ -69,7 +69,7 @@ public class Request {
      * 
      * @param view
      */
-    public static final void create(ViewData view) {
+    public static final void create(View view) {
         view.clearParameters();
         view.export("mode", Common.CREATE);
         view.setReloadableView(true);
@@ -83,7 +83,7 @@ public class Request {
      * @param form
      * @throws Exception
      */
-    public static final void edititem(ViewData view, Table itens,
+    public static final void edititem(View view, Table itens,
             DataForm form) {
         Link link;
         long tcodigo, fcodigo;
@@ -113,7 +113,7 @@ public class Request {
      * @return
      * @throws Exception
      */
-    public static final long itemmark(ViewData view, Table itens,
+    public static final long itemmark(View view, Table itens,
             DataForm form) {
         Parameter index = view.getElement("index");
         TableItem item = itens.get(Integer.parseInt((String)index.get()));
@@ -134,7 +134,7 @@ public class Request {
      * @param mode
      * @throws Exception
      */
-    public static final void load(ViewData view, Function function, byte mode)
+    public static final void load(View view, Function function, byte mode)
             throws Exception {
         Documents documents;
         ExtendedObject partner;
@@ -175,7 +175,7 @@ public class Request {
      * 
      * @param view
      */
-    public static final void removeitem(ViewData view, String tablename) {
+    public static final void removeitem(View view, String tablename) {
         Link link;
         Table itens = view.getElement(tablename);
         int i = 0;
@@ -196,7 +196,7 @@ public class Request {
      * @param view
      * @throws Exception
      */
-    public static final void save(ViewData view, Function function)
+    public static final void save(View view, Function function)
             throws Exception {
         DataItem dataitem;
         InputComponent input;

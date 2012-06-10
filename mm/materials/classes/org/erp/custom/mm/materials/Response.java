@@ -5,21 +5,21 @@ import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
-import org.iocaste.shell.common.Container;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.PageControl;
 import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Response {
 	
-	private static final void loadItens(ViewData view, byte mode) {
+	private static final void loadItens(View view, byte mode) {
         ExtendedObject[] objects;
         Table itens;
         ExtendedObject material = view.getParameter("material");
@@ -44,11 +44,14 @@ public class Response {
      * @param function
      * @throws Exception
      */
-    public static final void main(ViewData view, Function function)
+    public static final void main(View view, Function function)
             throws Exception {
-        Container container = new Form(view, "main");
+        Form container = new Form(view, "main");
+        PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
         DataItem item = new DataItem(form, Const.TEXT_FIELD, "material");
+        
+        pagecontrol.add("back");
         
         item.setModelItem(new Documents(function).getModel("MATERIAL").
                 getModelItem("ID"));
@@ -60,7 +63,6 @@ public class Response {
         
         view.setFocus("material");
         view.setTitle("material-selection");
-        view.setNavbarActionEnabled("back", true);
     }
     
     /**
@@ -69,7 +71,7 @@ public class Response {
      * @param function
      * @throws Exception
      */
-    public static final void material(ViewData view, Function function)
+    public static final void material(View view, Function function)
             throws Exception {
         Button save, addpromo, removepromo, addmaterial, removematerial;
         Button addprice, removeprice;
@@ -77,7 +79,8 @@ public class Response {
         DataItem dataitem;
         Table prices, promos, submat;
         byte mode = Common.getMode(view);
-        Container container = new Form(view, "main");
+        Form container = new Form(view, "main");
+        PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "tabs");
         TabbedPaneItem tabitem = new TabbedPaneItem(tabs, "basepane");
         DataForm base = new DataForm(tabs, "base");
@@ -85,6 +88,8 @@ public class Response {
         StandardContainer promocnt = new StandardContainer(tabs, "promocnt");
         StandardContainer submatcnt = new StandardContainer(tabs, "submatcnt");
         Documents documents = new Documents(function);
+        
+        pagecontrol.add("back");
         
         /*
          * Base
@@ -187,7 +192,6 @@ public class Response {
             break;
         }
         
-        view.setNavbarActionEnabled("back", true);
         view.setTitle(Common.TITLE[mode]);
     }
 }

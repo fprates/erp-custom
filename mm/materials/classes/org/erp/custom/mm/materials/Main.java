@@ -3,7 +3,7 @@ package org.erp.custom.mm.materials;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Main extends AbstractPage {
 
@@ -15,7 +15,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void addmaterial(ViewData view) {
+    public final void addmaterial(View view) {
     	Request.additem(view, "submats");
     }
     
@@ -23,7 +23,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void addprice(ViewData view) {
+    public final void addprice(View view) {
         Request.additem(view, "prices");
     }
     
@@ -31,7 +31,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void addpromo(ViewData view) {
+    public final void addpromo(View view) {
         Request.additem(view, "promos");
     }
     
@@ -40,7 +40,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void create(ViewData view) throws Exception {
+    public final void create(View view) throws Exception {
         Request.create(view, this);
     }
     
@@ -58,7 +58,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void main(ViewData view) throws Exception {
+    public final void main(View view) throws Exception {
         Response.main(view, this);
     }
     
@@ -67,7 +67,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void material(ViewData view) throws Exception {
+    public final void material(View view) throws Exception {
         Response.material(view, this);
     }
     
@@ -75,7 +75,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void removematerial(ViewData view) {
+    public final void removematerial(View view) {
     	Request.removeitem(view, "submats");
     }
     
@@ -83,7 +83,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void removeprice(ViewData view) {
+    public final void removeprice(View view) {
         Request.removeitem(view, "prices");
     }
     
@@ -91,7 +91,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void removepromo(ViewData view) {
+    public final void removepromo(View view) {
         Request.removeitem(view, "promos");
     }
     
@@ -100,7 +100,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void save(ViewData view) throws Exception {
+    public final void save(View view) throws Exception {
         Request.save(view, this);
     }
     
@@ -109,7 +109,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void show(ViewData view) throws Exception {
+    public final void show(View view) throws Exception {
         Request.show(view, this);
     }
     
@@ -118,7 +118,7 @@ public class Main extends AbstractPage {
      * @param view
      * @throws Exception
      */
-    public final void update(ViewData view) throws Exception {
+    public final void update(View view) throws Exception {
         Request.update(view, this);
     }
 }

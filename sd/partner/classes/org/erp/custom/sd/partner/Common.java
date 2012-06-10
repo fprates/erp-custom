@@ -12,7 +12,7 @@ import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableColumn;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.TextField;
-import org.iocaste.shell.common.ViewData;
+import org.iocaste.shell.common.View;
 
 public class Common {
     public final static byte SHOW = 0;
@@ -70,7 +70,7 @@ public class Common {
      * @param view
      * @return
      */
-    public static final byte getMode(ViewData view) {
+    public static final byte getMode(View view) {
         return view.getParameter("mode");
     }
     
@@ -140,7 +140,7 @@ public class Common {
         item.setObject(itemdata.object);
     }
     
-    public static final void insertCommunic(Table communics, ViewData view,
+    public static final void insertCommunic(Table communics, View view,
             ExtendedObject object) {
         DataForm contact;
         long codigo, contactid;
