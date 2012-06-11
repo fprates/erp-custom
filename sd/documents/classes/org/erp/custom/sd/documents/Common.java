@@ -45,8 +45,10 @@ public class Common {
             tfield.setModelItem(column.getModelItem());
             tfield.setEnabled(name.equals("ID")? false : mode != Common.SHOW);
             
-            if (name.equals("CONDICAO"))
+            if (name.equals("CONDICAO")) {
+                tfield.setValidator(ConditionTypeValidator.class);
                 view.setFocus(tfield);
+            }
             
             item.add(tfield);
         }

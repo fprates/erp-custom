@@ -1,5 +1,6 @@
 package org.erp.custom.sd.documents;
 
+import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
@@ -20,7 +21,7 @@ public class Main extends AbstractPage {
     }
     
     public final void condapply(View view) throws Exception {
-        Request.condapply(view);
+        Request.condapply(view, this);
         back(view);
     }
     
@@ -72,5 +73,15 @@ public class Main extends AbstractPage {
         Request.update(view, this);
     }
     
-    public final void validate(View view) { }
+    public final void validate(View view) {
+        ExtendedObject[] objects;
+        
+        if (Common.getMode(view) == Common.SHOW)
+            return;
+        
+        objects = view.getParameter("conditions");
+        Request.totalAmountUpdate(view, objects);
+    }
+    
+    public final void validatecond(View view) { }
 }

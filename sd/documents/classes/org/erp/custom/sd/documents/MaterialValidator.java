@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.shell.common.AbstractValidator;
-import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.ValidatorConfig;
 
@@ -20,7 +19,6 @@ public class MaterialValidator extends AbstractValidator {
     @Override
     public final void validate(ValidatorConfig config) throws Exception {
         double uprice, quantity, itemtotal;
-        InputComponent vltotal;
         Documents documents;
         ExtendedObject[] objects;
         String query;
@@ -41,10 +39,6 @@ public class MaterialValidator extends AbstractValidator {
         quantity = config.getInput("QUANTITY").get();
         itemtotal = quantity * uprice;
         config.getInput("PRECO_TOTAL").set(itemtotal);
-        
-        vltotal = config.getInput("VALOR");
-        itemtotal += (Double)vltotal.get();
-        config.getInput("VALOR").set(itemtotal);
     }
 
 }

@@ -9,6 +9,7 @@ import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.View;
@@ -35,19 +36,28 @@ public class Request {
         Common.insertItem(itens, view, null);
     }
     
-    public static final void condapply(View view) {
+    public static final void condapply(View view, Function function)
+            throws Exception {
+        ExtendedObject[] conditions_;
         Table conditions = view.getElement("conditions");
         List<ExtendedObject> oconditions = new ArrayList<ExtendedObject>();
+        Shell shell = new Shell(function);
+        View document = shell.getView(view, "document");
         
         for (TableItem item : conditions.getItens())
             oconditions.add(item.getObject());
         
-        view.export("conditions", oconditions.toArray(new ExtendedObject[0]));
+        conditions_ = oconditions.toArray(new ExtendedObject[0]);
+        view.export("conditions", conditions_);
+        
+        totalAmountUpdate(document, conditions_);
+        shell.updateView(document);
     }
     
     public static final void condadd(View view) {
         Table conditions = view.getElement("conditions");
         
+        view.getElement("validatecond").setVisible(true);
         view.getElement("condremove").setVisible(true);
         view.getElement("condapply").setVisible(true);
         conditions.setVisible(true);
@@ -70,6 +80,7 @@ public class Request {
         if (conditions.length() > 0)
             return;
         
+        view.getElement("validatecond").setVisible(false);
         view.getElement("condremove").setVisible(false);
         conditions.setVisible(false);
     }
@@ -226,6 +237,31 @@ public class Request {
             }
         
         view.message(Const.STATUS, "document.saved.successfully");
+    }
+    
+    /**
+     * 
+     * @param view
+     * @param objects
+     */
+    public static final void totalAmountUpdate(View view, 
+            ExtendedObject[] objects) {
+        InputComponent input;
+        double valor = 0;
+        Table itens = view.getElement("itens");
+        DataForm header = view.getElement("header");
+        
+        for (TableItem item : itens.getItens()) {
+            input = item.get("PRECO_TOTAL");
+            valor += (Double)input.get();
+        }
+
+        if (objects != null)
+            for (ExtendedObject object : objects)
+                valor += (Double)object.getValue("VALOR");
+        
+        input = header.get("VALOR");
+        input.set(valor);
     }
     
     /**
