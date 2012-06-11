@@ -1,5 +1,7 @@
 package org.erp.custom.sd.documents;
 
+import java.util.Calendar;
+
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
@@ -17,7 +19,7 @@ public class Response {
     
     public static final void condform(View view, Function function)
             throws Exception {
-        Button condadd, condremove, condapply;
+        Button validate, condadd, condremove, condapply;
         Table conditions;
         Form container = new Form(view, "main");
         Documents documents = new Documents(function);
@@ -34,6 +36,8 @@ public class Response {
         conditions.importModel(documents.getModel("CUSTOM_SD_CONDITIONS"));
         conditions.getColumn("DOCUMENT").setVisible(false);
         
+        validate = new Button(container, "validatecond");
+        validate.setSubmit(true);
         condapply = new Button(container, "condapply");
         new Button(container, "condcancel");
         
@@ -48,6 +52,7 @@ public class Response {
                 condadd.setVisible(true);
                 condremove.setVisible(false);
                 condapply.setVisible(false);
+                validate.setVisible(false);
             }
             
             break;
@@ -56,6 +61,7 @@ public class Response {
             condadd.setVisible(false);
             condremove.setVisible(false);
             condapply.setVisible(false);
+            validate.setVisible(false);
             
             if (oconditions != null)
                 for (ExtendedObject ocondition : oconditions)
@@ -77,6 +83,7 @@ public class Response {
      */
     public static final void document(View view, Function function)
             throws Exception {
+        Calendar calendar;
         Button add, remove, save, validate;
         Table itens;
         InputComponent receiver, tipo;
@@ -128,6 +135,9 @@ public class Response {
         
         switch (mode) {
         case Common.CREATE:
+            calendar = Calendar.getInstance(view.getLocale());
+            header.get("DATA_CRIACAO").set(calendar.getTime());
+            
             Common.insertItem(itens, view, null);
             break;
             
