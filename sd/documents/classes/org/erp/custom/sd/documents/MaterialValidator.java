@@ -1,7 +1,5 @@
 package org.erp.custom.sd.documents;
 
-import java.math.BigDecimal;
-
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.shell.common.AbstractValidator;
@@ -33,7 +31,7 @@ public class MaterialValidator extends AbstractValidator {
         if (objects == null)
             return;
         
-        uprice = ((BigDecimal)objects[0].getValue("VL_VENDA")).doubleValue();
+        uprice = objects[0].getValue("VL_VENDA");
         config.getInput("PRECO_UNITARIO").set(uprice);
         
         quantity = config.getInput("QUANTITY").get();
