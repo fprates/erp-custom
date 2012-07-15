@@ -70,10 +70,10 @@ public class Request {
      * @param view
      */
     public static final void create(View view) {
-        view.clearParameters();
+        view.clearExports();
         view.export("mode", Common.CREATE);
         view.setReloadableView(true);
-        view.redirect(null, "identity");
+        view.redirect("identity");
     }
     
     /**
@@ -132,13 +132,12 @@ public class Request {
      * @param view
      * @param function
      * @param mode
-     * @throws Exception
      */
-    public static final void load(View view, Function function, byte mode)
-            throws Exception {
+    public static final void load(View view, Function function, byte mode) {
         Documents documents;
         ExtendedObject partner;
         ExtendedObject[] objects;
+        String strid;
         DataForm form = view.getElement("selection");
         long ident = form.get("partner").get();
         
@@ -154,8 +153,15 @@ public class Request {
             return;
         }
         
-        view.clearParameters();
+        strid = Long.toString(ident);
+        if (mode == Common.UPDATE && documents.
+                isLocked("CUSTOM_PARTNER", strid)) {
+            view.message(Const.ERROR, "record.is.locked");
+            return;
+        }
         
+        documents.lock("CUSTOM_PARTNER", strid);
+        view.clearExports();
         objects = documents.select(QUERIES[ADDRESSES], ident);
         view.export("addresses", objects);
         
@@ -199,10 +205,8 @@ public class Request {
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public static final void save(View view, Function function)
-            throws Exception {
+    public static final void save(View view, Function function) {
         DataItem dataitem;
         InputComponent input;
         long codigo, addrfrom, addrto, contactid, contactid_, itemcode;
@@ -226,7 +230,7 @@ public class Request {
             }
             
             form.get("CODIGO").set(codigo);
-            
+            documents.lock("CUSTOM_PARTNER", Long.toString(codigo));
             view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
             
@@ -298,10 +302,9 @@ public class Request {
      * 
      * @param documents
      * @param item
-     * @throws Exception
      */
     private static final void saveCommunicationItem(Documents documents,
-            TableItem item, long contactid, long partner) throws Exception {
+            TableItem item, long contactid, long partner) {
         InputComponent input;
         long codigo = Common.getValue(item.get("CODIGO"));
         
@@ -325,10 +328,9 @@ public class Request {
      * @param item
      * @param partner
      * @return
-     * @throws Exception
      */
     private static final long saveItem(Documents documents, TableItem item,
-            long partner) throws Exception {
+            long partner) {
         ExtendedObject object = item.getObject();
         Link link = item.get("CODIGO");
         long codigo = Long.parseLong(link.getText());

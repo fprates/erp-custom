@@ -28,7 +28,7 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void addaddress(View view) throws Exception {
+    public final void addaddress(View view) {
         Button button;
         ItemData itemdata = new ItemData();
         DataForm identity = view.getElement("identity");
@@ -37,7 +37,6 @@ public class Main extends AbstractPage {
         
         if (itens.length() == 0) {
             itens.setVisible(true);
-            
             button = view.getElement("removeaddress");
             button.setVisible(true);
             button = view.getElement("editaddress");
@@ -51,10 +50,9 @@ public class Main extends AbstractPage {
         itemdata.container = view.getElement("addresscnt");
         itemdata.mark = "addressmark";
         itemdata.object.setValue("CODIGO", 0l);
+        
         Common.insertItem(itemdata);
-        
         updatePartnerView(view);
-        
         address.clearInputs();
     }
     
@@ -132,6 +130,19 @@ public class Main extends AbstractPage {
         DataForm form = view.getElement("address");
         
         Request.itemmark(view, itens, form);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.iocaste.shell.common.AbstractPage#back(
+     *    org.iocaste.shell.common.View)
+     */
+    @Override
+    public final void back(View view) {
+        if (Common.getMode(view) == Common.UPDATE)
+            unlock(view);
+        
+        super.back(view);
     }
     
     /**
@@ -213,12 +224,25 @@ public class Main extends AbstractPage {
         contact.clearInputs();
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.iocaste.shell.common.AbstractPage#home(
+     *    org.iocaste.shell.common.View)
+     */
+    @Override
+    public final void home(View view) {
+        if ((view.getPageName().equals("identity")) &&
+                (Common.getMode(view) == Common.UPDATE))
+            unlock(view);
+        
+        super.home(view);
+    }
+    
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void identity(View view) throws Exception {
+    public final void identity(View view) {
         Documents documents = new Documents(this);
         DocumentModel[] models = new DocumentModel[3];
         
@@ -241,9 +265,8 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void main(View view) throws Exception {
+    public final void main(View view) {
         Response.main(view, this);
     }
     
@@ -323,25 +346,36 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void save(View view) throws Exception {
+    public final void save(View view) {
         Request.save(view, this);
     }
     
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void show(View view) throws Exception {
+    public final void show(View view) {
         Request.load(view, this, Common.SHOW);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    private final void unlock(View view) {
+        DataForm form;
+        long id;
+        form = view.getElement("identity");
+        id = form.get("CODIGO").get();
+        
+        new Documents(this).unlock("CUSTOM_PARTNER", Long.toString(id));
     }
 
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void update(View view) throws Exception {
+    public final void update(View view) {
         Request.load(view, this, Common.UPDATE);
     }
     
@@ -352,7 +386,6 @@ public class Main extends AbstractPage {
      */
     private final void updateCommunicsView(View view, boolean visible) {
         Container communicscnt = view.getElement("communicscnt");
-        
         communicscnt.setVisible(visible);
     }
     

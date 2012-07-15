@@ -122,11 +122,9 @@ public class Response {
      * @param model
      * @param view
      * @param function
-     * @throws Exception
      */
     private static final void buildContactTab(TabbedPane tabs,
-            DocumentModel model, View view, Function function)
-                    throws Exception {
+            DocumentModel model, View view, Function function) {
         ItemData itemdata;
         TabbedPaneItem tab;
         DataItem dataitem;
@@ -146,7 +144,6 @@ public class Response {
         
         editcontact = new Button(contactcnt, "editcontact");
         addcontact = new Button(contactcnt, "addcontact");
-        
         contact = new DataForm(contactcnt, "contact");
         contact.importModel(model);
         contact.get("PARTNER_ID").setVisible(false);
@@ -165,14 +162,11 @@ public class Response {
          * itens de contato
          */
         removecontact = new Button(contactcnt, "removecontact");
-        
         contacts = new Table(contactcnt, "contacts");
         contacts.importModel(model);
         contacts.getColumn("PARTNER_ID").setVisible(false);
         contacts.setVisible(false);
         contacts.setMark(true);
-        
-
         Common.enableTableColumns(contacts, "CODIGO", "PNOME", "UNOME");
         
         /*
@@ -318,10 +312,9 @@ public class Response {
      * @param view
      * @param models
      * @param function
-     * @throws Exception
      */
     public static final void identity(View view, DocumentModel[] models,
-            Function function) throws Exception {
+            Function function) {
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "pane");
@@ -353,10 +346,8 @@ public class Response {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void main(View view, Function function)
-            throws Exception {
+    public static final void main(View view, Function function) {
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
