@@ -53,11 +53,11 @@ public class Request {
             return;
         }
         
-        view.clearParameters();
+        view.clearExports();
         view.setReloadableView(true);
         view.export("matid", matid);
         view.export("mode", Common.CREATE);
-        view.redirect(null, "material");
+        view.redirect("material");
     }
     
     /**
@@ -91,7 +91,7 @@ public class Request {
             return;
         }
         
-        view.clearParameters();
+        view.clearExports();
         objects = documents.select(QUERIES[PRICES], matid);
         view.export("prices", objects);
         
@@ -105,7 +105,7 @@ public class Request {
         view.setReloadableView(true);
         view.export("material", material);
         view.export("mode", mode);
-        view.redirect(null, "material");
+        view.redirect("material");
     }
     
     /**

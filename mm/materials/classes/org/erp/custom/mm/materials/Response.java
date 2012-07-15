@@ -1,5 +1,6 @@
 package org.erp.custom.mm.materials;
 
+import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.Function;
@@ -46,6 +47,7 @@ public class Response {
      */
     public static final void main(View view, Function function)
             throws Exception {
+        DocumentModelItem matid;
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
@@ -54,8 +56,8 @@ public class Response {
         view.setFocus(item);
         pagecontrol.add("back");
         
-        item.setModelItem(new Documents(function).getModel("MATERIAL").
-                getModelItem("ID"));
+        matid = new Documents(function).getModel("MATERIAL").getModelItem("ID");
+        item.setModelItem(matid);
         item.setObligatory(true);
         
         new Button(container, "create");
