@@ -17,8 +17,7 @@ import org.iocaste.shell.common.View;
 
 public class Response {
     
-    public static final void condform(View view, Function function)
-            throws Exception {
+    public static final void condform(View view, Function function) {
         Button validate, condadd, condremove, condapply;
         Table conditions;
         Form container = new Form(view, "main");
@@ -79,10 +78,8 @@ public class Response {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void document(View view, Function function)
-            throws Exception {
+    public static final void document(View view, Function function) {
         Calendar calendar;
         Button add, remove, save, validate;
         Table itens;
@@ -175,10 +172,8 @@ public class Response {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void main(View view, Function function)
-            throws Exception {
+    public static final void main(View view, Function function) {
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");

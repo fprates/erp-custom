@@ -16,7 +16,7 @@ import org.iocaste.protocol.user.Authorization;
 
 public class Install {
     
-    public static final InstallData init(Function function) throws Exception {
+    public static final InstallData init(Function function) {
         Map<String, String> messages;
         Authorization authorization;
         InstallData data = new InstallData();
@@ -204,10 +204,9 @@ public class Install {
      * @param data
      * @param cdata
      * @param documents
-     * @throws Exception
      */
     private static final void installHeader(InstallData data, CData cdata,
-            Documents documents) throws Exception {
+            Documents documents) {
         DocumentModel model;
         DocumentModelItem item, partnercode, doctype;
         DataElement element;
@@ -346,10 +345,9 @@ public class Install {
      * @param data
      * @param cdata
      * @param documents
-     * @throws Exception
      */
     private static final void installItens(InstallData data, CData cdata,
-            Documents documents) throws Exception {
+            Documents documents) {
         DocumentModel model;
         DocumentModelItem item, materialid;
         DataElement element;

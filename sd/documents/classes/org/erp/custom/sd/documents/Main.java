@@ -20,16 +20,16 @@ public class Main extends AbstractPage {
         Request.condadd(view);
     }
     
-    public final void condapply(View view) throws Exception {
+    public final void condapply(View view) {
         Request.condapply(view, this);
         back(view);
     }
     
-    public final void condcancel(View view) throws Exception {
+    public final void condcancel(View view) {
         back(view);
     }
     
-    public final void condform(View view) throws Exception {
+    public final void condform(View view) {
         Response.condform(view, this);
     }
     
@@ -45,19 +45,19 @@ public class Main extends AbstractPage {
         Request.create(view);
     }
     
-    public final void display(View view) throws Exception {
+    public final void display(View view) {
         Request.display(view, this);
     }
     
-    public final void document(View view) throws Exception {
+    public final void document(View view) {
         Response.document(view, this);
     }
     
-    public final InstallData install(Message message) throws Exception {
+    public final InstallData install(Message message) {
         return Install.init(this);
     }
     
-    public final void main(View view) throws Exception {
+    public final void main(View view) {
         Response.main(view, this);
     }
     
@@ -65,11 +65,11 @@ public class Main extends AbstractPage {
         Request.remove(view);
     }
     
-    public final void save(View view) throws Exception {
+    public final void save(View view) {
         Request.save(view, this);
     }
     
-    public final void update(View view) throws Exception {
+    public final void update(View view) {
         Request.update(view, this);
     }
     

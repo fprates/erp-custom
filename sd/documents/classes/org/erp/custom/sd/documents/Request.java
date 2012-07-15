@@ -32,12 +32,10 @@ public class Request {
      */
     public static final void add(View view) {
         Table itens = view.getElement("itens");
-        
         Common.insertItem(itens, view, null);
     }
     
-    public static final void condapply(View view, Function function)
-            throws Exception {
+    public static final void condapply(View view, Function function) {
         ExtendedObject[] conditions_;
         Table conditions = view.getElement("conditions");
         List<ExtendedObject> oconditions = new ArrayList<ExtendedObject>();
@@ -100,10 +98,8 @@ public class Request {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void display(View view, Function function)
-            throws Exception {
+    public static final void display(View view, Function function) {
         load(view, function, Common.SHOW);
     }
     
@@ -112,10 +108,8 @@ public class Request {
      * @param view
      * @param function
      * @param mode
-     * @throws Exception
      */
-    private static final void load(View view, Function function, byte mode)
-            throws Exception {
+    private static final void load(View view, Function function, byte mode) {
         ExtendedObject header;
         ExtendedObject[] objects;
         Documents documents = new Documents(function);
@@ -171,10 +165,8 @@ public class Request {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void save(View view, Function function)
-            throws Exception {
+    public static final void save(View view, Function function) {
         long docid, itemnr;
         Table itens;
         ExtendedObject[] conditions;
@@ -267,10 +259,8 @@ public class Request {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void update(View view, Function function)
-            throws Exception {
+    public static final void update(View view, Function function) {
         load(view, function, Common.UPDATE);
     }
 }
