@@ -90,10 +90,10 @@ public class Request {
      * @param view
      */
     public static final void create(View view) {
-        view.clearParameters();
+        view.clearExports();
         view.setReloadableView(true);
         view.export("mode", Common.CREATE);
-        view.redirect(null, "document");
+        view.redirect("document");
     }
     
     /**
@@ -133,8 +133,7 @@ public class Request {
             return;
         }
         
-        view.clearParameters();
-        
+        view.clearExports();
         objects = documents.select(QUERIES[ITENS], ident);
         view.export("itens", objects);
         
