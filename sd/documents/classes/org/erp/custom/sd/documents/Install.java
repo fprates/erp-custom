@@ -11,12 +11,14 @@ import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.packagetool.common.SearchHelpData;
+import org.iocaste.packagetool.common.TaskGroup;
 import org.iocaste.protocol.Function;
 import org.iocaste.protocol.user.Authorization;
 
 public class Install {
     
     public static final InstallData init(Function function) {
+    	TaskGroup taskgroup;
         Map<String, String> messages;
         Authorization authorization;
         InstallData data = new InstallData();
@@ -48,7 +50,9 @@ public class Install {
          * links
          */
         data.link("VA01", "erp-custom-sd.documents");
-        data.addTaskGroup("ERP", "VA01");
+        taskgroup = new TaskGroup("ERP");
+        taskgroup.add("VA01");
+        data.add(taskgroup);
         
         /*
          * mensagens

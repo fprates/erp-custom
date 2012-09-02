@@ -259,7 +259,7 @@ public class Main extends AbstractPage {
      * @return
      */
     public final InstallData install(Message message) {
-        return Install.self();
+        return Install.init();
     }
     
     /**

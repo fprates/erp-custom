@@ -10,6 +10,7 @@ import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.packagetool.common.SearchHelpData;
+import org.iocaste.packagetool.common.TaskGroup;
 import org.iocaste.protocol.user.Authorization;
 
 public class Install {
@@ -19,6 +20,7 @@ public class Install {
      * @return
      */
     public static final InstallData init() {
+    	TaskGroup taskgroup;
         Map<String, String> messages;
         Authorization authorization;
         InstallData data = new InstallData();
@@ -42,47 +44,50 @@ public class Install {
          * links
          */
         data.link("MM01", "erp-custom-mm.materials");
-        data.addTaskGroup("ERP", "MM01");
+        taskgroup = new TaskGroup("ERP");
+        taskgroup.add("MM01");
+        data.add(taskgroup);
         
         /*
          * mensagens
          */
         messages = new HashMap<String, String>();
-        messages.put("material-selection", "Selecionar material");
-        messages.put("material", "Material");
-        messages.put("create", "Criar");
-        messages.put("show", "Exibir");
-        messages.put("update", "Atualizar");
-        messages.put("material-editor-create", "Criar material");
-        messages.put("basepane", "Dados básicos");
-        messages.put("save", "Salvar");
-        messages.put("ID", "Código");
-        messages.put("NAME", "Descrição");
         messages.put("ACTIVE", "Ativo");
-        messages.put("pricespane", "Preços");
-        messages.put("VL_VENDA", "Preço venda");
-        messages.put("VL_CUSTO", "Preço custo");
-        messages.put("DT_INICIAL", "Data inicial");
-        messages.put("DT_FINAL", "Data final");
+        messages.put("addmaterial", "Adicionar");
         messages.put("addprice", "Adicionar");
-        messages.put("removeprice", "Remover");
-        messages.put("promotions", "Promoções");
         messages.put("addpromo", "Adicionar");
-        messages.put("removepromo", "Remover");
-        messages.put("material.saved.successfully",
-                "Material salvo com sucesso.");
-        messages.put("vlcusto.gt.vlvenda",
-                "Valor de custo não pode ser maior que valor de venda.");
+        messages.put("basepane", "Dados básicos");
+        messages.put("create", "Criar");
+        messages.put("DT_FINAL", "Data final");
+        messages.put("DT_INICIAL", "Data inicial");
         messages.put("dtini.gt.dtfin",
                 "Data final não pode ser maiorn que a data inicial");
+        messages.put("ID", "Código");
+        messages.put("material", "Material");
+        messages.put("material.already.exists", "Material já existe.");
         messages.put("material.not.found", "Material não encontrado.");
+        messages.put("material.saved.successfully",
+                "Material salvo com sucesso.");
+        messages.put("material-editor-create", "Criar material");
         messages.put("material-editor-update", "Atualizar material");
         messages.put("material-editor-show", "Exibir material");
-        messages.put("submaterials", "Sub-materiais");
-        messages.put("SUB_MATERIAL", "Material");
-        messages.put("addmaterial", "Adicionar");
-        messages.put("removematerial", "Remover");
+        messages.put("material-selection", "Selecionar material");
         messages.put("MM01", "Mestre de materiais");
+        messages.put("NAME", "Descrição");
+        messages.put("pricespane", "Preços");
+        messages.put("promotions", "Promoções");
+        messages.put("removematerial", "Remover");
+        messages.put("removeprice", "Remover");
+        messages.put("removepromo", "Remover");
+        messages.put("save", "Salvar");
+        messages.put("SUB_MATERIAL", "Material");
+        messages.put("submaterials", "Sub-materiais");
+        messages.put("show", "Exibir");
+        messages.put("update", "Atualizar");
+        messages.put("VL_CUSTO", "Preço custo");
+        messages.put("VL_VENDA", "Preço venda");
+        messages.put("vlcusto.gt.vlvenda",
+                "Valor de custo não pode ser maior que valor de venda.");
         data.setMessages("pt_BR", messages);
         
         return data;
