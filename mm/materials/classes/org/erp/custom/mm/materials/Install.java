@@ -26,6 +26,7 @@ public class Install {
         InstallData data = new InstallData();
         CData cdata = new CData();
         
+        installMaterialGroup(data, cdata);
         installMaterialType(data, cdata);
         installBaseData(data, cdata);
         installPrices(data, cdata);
@@ -64,6 +65,7 @@ public class Install {
         messages.put("dtini.gt.dtfin",
                 "Data final não pode ser maiorn que a data inicial");
         messages.put("ID", "Código");
+        messages.put("MAT_GROUP", "Grupo de materiais");
         messages.put("MAT_TYPE", "Tipo de material");
         messages.put("material", "Material");
         messages.put("material.already.exists", "Material já existe.");
@@ -157,6 +159,15 @@ public class Install {
         item.setSearchHelp("SH_MAT_TYPE");
         model.add(item);
         
+        // grupo de materiais
+        item = new DocumentModelItem();
+        item.setName("MAT_GROUP");
+        item.setTableFieldName("GRMAT");
+        item.setDataElement(cdata.matgrpid.getDataElement());
+        item.setReference(cdata.matgrpid);
+        item.setSearchHelp("SH_MAT_GROUP");
+        model.add(item);
+        
         /*
          * Ajuda de pesquisa para material
          */
@@ -169,8 +180,45 @@ public class Install {
         data.add(sh);
     }
     
-    private static final void installMaterialType(InstallData data, CData cdata)
-    {
+    private static final void installMaterialGroup(InstallData data,
+            CData cdata) {
+        DocumentModel model;
+        DataElement element;
+        SearchHelpData shd;
+        
+        /*
+         * Grupo de materiais
+         */
+        model = data.getModel("MATERIAL_GROUP", "MATGROUP", null);
+        
+        // identificador
+        element = new DataElement();
+        element.setName("MATERIAL_GROUP.ID");
+        element.setType(DataType.CHAR);
+        element.setLength(4);
+        element.setUpcase(true);
+        
+        cdata.matgrpid = new DocumentModelItem();
+        cdata.matgrpid.setName("ID");
+        cdata.matgrpid.setTableFieldName("IDENT");
+        cdata.matgrpid.setDataElement(element);
+        model.add(cdata.matgrpid);
+        model.add(new DocumentModelKey(cdata.matgrpid));
+        
+        data.addValues(model, "ALMT");
+        data.addValues(model, "FRMC");
+        data.addValues(model, "VEST");
+        
+        shd = new SearchHelpData();
+        shd.setName("SH_MAT_GROUP");
+        shd.setModel("MATERIAL_GROUP");
+        shd.setExport("ID");
+        shd.add("ID");
+        data.add(shd);
+    }
+    
+    private static final void installMaterialType(InstallData data,
+            CData cdata) {
         DocumentModel model;
         DataElement element;
         SearchHelpData shd;
@@ -375,5 +423,5 @@ public class Install {
 
 class CData {
     public DataElement evalue, edate, ematid;
-    public DocumentModelItem imatid, item, mattypeid;
+    public DocumentModelItem imatid, item, mattypeid, matgrpid;
 }

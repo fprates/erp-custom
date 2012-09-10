@@ -153,6 +153,7 @@ public class Response {
             matid = view.getParameter("matid");
             base.get("ID").set(matid);
             base.get("MAT_TYPE").setObligatory(true);
+            base.get("MAT_GROUP").setObligatory(true);
             
             Common.insertItem(mode, prices, view, null);
             Common.insertItem(mode, promos, view, null);
@@ -162,6 +163,7 @@ public class Response {
             
         case Common.UPDATE:
             base.get("MAT_TYPE").setObligatory(true);
+            base.get("MAT_GROUP").setObligatory(true);
             loadItens(view, mode);
             
             break;
