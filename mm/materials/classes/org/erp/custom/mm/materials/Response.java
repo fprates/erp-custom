@@ -77,8 +77,7 @@ public class Response {
             throws Exception {
         Button save, addpromo, removepromo, addmaterial, removematerial;
         Button addprice, removeprice;
-        String matid, name;
-        DataItem dataitem;
+        String matid;
         Table prices, promos, submat;
         byte mode = Common.getMode(view);
         Form container = new Form(view, "main");
@@ -98,21 +97,10 @@ public class Response {
          */
         tabitem.setContainer(base);
         base.importModel(documents.getModel("MATERIAL"));
-        
-        for (Element element : base.getElements()) {
-            dataitem = (DataItem)element;
-            
-            name = dataitem.getName();
-            if (name.equals("ID")) {
-                dataitem.setEnabled(false);
-                continue;
-            }
-            
-            if (name.equals("ACTIVE"))
-                dataitem.setComponentType(Const.CHECKBOX);
-            
-            dataitem.setEnabled(mode != Common.SHOW);
-        }
+        base.get("ACTIVE").setComponentType(Const.CHECKBOX);
+        for (Element element : base.getElements())
+            ((DataItem)element).setEnabled(mode != Common.SHOW);
+        base.get("ID").setEnabled(false);
         
         /*
          * Prices
@@ -164,6 +152,7 @@ public class Response {
         case Common.CREATE:
             matid = view.getParameter("matid");
             base.get("ID").set(matid);
+            base.get("MAT_TYPE").setObligatory(true);
             
             Common.insertItem(mode, prices, view, null);
             Common.insertItem(mode, promos, view, null);
@@ -172,6 +161,7 @@ public class Response {
             break;
             
         case Common.UPDATE:
+            base.get("MAT_TYPE").setObligatory(true);
             loadItens(view, mode);
             
             break;

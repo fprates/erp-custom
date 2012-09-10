@@ -26,6 +26,7 @@ public class Install {
         InstallData data = new InstallData();
         CData cdata = new CData();
         
+        installMaterialType(data, cdata);
         installBaseData(data, cdata);
         installPrices(data, cdata);
         installPromotions(data, cdata);
@@ -63,6 +64,7 @@ public class Install {
         messages.put("dtini.gt.dtfin",
                 "Data final não pode ser maiorn que a data inicial");
         messages.put("ID", "Código");
+        messages.put("MAT_TYPE", "Tipo de material");
         messages.put("material", "Material");
         messages.put("material.already.exists", "Material já existe.");
         messages.put("material.not.found", "Material não encontrado.");
@@ -97,11 +99,14 @@ public class Install {
     	DataElement element;
     	DocumentModelItem item;
         SearchHelpData sh;
-        DocumentModel model = data.getModel("MATERIAL", "CMATERIAL", null);
-        
+        DocumentModel model;
+
         /*
          * MATERIAL
          */
+        model = data.getModel("MATERIAL", "CMATERIAL", null);
+        
+        // identificador
         cdata.ematid = new DataElement();
         cdata.ematid.setName("MATERIAL.ID");
         cdata.ematid.setLength(20);
@@ -114,10 +119,10 @@ public class Install {
         cdata.imatid.setTableFieldName("IDENT");
         cdata.imatid.setDataElement(cdata.ematid);
         cdata.imatid.setSearchHelp("SH_MATERIAL");
-        
         model.add(cdata.imatid);
         model.add(new DocumentModelKey(cdata.imatid));
         
+        // descrição
         element = new DataElement();
         element.setName("MATERIAL.NAME");
         element.setLength(60);
@@ -129,9 +134,9 @@ public class Install {
         item.setName("NAME");
         item.setTableFieldName("NAME1");
         item.setDataElement(element);
-        
         model.add(item);
         
+        // ativo?
         element = new DataElement();
         element.setName("MATERIAL.ACTIVE");
         element.setType(DataType.BOOLEAN);
@@ -141,7 +146,15 @@ public class Install {
         item.setName("ACTIVE");
         item.setTableFieldName("ACTIV");
         item.setDataElement(element);
+        model.add(item);
         
+        // tipo de material
+        item = new DocumentModelItem();
+        item.setName("MAT_TYPE");
+        item.setTableFieldName("TPMAT");
+        item.setDataElement(cdata.mattypeid.getDataElement());
+        item.setReference(cdata.mattypeid);
+        item.setSearchHelp("SH_MAT_TYPE");
         model.add(item);
         
         /*
@@ -156,7 +169,43 @@ public class Install {
         data.add(sh);
     }
     
-    public static final void installPrices(InstallData data, CData cdata) {
+    private static final void installMaterialType(InstallData data, CData cdata)
+    {
+        DocumentModel model;
+        DataElement element;
+        SearchHelpData shd;
+        
+        /*
+         * Tipo de material
+         */
+        model = data.getModel("MATERIAL_TYPE", "MATTYPE", null);
+        
+        // identificador
+        element = new DataElement();
+        element.setName("MATERIAL_TYPE.ID");
+        element.setType(DataType.CHAR);
+        element.setLength(4);
+        element.setUpcase(true);
+        
+        cdata.mattypeid = new DocumentModelItem();
+        cdata.mattypeid.setName("ID");
+        cdata.mattypeid.setTableFieldName("IDENT");
+        cdata.mattypeid.setDataElement(element);
+        model.add(cdata.mattypeid);
+        model.add(new DocumentModelKey(cdata.mattypeid));
+        
+        data.addValues(model, "PROD");
+        data.addValues(model, "SERV");
+        
+        shd = new SearchHelpData();
+        shd.setName("SH_MAT_TYPE");
+        shd.setModel("MATERIAL_TYPE");
+        shd.setExport("ID");
+        shd.add("ID");
+        data.add(shd);
+    }
+    
+    private static final void installPrices(InstallData data, CData cdata) {
     	DataElement element;
     	DocumentModelItem item;
         DocumentModel model;
@@ -183,7 +232,6 @@ public class Install {
         item.setTableFieldName("MATCD");
         item.setDataElement(cdata.ematid);
         item.setReference(cdata.imatid);
-        
         model.add(item);
         
         cdata.evalue = new DataElement();
@@ -197,14 +245,12 @@ public class Install {
         item.setName("VL_VENDA");
         item.setTableFieldName("VLVND");
         item.setDataElement(cdata.evalue);
-        
         model.add(item);
         
         item = new DocumentModelItem();
         item.setName("VL_CUSTO");
         item.setTableFieldName("VLCST");
         item.setDataElement(cdata.evalue);
-        
         model.add(item);
         
         cdata.edate = new DataElement();
@@ -216,14 +262,12 @@ public class Install {
         item.setName("DT_INICIAL");
         item.setTableFieldName("DTINI");
         item.setDataElement(cdata.edate);
-        
         model.add(item);
         
         item = new DocumentModelItem();
         item.setName("DT_FINAL");
         item.setTableFieldName("DTTRM");
         item.setDataElement(cdata.edate);
-        
         model.add(item);
     }
     
@@ -331,6 +375,5 @@ public class Install {
 
 class CData {
     public DataElement evalue, edate, ematid;
-    public DocumentModelItem imatid, item;
-	
+    public DocumentModelItem imatid, item, mattypeid;
 }
