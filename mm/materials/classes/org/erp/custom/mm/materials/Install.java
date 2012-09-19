@@ -88,6 +88,7 @@ public class Install {
         messages.put("submaterials", "Sub-materiais");
         messages.put("show", "Exibir");
         messages.put("update", "Atualizar");
+        messages.put("validate", "Validar");
         messages.put("VL_CUSTO", "Preço custo");
         messages.put("VL_VENDA", "Preço venda");
         messages.put("vlcusto.gt.vlvenda",
@@ -182,6 +183,7 @@ public class Install {
     
     private static final void installMaterialGroup(InstallData data,
             CData cdata) {
+        DocumentModelItem item;
         DocumentModel model;
         DataElement element;
         SearchHelpData shd;
@@ -205,20 +207,35 @@ public class Install {
         model.add(cdata.matgrpid);
         model.add(new DocumentModelKey(cdata.matgrpid));
         
-        data.addValues(model, "ALMT");
-        data.addValues(model, "FRMC");
-        data.addValues(model, "VEST");
+        // descrição
+        element = new DataElement();
+        element.setName("MATERIAL_GROUP.TEXT");
+        element.setType(DataType.CHAR);
+        element.setLength(40);
+        element.setUpcase(true);
+        
+        item = new DocumentModelItem();
+        item.setName("TEXT");
+        item.setTableFieldName("TEXT");
+        item.setDataElement(element);
+        model.add(item);
+        
+        data.addValues(model, "ALMT", "ALIMENTAÇÃO");
+        data.addValues(model, "FRMC", "FARMACEUTICO");
+        data.addValues(model, "VEST", "VESTUARIO");
         
         shd = new SearchHelpData();
         shd.setName("SH_MAT_GROUP");
         shd.setModel("MATERIAL_GROUP");
         shd.setExport("ID");
         shd.add("ID");
+        shd.add("TEXT");
         data.add(shd);
     }
     
     private static final void installMaterialType(InstallData data,
             CData cdata) {
+        DocumentModelItem item;
         DocumentModel model;
         DataElement element;
         SearchHelpData shd;
@@ -242,14 +259,28 @@ public class Install {
         model.add(cdata.mattypeid);
         model.add(new DocumentModelKey(cdata.mattypeid));
         
-        data.addValues(model, "PROD");
-        data.addValues(model, "SERV");
+        // descrição
+        element = new DataElement();
+        element.setName("MATERIAL_TYPE.TEXT");
+        element.setType(DataType.CHAR);
+        element.setLength(40);
+        element.setUpcase(true);
+        
+        item = new DocumentModelItem();
+        item.setName("TEXT");
+        item.setTableFieldName("TEXT");
+        item.setDataElement(element);
+        model.add(item);
+        
+        data.addValues(model, "PROD", "PRODUTO");
+        data.addValues(model, "SERV", "SERVICO");
         
         shd = new SearchHelpData();
         shd.setName("SH_MAT_TYPE");
         shd.setModel("MATERIAL_TYPE");
         shd.setExport("ID");
         shd.add("ID");
+        shd.add("TEXT");
         data.add(shd);
     }
     
@@ -260,6 +291,7 @@ public class Install {
         
         model = data.getModel("PRECO_MATERIAL", "CMATPRICE", null);
         
+        // identificador
         element = new DataElement();
         element.setName("PRECO_MATERIAL.ID");
         element.setLength(23);
@@ -271,10 +303,10 @@ public class Install {
         item.setName("ID");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
-        
         model.add(item);
         model.add(new DocumentModelKey(item));
         
+        // material
         item = new DocumentModelItem();
         item.setName("MATERIAL");
         item.setTableFieldName("MATCD");
@@ -289,6 +321,7 @@ public class Install {
         cdata.evalue.setType(DataType.DEC);
         data.add(element);
         
+        // valor venda
         item = new DocumentModelItem();
         item.setName("VL_VENDA");
         item.setTableFieldName("VLVND");
@@ -306,12 +339,14 @@ public class Install {
         cdata.edate.setType(DataType.DATE);
         data.add(element);
         
+        // data inicial
         item = new DocumentModelItem();
         item.setName("DT_INICIAL");
         item.setTableFieldName("DTINI");
         item.setDataElement(cdata.edate);
         model.add(item);
         
+        // data final
         item = new DocumentModelItem();
         item.setName("DT_FINAL");
         item.setTableFieldName("DTTRM");

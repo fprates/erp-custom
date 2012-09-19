@@ -98,27 +98,26 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void save(View view) throws Exception {
+    public final void save(View view) {
         Request.save(view, this);
     }
     
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void show(View view) throws Exception {
+    public final void show(View view) {
         Request.show(view, this);
     }
     
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void update(View view) throws Exception {
+    public final void update(View view) {
         Request.update(view, this);
     }
+    
+    public final void validate(View view) { }
 }

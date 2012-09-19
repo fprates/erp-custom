@@ -71,19 +71,17 @@ public class Response {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void material(View view, Function function)
-            throws Exception {
+    public static final void material(View view, Function function) {
         Button save, addpromo, removepromo, addmaterial, removematerial;
-        Button addprice, removeprice;
+        Button addprice, removeprice, validate;
         String matid;
         Table prices, promos, submat;
+        TabbedPaneItem tabitem;
         byte mode = Common.getMode(view);
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "tabs");
-        TabbedPaneItem tabitem = new TabbedPaneItem(tabs, "basepane");
         DataForm base = new DataForm(tabs, "base");
         StandardContainer pricescnt = new StandardContainer(tabs, "pricescnt");
         StandardContainer promocnt = new StandardContainer(tabs, "promocnt");
@@ -91,16 +89,22 @@ public class Response {
         Documents documents = new Documents(function);
         
         pagecontrol.add("back");
+        validate = new Button(container, "validate");
+        validate.setSubmit(true);
         
         /*
          * Base
          */
-        tabitem.setContainer(base);
         base.importModel(documents.getModel("MATERIAL"));
         base.get("ACTIVE").setComponentType(Const.CHECKBOX);
         for (Element element : base.getElements())
             ((DataItem)element).setEnabled(mode != Common.SHOW);
         base.get("ID").setEnabled(false);
+        base.get("MAT_TYPE").setValidator(MaterialTypeValidator.class);
+        base.get("MAT_GROUP").setValidator(MaterialGroupValidator.class);
+        
+        tabitem = new TabbedPaneItem(tabs, "basepane");
+        tabitem.setContainer(base);
         
         /*
          * Prices
@@ -176,6 +180,7 @@ public class Response {
         	removepromo.setVisible(false);
         	addmaterial.setVisible(false);
         	removematerial.setVisible(false);
+            validate.setVisible(false);
             
             prices.setMark(false);
             promos.setMark(false);

@@ -76,10 +76,8 @@ public class Request {
      * @param view
      * @param function
      * @param mode
-     * @throws Exception
      */
-    private static final void load(View view, Function function, byte mode)
-            throws Exception {
+    private static final void load(View view, Function function, byte mode) {
         ExtendedObject[] objects;
         DataForm selection = view.getElement("selection");
         String matid = selection.get("material").get();
@@ -124,10 +122,8 @@ public class Request {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void save(View view, Function function)
-            throws Exception {
+    public static final void save(View view, Function function) {
         Documents documents = new Documents(function);
         DataForm base = view.getElement("base");
         ExtendedObject obase = base.getObject();
@@ -157,10 +153,9 @@ public class Request {
      * @param table
      * @param material
      * @param documents
-     * @throws Exception
      */
     private static final void saveItens(Table table, String material,
-            Documents documents) throws Exception {
+            Documents documents) {
         String itemid;
         ExtendedObject object;
         int i = 0;
@@ -178,10 +173,8 @@ public class Request {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void show(View view, Function function)
-            throws Exception {
+    public static final void show(View view, Function function) {
         load(view, function, Common.SHOW);
     }
     
@@ -189,10 +182,8 @@ public class Request {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void update(View view, Function function)
-            throws Exception {
+    public static final void update(View view, Function function) {
         load(view, function, Common.UPDATE);
     }
 }
