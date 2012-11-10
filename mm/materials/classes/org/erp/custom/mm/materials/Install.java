@@ -8,6 +8,7 @@ import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
+import org.iocaste.packagetool.common.GlobalConfigData;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.packagetool.common.SearchHelpData;
 import org.iocaste.packagetool.common.TaskGroup;
@@ -17,9 +18,11 @@ public class Install {
     
     /**
      * 
+     * @param function
      * @return
      */
     public static final InstallData init() {
+        GlobalConfigData config;
     	TaskGroup taskgroup;
         Map<String, String> messages;
         Authorization authorization;
@@ -32,6 +35,15 @@ public class Install {
         installPrices(data, cdata);
         installPromotions(data, cdata);
         installSubMaterial(data, cdata);
+        
+        /*
+         * dados de configuração
+         */
+        config = new GlobalConfigData();
+        config.define("MATERIAL_AUTOCODE", Boolean.class, true);
+        data.add(config);
+        
+        data.addNumberFactory("MATERIAL_ID");
         
         /*
          * autorizações
@@ -53,7 +65,7 @@ public class Install {
         /*
          * mensagens
          */
-        messages = new HashMap<String, String>();
+        messages = new HashMap<>();
         messages.put("ACTIVE", "Ativo");
         messages.put("addmaterial", "Adicionar");
         messages.put("addprice", "Adicionar");
@@ -65,6 +77,7 @@ public class Install {
         messages.put("dtini.gt.dtfin",
                 "Data final não pode ser maiorn que a data inicial");
         messages.put("ID", "Código");
+        messages.put("MATERIAL_AUTOCODE", "Auto-numeração");
         messages.put("MAT_GROUP", "Grupo de materiais");
         messages.put("MAT_TYPE", "Tipo de material");
         messages.put("material", "Material");
@@ -73,8 +86,8 @@ public class Install {
         messages.put("material.saved.successfully",
                 "Material salvo com sucesso.");
         messages.put("material-editor-create", "Criar material");
-        messages.put("material-editor-update", "Atualizar material");
         messages.put("material-editor-show", "Exibir material");
+        messages.put("material-editor-update", "Atualizar material");
         messages.put("material-selection", "Selecionar material");
         messages.put("MM01", "Mestre de materiais");
         messages.put("NAME", "Descrição");

@@ -3,6 +3,7 @@ package org.erp.custom.mm.materials;
 import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.globalconfig.common.GlobalConfig;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
@@ -23,10 +24,6 @@ public class Response {
 	private static final void loadItens(View view, byte mode) {
         ExtendedObject[] objects;
         Table itens;
-        ExtendedObject material = view.getParameter("material");
-        DataForm base = view.getElement("base");
-        
-        base.setObject(material);
 
         for (String name : new String[] {"prices", "promos", "submats"}) {
 	        objects = view.getParameter(name);
@@ -43,11 +40,11 @@ public class Response {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void main(View view, Function function)
-            throws Exception {
+    public static final void main(View view, Function function) {
+        GlobalConfig gconfig;
         DocumentModelItem matid;
+        boolean autocode;
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
@@ -58,7 +55,9 @@ public class Response {
         
         matid = new Documents(function).getModel("MATERIAL").getModelItem("ID");
         item.setModelItem(matid);
-        item.setObligatory(true);
+        gconfig = new GlobalConfig(function);
+        autocode = gconfig.get("MATERIAL_AUTOCODE");
+        item.setObligatory(!autocode);
         
         new Button(container, "create");
         new Button(container, "show");
@@ -87,6 +86,7 @@ public class Response {
         StandardContainer promocnt = new StandardContainer(tabs, "promocnt");
         StandardContainer submatcnt = new StandardContainer(tabs, "submatcnt");
         Documents documents = new Documents(function);
+        ExtendedObject material = view.getParameter("material");
         
         pagecontrol.add("back");
         validate = new Button(container, "validate");
@@ -155,20 +155,15 @@ public class Response {
         switch (mode) {
         case Common.CREATE:
             matid = view.getParameter("matid");
-            base.get("ID").set(matid);
+            material.setValue("ID", matid);
             base.get("MAT_TYPE").setObligatory(true);
             base.get("MAT_GROUP").setObligatory(true);
-            
-            Common.insertItem(mode, prices, view, null);
-            Common.insertItem(mode, promos, view, null);
-            Common.insertItem(mode, submat, view, null);
             
             break;
             
         case Common.UPDATE:
             base.get("MAT_TYPE").setObligatory(true);
             base.get("MAT_GROUP").setObligatory(true);
-            loadItens(view, mode);
             
             break;
             
@@ -186,10 +181,11 @@ public class Response {
             promos.setMark(false);
             submat.setMark(false);
             
-            loadItens(view, mode);
-            
             break;
         }
+
+        base.setObject(material);
+        loadItens(view, mode);
         
         view.setTitle(Common.TITLE[mode]);
     }

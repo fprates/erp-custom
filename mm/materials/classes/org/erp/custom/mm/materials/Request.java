@@ -2,6 +2,7 @@ package org.erp.custom.mm.materials;
 
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.globalconfig.common.GlobalConfig;
 import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
@@ -40,10 +41,9 @@ public class Request {
      * 
      * @param view
      * @param function
-     * @throws Exception
      */
-    public static final void create(View view, Function function)
-            throws Exception {
+    public static final void create(View view, Function function) {
+        ExtendedObject material; 
         DataForm selection = view.getElement("selection");
         String matid = selection.get("material").get();
         Documents documents = new Documents(function);
@@ -53,10 +53,12 @@ public class Request {
             return;
         }
         
+        material = new ExtendedObject(documents.getModel("MATERIAL"));
         view.clearExports();
         view.setReloadableView(true);
         view.export("matid", matid);
         view.export("mode", Common.CREATE);
+        view.export("material", material);
         view.redirect("material");
     }
     
@@ -124,17 +126,31 @@ public class Request {
      * @param function
      */
     public static final void save(View view, Function function) {
+        boolean autocode;
+        GlobalConfig config;
+        String material;
         Documents documents = new Documents(function);
         DataForm base = view.getElement("base");
         ExtendedObject obase = base.getObject();
         byte mode = Common.getMode(view);
-        String material = obase.getValue("ID");
         
         if (mode == Common.CREATE) {
+            config = new GlobalConfig(function);
+            autocode = config.get("MATERIAL_AUTOCODE");
+            if (autocode) {
+                material = Long.toString(documents.
+                        getNextNumber("MATERIAL_ID"));
+                obase.setValue("ID", material);
+                base.setObject(obase);
+            } else {
+                material = obase.getValue("ID");
+            }
+            
             view.setTitle(Common.TITLE[Common.UPDATE]);
             view.export("mode", Common.UPDATE);
             documents.save(obase);
         } else {
+            material = obase.getValue("ID");
             documents.modify(obase);
             documents.update(QUERIES[DEL_SUBMAT], material);
             documents.update(QUERIES[DEL_PRICES], material);
