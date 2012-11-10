@@ -8,7 +8,8 @@ import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
-import org.iocaste.documents.common.Documents;
+import org.iocaste.documents.common.DummyElement;
+import org.iocaste.documents.common.DummyModelItem;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.packagetool.common.SearchHelpData;
 import org.iocaste.packagetool.common.TaskGroup;
@@ -22,14 +23,13 @@ public class Install {
         Map<String, String> messages;
         Authorization authorization;
         InstallData data = new InstallData();
-        Documents documents = new Documents(function);
         CData cdata = new CData();
 
         data.setDependencies("erp-custom-mm.materials",
                 "erp-custom-sd.partner");
                 
-        installHeader(data, cdata, documents);
-        installItens(data, cdata, documents);
+        installHeader(data, cdata);
+        installItens(data, cdata);
         installConditions(data, cdata);
         
         /*
@@ -58,42 +58,43 @@ public class Install {
          * mensagens
          */
         messages = new HashMap<String, String>();
-        messages.put("document-selection", "Seleção de documento");
+        messages.put("add", "Adicionar");
+        messages.put("condadd", "Adicionar");
+        messages.put("condapply", "Aplicar");
+        messages.put("condcancel", "Cancelar");
+        messages.put("CONDICAO", "Condição");
+        messages.put("conditions", "Condições");
+        messages.put("condremove", "Remover");
+        messages.put("create", "Criar");
+        messages.put("DATA_CRIACAO", "Criado em");
+        messages.put("display", "Exibir");
+        messages.put("document-conditions", "Condições de preço");
         messages.put("document-create", "Criar documento");
         messages.put("document-display", "Exibir documento");
+        messages.put("document-selection", "Seleção de documento");
         messages.put("document-update", "Editar documento");
-        messages.put("document-conditions", "Condições de preço");
         messages.put("document.number.required",
                 "Número do documento obrigatório.");
         messages.put("document.saved.successfully",
                 "Documento salvo com sucesso.");
-        messages.put("invalid.sd.document", "Documento inválido.");
+        messages.put("ID", "Documento");
         messages.put("invalid.document.header",
                 "Cabeçalho do documento inválido.");
-        messages.put("display", "Exibir");
-        messages.put("create", "Criar");
-        messages.put("update", "Atualizar");
-        messages.put("ID", "Documento");
+        messages.put("invalid.sd.document", "Documento inválido.");
         messages.put("ITEM_NUMBER", "Item");
         messages.put("MATERIAL", "Produto");
-        messages.put("RECEIVER", "Recebedor");
-        messages.put("QUANTITY", "Quantidade");
-        messages.put("DATA_CRIACAO", "Criado em");
         messages.put("PRECO_UNITARIO", "Preço unitário");
         messages.put("PRECO_TOTAL", "Preço total");
-        messages.put("CONDICAO", "Condição");
-        messages.put("VALOR", "Valor");
-        messages.put("TIPO", "Tipo documento");
-        messages.put("save", "Salvar");
-        messages.put("add", "Adicionar");
+        messages.put("QUANTITY", "Quantidade");
+        messages.put("RECEIVER", "Recebedor");
         messages.put("remove", "Remover");
-        messages.put("condadd", "Adicionar");
-        messages.put("condremove", "Remover");
-        messages.put("condapply", "Aplicar");
-        messages.put("condcancel", "Cancelar");
-        messages.put("conditions", "Condições");
-        messages.put("validate", "Validar");
+        messages.put("save", "Salvar");
+        messages.put("TIPO", "Tipo documento");
+        messages.put("update", "Atualizar");
         messages.put("VA01", "Emissão de documento de venda");
+        messages.put("validate", "Validar");
+        messages.put("validatecond", "Validar");
+        messages.put("VALOR", "Valor");
         data.setMessages("pt_BR", messages);
         
         return data;
@@ -207,10 +208,8 @@ public class Install {
      * 
      * @param data
      * @param cdata
-     * @param documents
      */
-    private static final void installHeader(InstallData data, CData cdata,
-            Documents documents) {
+    private static final void installHeader(InstallData data, CData cdata) {
         DocumentModel model;
         DocumentModelItem item, partnercode, doctype;
         DataElement element;
@@ -283,9 +282,8 @@ public class Install {
         model.add(new DocumentModelKey(cdata.docid));
         
         // código do recebedor
-        partnercode = documents.getModel("CUSTOM_PARTNER").
-                getModelItem("CODIGO");
-        element = partnercode.getDataElement();
+        partnercode = new DummyModelItem("CUSTOM_PARTNER","CODIGO");
+        element = new DummyElement("CUSTOM_PARTNER.CODIGO");
         
         item = new DocumentModelItem();
         item.setName("RECEIVER");
@@ -348,10 +346,8 @@ public class Install {
      * 
      * @param data
      * @param cdata
-     * @param documents
      */
-    private static final void installItens(InstallData data, CData cdata,
-            Documents documents) {
+    private static final void installItens(InstallData data, CData cdata) {
         DocumentModel model;
         DocumentModelItem item, materialid;
         DataElement element;
@@ -369,7 +365,6 @@ public class Install {
         item.setName("ITEM_NUMBER");
         item.setTableFieldName("ITMNR");
         item.setDataElement(element);
-        
         model.add(item);
         model.add(new DocumentModelKey(item));
         
@@ -381,12 +376,11 @@ public class Install {
         item.setTableFieldName("DOCID");
         item.setDataElement(element);
         item.setReference(cdata.docid);
-        
         model.add(item);
         
         // material
-        materialid = documents.getModel("MATERIAL").getModelItem("ID");
-        element = materialid.getDataElement();
+        materialid = new DummyModelItem("MATERIAL", "ID");
+        element = new DummyElement("MATERIAL.ID");
         
         item = new DocumentModelItem();
         item.setName("MATERIAL");
@@ -394,7 +388,6 @@ public class Install {
         item.setDataElement(element);
         item.setReference(materialid);
         item.setSearchHelp("SH_MATERIAL");
-        
         model.add(item);
         
         // quantidade
@@ -408,7 +401,6 @@ public class Install {
         item.setName("QUANTITY");
         item.setTableFieldName("QUANT");
         item.setDataElement(element);
-        
         model.add(item);
         
         // preço unitário
@@ -416,7 +408,6 @@ public class Install {
         item.setName("PRECO_UNITARIO");
         item.setTableFieldName("PUNIT");
         item.setDataElement(cdata.eprice);
-        
         model.add(item);
         
         // preço total
@@ -424,7 +415,6 @@ public class Install {
         item.setName("PRECO_TOTAL");
         item.setTableFieldName("PTOTA");
         item.setDataElement(cdata.eprice);
-        
         model.add(item);
     }
 }
