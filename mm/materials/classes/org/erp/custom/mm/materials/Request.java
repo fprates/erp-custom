@@ -3,7 +3,6 @@ package org.erp.custom.mm.materials;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.globalconfig.common.GlobalConfig;
-import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Table;
@@ -29,37 +28,20 @@ public class Request {
     /**
      * 
      * @param view
-     */
-    public static final void additem(View view, String tablename) {
-        Table itens = view.getElement(tablename);
-        byte mode = Common.getMode(view);
-        
-        Common.insertItem(mode, itens, view, null);
-    }
-    
-    /**
-     * 
-     * @param view
      * @param function
      */
-    public static final void create(View view, Function function) {
-        ExtendedObject material; 
-        DataForm selection = view.getElement("selection");
-        String matid = selection.get("material").get();
-        Documents documents = new Documents(function);
-        
-        if (documents.getObject("MATERIAL", matid) != null) {
+    public static final void create(View view, Context context) {
+        DataForm selection = view.getElement("material");
+        Documents documents = new Documents(context.function);
+
+        context.matid = selection.get("ID").get();
+        if (documents.getObject("MATERIAL", context.matid) != null) {
             view.message(Const.ERROR, "material.already.exists");
             return;
         }
         
-        material = new ExtendedObject(documents.getModel("MATERIAL"));
-        view.clearExports();
-        view.setReloadableView(true);
-        view.export("matid", matid);
-        view.export("mode", Common.CREATE);
-        view.export("material", material);
-        view.redirect("material");
+        context.mode = Context.CREATE;
+        view.redirect("form");
     }
     
     /**
@@ -79,45 +61,22 @@ public class Request {
      * @param function
      * @param mode
      */
-    private static final void load(View view, Function function, byte mode) {
-        ExtendedObject[] objects;
-        DataForm selection = view.getElement("selection");
-        String matid = selection.get("material").get();
-        Documents documents = new Documents(function);
-        ExtendedObject material = documents.getObject("MATERIAL", matid);
-        
-        if (material == null) {
+    private static final void load(View view, Context context) {
+        DataForm selection = view.getElement("material");
+        Documents documents = new Documents(context.function);
+
+        context.matid = selection.get("ID").get();
+        context.material = documents.getObject("MATERIAL", context.matid);
+        if (context.material == null) {
             view.message(Const.ERROR, "material.not.found");
             return;
         }
         
-        view.clearExports();
-        objects = documents.select(QUERIES[PRICES], matid);
-        view.export("prices", objects);
+        context.prices = documents.select(QUERIES[PRICES], context.matid);
+        context.promos = documents.select(QUERIES[PROMOS], context.matid);
+        context.submats = documents.select(QUERIES[SUBMATS], context.matid);
         
-        objects = documents.select(QUERIES[PROMOS], matid);
-        view.export("promos", objects);
-        
-        objects = documents.select(QUERIES[SUBMATS], matid);
-        view.export("submats", objects);
-        
-        view.setTitle(Common.TITLE[mode]);
-        view.setReloadableView(true);
-        view.export("material", material);
-        view.export("mode", mode);
-        view.redirect("material");
-    }
-    
-    /**
-     * 
-     * @param view
-     */
-    public static final void removeitem(View view, String tablename) {
-        Table itens = view.getElement(tablename);
-        
-        for (TableItem item : itens.getItens())
-            if (item.isSelected())
-                itens.remove(item);
+        view.redirect("form");
     }
     
     /**
@@ -125,17 +84,17 @@ public class Request {
      * @param view
      * @param function
      */
-    public static final void save(View view, Function function) {
+    public static final void save(View view, Context context) {
         boolean autocode;
         GlobalConfig config;
         String material;
-        Documents documents = new Documents(function);
+        Documents documents = new Documents(context.function);
         DataForm base = view.getElement("base");
         ExtendedObject obase = base.getObject();
-        byte mode = Common.getMode(view);
         
-        if (mode == Common.CREATE) {
-            config = new GlobalConfig(function);
+        switch (context.mode) {
+        case Context.CREATE:
+            config = new GlobalConfig(context.function);
             autocode = config.get("MATERIAL_AUTOCODE");
             if (autocode) {
                 material = Long.toString(documents.
@@ -146,19 +105,21 @@ public class Request {
                 material = obase.getValue("ID");
             }
             
-            view.setTitle(Common.TITLE[Common.UPDATE]);
-            view.export("mode", Common.UPDATE);
+            view.setTitle(Context.TITLE[Context.UPDATE]);
+            context.mode = Context.UPDATE;
             documents.save(obase);
-        } else {
+            break;
+        default:
             material = obase.getValue("ID");
             documents.modify(obase);
             documents.update(QUERIES[DEL_SUBMAT], material);
             documents.update(QUERIES[DEL_PRICES], material);
             documents.update(QUERIES[DEL_PROMOS], material);
+            break;
         }
         
         saveItens((Table)view.getElement("prices"), material, documents);
-        saveItens((Table)view.getElement("promos"), material, documents);
+        saveItens((Table)view.getElement("promotions"), material, documents);
         saveItens((Table)view.getElement("submats"), material, documents);
         
         view.message(Const.STATUS, "material.saved.successfully");
@@ -185,13 +146,15 @@ public class Request {
             documents.save(object);
         }
     }
+    
     /**
      * 
      * @param view
-     * @param function
+     * @param context
      */
-    public static final void show(View view, Function function) {
-        load(view, function, Common.SHOW);
+    public static final void show(View view, Context context) {
+        context.mode = Context.SHOW;
+        load(view, context);
     }
     
     /**
@@ -199,7 +162,8 @@ public class Request {
      * @param view
      * @param function
      */
-    public static final void update(View view, Function function) {
-        load(view, function, Common.UPDATE);
+    public static final void update(View view, Context context) {
+        context.mode = Context.UPDATE;
+        load(view, context);
     }
 }

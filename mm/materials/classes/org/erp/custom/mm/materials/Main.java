@@ -1,12 +1,15 @@
 package org.erp.custom.mm.materials;
 
+import org.iocaste.documents.common.Documents;
+import org.iocaste.globalconfig.common.GlobalConfig;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
 import org.iocaste.shell.common.View;
 
 public class Main extends AbstractPage {
-
+    private Context context;
+    
     public Main() {
         export("install", "install");
     }
@@ -15,33 +18,86 @@ public class Main extends AbstractPage {
      * 
      * @param view
      */
-    public final void addmaterial(View view) {
-    	Request.additem(view, "submats");
+    public final void acceptprices(View view) {
+        context.priceshelper.accept(view);
     }
     
     /**
      * 
      * @param view
      */
-    public final void addprice(View view) {
-        Request.additem(view, "prices");
+    public final void acceptpromotions(View view) {
+        context.promotionshelper.accept(view);
     }
     
     /**
      * 
      * @param view
      */
-    public final void addpromo(View view) {
-        Request.additem(view, "promos");
+    public final void acceptsubmats(View view) {
+        context.smaterialshelper.accept(view);
     }
     
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void create(View view) throws Exception {
-        Request.create(view, this);
+    public final void addprices(View view) {
+        context.priceshelper.add(view);
+    }
+
+    /**
+     * 
+     * @param view
+     */
+    public final void addpromotions(View view) {
+        context.promotionshelper.add(view);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void addsubmats(View view) {
+        context.smaterialshelper.add(view);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void create(View view) {
+        Request.create(view, context);
+    }
+    
+    /**
+     * 
+     * @param view
+     */
+    public final void form(View view) {
+        Response.form(view, context);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.iocaste.shell.common.AbstractPage#init(
+     *     org.iocaste.shell.common.View)
+     */
+    @Override
+    public final void init(View view) {
+        Documents documents;
+        
+        if (!view.getPageName().equals("main"))
+            return;
+        
+        documents = new Documents(this);
+        context = new Context();
+        context.materialmodel = documents.getModel("MATERIAL");
+        context.pricesmodel = documents.getModel("PRECO_MATERIAL");
+        context.promotionsmodel = documents.getModel("PROMOCAO_MATERIAL");
+        context.submatmodel = documents.getModel("SUB_MATERIAL");
+        context.function = this;
+        context.autocode = new GlobalConfig(this).get("MATERIAL_AUTOCODE");
     }
     
     /**
@@ -56,43 +112,33 @@ public class Main extends AbstractPage {
     /**
      * 
      * @param view
-     * @throws Exception
      */
-    public final void main(View view) throws Exception {
-        Response.main(view, this);
-    }
-    
-    /**
-     * 
-     * @param view
-     * @throws Exception
-     */
-    public final void material(View view) throws Exception {
-        Response.material(view, this);
+    public final void main(View view) {
+        Response.main(view, context);
     }
     
     /**
      * 
      * @param view
      */
-    public final void removematerial(View view) {
-    	Request.removeitem(view, "submats");
+    public final void removeprices(View view) {
+        context.priceshelper.remove(view);
     }
     
     /**
      * 
      * @param view
      */
-    public final void removeprice(View view) {
-        Request.removeitem(view, "prices");
+    public final void removepromotions(View view) {
+        context.promotionshelper.remove(view);
     }
     
     /**
      * 
      * @param view
      */
-    public final void removepromo(View view) {
-        Request.removeitem(view, "promos");
+    public final void removesubmats(View view) {
+        context.smaterialshelper.remove(view);
     }
     
     /**
@@ -100,7 +146,7 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void save(View view) {
-        Request.save(view, this);
+        Request.save(view, context);
     }
     
     /**
@@ -108,7 +154,7 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void show(View view) {
-        Request.show(view, this);
+        Request.show(view, context);
     }
     
     /**
@@ -116,7 +162,7 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void update(View view) {
-        Request.update(view, this);
+        Request.update(view, context);
     }
     
     public final void validate(View view) { }

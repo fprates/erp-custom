@@ -1,107 +1,55 @@
 package org.erp.custom.mm.materials;
 
-import org.iocaste.documents.common.DocumentModelItem;
-import org.iocaste.documents.common.Documents;
-import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.globalconfig.common.GlobalConfig;
-import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
-import org.iocaste.shell.common.DataItem;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
+import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.PageControl;
-import org.iocaste.shell.common.StandardContainer;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.TableColumn;
+import org.iocaste.shell.common.TableTool;
 import org.iocaste.shell.common.View;
 
 public class Response {
-	
-	private static final void loadItens(View view, byte mode) {
-        ExtendedObject[] objects;
-        Table itens;
-
-        for (String name : new String[] {"prices", "promos", "submats"}) {
-	        objects = view.getParameter(name);
-	        if (objects == null)
-	            continue;
-	        
-        	itens = view.getElement(name);
-            for (ExtendedObject oprice : objects)
-                Common.insertItem(mode, itens, view, oprice);
-        }
-	}
-
-    /**
-     * 
-     * @param view
-     * @param function
-     */
-    public static final void main(View view, Function function) {
-        GlobalConfig gconfig;
-        DocumentModelItem matid;
-        boolean autocode;
-        Form container = new Form(view, "main");
-        PageControl pagecontrol = new PageControl(container);
-        DataForm form = new DataForm(container, "selection");
-        DataItem item = new DataItem(form, Const.TEXT_FIELD, "material");
-
-        view.setFocus(item);
-        pagecontrol.add("back");
-        
-        matid = new Documents(function).getModel("MATERIAL").getModelItem("ID");
-        item.setModelItem(matid);
-        gconfig = new GlobalConfig(function);
-        autocode = gconfig.get("MATERIAL_AUTOCODE");
-        item.setObligatory(!autocode);
-        
-        new Button(container, "create");
-        new Button(container, "show");
-        new Button(container, "update");
-        
-        view.setTitle("material-selection");
-    }
     
     /**
      * 
      * @param view
      * @param function
      */
-    public static final void material(View view, Function function) {
-        Button save, addpromo, removepromo, addmaterial, removematerial;
-        Button addprice, removeprice, validate;
-        String matid;
+    public static final void form(View view, Context context) {
+        InputComponent input;
+        Button validate;
         Table prices, promos, submat;
         TabbedPaneItem tabitem;
-        byte mode = Common.getMode(view);
         Form container = new Form(view, "main");
         PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "tabs");
         DataForm base = new DataForm(tabs, "base");
-        StandardContainer pricescnt = new StandardContainer(tabs, "pricescnt");
-        StandardContainer promocnt = new StandardContainer(tabs, "promocnt");
-        StandardContainer submatcnt = new StandardContainer(tabs, "submatcnt");
-        Documents documents = new Documents(function);
-        ExtendedObject material = view.getParameter("material");
         
         pagecontrol.add("back");
-        validate = new Button(container, "validate");
-        validate.setSubmit(true);
+        if (context.mode != Context.SHOW)
+            pagecontrol.add("save", PageControl.REQUEST);
         
         /*
          * Base
          */
-        base.importModel(documents.getModel("MATERIAL"));
+        base.importModel(context.materialmodel);
         base.get("ACTIVE").setComponentType(Const.CHECKBOX);
         for (Element element : base.getElements())
-            ((DataItem)element).setEnabled(mode != Common.SHOW);
+            element.setEnabled(context.mode != Context.SHOW);
+        
         base.get("ID").setEnabled(false);
-        base.get("MAT_TYPE").setValidator(MaterialTypeValidator.class);
-        base.get("MAT_GROUP").setValidator(MaterialGroupValidator.class);
+        input = base.get("MAT_TYPE");
+        input.setValidator(MaterialTypeValidator.class);
+        context.function.validate(input);
+        
+        input = base.get("MAT_GROUP");
+        input.setValidator(MaterialGroupValidator.class);
+        context.function.validate(input);
         
         tabitem = new TabbedPaneItem(tabs, "basepane");
         tabitem.setContainer(base);
@@ -109,84 +57,105 @@ public class Response {
         /*
          * Prices
          */
-        addprice = new Button(pricescnt, "addprice");
-        removeprice = new Button(pricescnt, "removeprice");
-        prices = new Table(pricescnt, "prices");
-        prices.setMark(true);
-        prices.importModel(documents.getModel("PRECO_MATERIAL"));
-        prices.getColumn("MATERIAL").setVisible(false);
-        prices.getColumn("ID").setVisible(false);
-        
+        context.priceshelper = new TableTool(tabs, "prices");
+        prices = context.priceshelper.getTable();
+        prices.importModel(context.pricesmodel);
+        context.priceshelper.visible(
+                "VL_VENDA", "VL_CUSTO", "DT_INICIAL", "DT_FINAL");
         tabitem = new TabbedPaneItem(tabs, "pricespane");
-        tabitem.setContainer(pricescnt);
+        tabitem.setContainer(context.priceshelper.getContainer());
         
         /*
          * Promotion
          */
-        addpromo = new Button(promocnt, "addpromo");
-        removepromo = new Button(promocnt, "removepromo");
-        promos = new Table(promocnt, "promos");
-        promos.setMark(true);
-        promos.importModel(documents.getModel("PROMOCAO_MATERIAL"));
-        promos.getColumn("MATERIAL").setVisible(false);
-        promos.getColumn("ID").setVisible(false);
+        context.promotionshelper = new TableTool(tabs, "promotions");
+        promos = context.promotionshelper.getTable();
+        promos.importModel(context.promotionsmodel);
+        context.promotionshelper.visible(
+                "VL_VENDA", "VL_CUSTO", "DT_INICIAL", "DT_FINAL");
         
-        tabitem = new TabbedPaneItem(tabs, "promotions");
-        tabitem.setContainer(promocnt);
+        tabitem = new TabbedPaneItem(tabs, "promotionspane");
+        tabitem.setContainer(context.promotionshelper.getContainer());
         
         /*
          * Sub-materials
          */
-        addmaterial = new Button(submatcnt, "addmaterial");
-        removematerial = new Button(submatcnt, "removematerial");
-        submat = new Table(submatcnt, "submats");
-        submat.setMark(true);
-        submat.importModel(documents.getModel("SUB_MATERIAL"));
-        
-        for (TableColumn column : submat.getColumns())
-            if (!column.isMark())
-                column.setVisible(column.getName().equals("SUB_MATERIAL"));
+        context.smaterialshelper = new TableTool(tabs, "submats");
+        submat = context.smaterialshelper.getTable();
+        submat.importModel(context.submatmodel);
+        context.smaterialshelper.visible("SUB_MATERIAL");
             
-        tabitem = new TabbedPaneItem(tabs, "submaterials");
-        tabitem.setContainer(submatcnt);
+        tabitem = new TabbedPaneItem(tabs, "submatspane");
+        tabitem.setContainer(context.smaterialshelper.getContainer());
+
+        TableTool.setObjects(prices, context.prices);
+        TableTool.setObjects(promos, context.promos);
+        TableTool.setObjects(submat, context.submats);
         
-        save = new Button(container, "save");
+        validate = new Button(container, "validate");
+        validate.setSubmit(true);
         
-        switch (mode) {
-        case Common.CREATE:
-            matid = view.getParameter("matid");
-            material.setValue("ID", matid);
+        switch (context.mode) {
+        case Context.CREATE:
+            base.get("ID").set(context.matid);
             base.get("MAT_TYPE").setObligatory(true);
             base.get("MAT_GROUP").setObligatory(true);
             
+            context.priceshelper.setMode(TableTool.UPDATE, view);
+            context.promotionshelper.setMode(TableTool.UPDATE, view);
+            context.smaterialshelper.setMode(TableTool.UPDATE, view);
             break;
             
-        case Common.UPDATE:
+        case Context.UPDATE:
             base.get("MAT_TYPE").setObligatory(true);
             base.get("MAT_GROUP").setObligatory(true);
+            base.setObject(context.material);
             
+            context.priceshelper.setMode(TableTool.UPDATE, view);
+            context.promotionshelper.setMode(TableTool.UPDATE, view);
+            context.smaterialshelper.setMode(TableTool.UPDATE, view);
             break;
             
-        case Common.SHOW:
-        	save.setVisible(false);
-        	addprice.setVisible(false);
-        	removeprice.setVisible(false);
-        	addpromo.setVisible(false);
-        	removepromo.setVisible(false);
-        	addmaterial.setVisible(false);
-        	removematerial.setVisible(false);
+        case Context.SHOW:
             validate.setVisible(false);
+            base.setObject(context.material);
             
-            prices.setMark(false);
-            promos.setMark(false);
-            submat.setMark(false);
-            
+            context.priceshelper.setMode(TableTool.DISPLAY, view);
+            context.promotionshelper.setMode(TableTool.DISPLAY, view);
+            context.smaterialshelper.setMode(TableTool.DISPLAY, view);
             break;
         }
-
-        base.setObject(material);
-        loadItens(view, mode);
         
-        view.setTitle(Common.TITLE[mode]);
+        view.setFocus(base.get("NAME"));
+        view.setTitle(Context.TITLE[context.mode]);
+    }
+
+    /**
+     * 
+     * @param view
+     * @param function
+     */
+    public static final void main(View view, Context context) {
+        InputComponent input;
+        Form container = new Form(view, "main");
+        PageControl pagecontrol = new PageControl(container);
+        DataForm form = new DataForm(container, "material");
+
+        pagecontrol.add("back");
+
+        form.importModel(context.materialmodel);
+        for (Element element : form.getElements())
+            element.setVisible(false);
+        
+        input = form.get("ID");
+        input.setVisible(true);
+        view.setFocus(input);
+        input.setObligatory(!context.autocode);
+        
+        new Button(container, "create");
+        new Button(container, "show");
+        new Button(container, "update");
+        
+        view.setTitle("material-selection");
     }
 }

@@ -13,6 +13,7 @@ import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.packagetool.common.SearchHelpData;
 import org.iocaste.packagetool.common.TaskGroup;
 import org.iocaste.protocol.user.Authorization;
+import org.iocaste.protocol.user.UserProfile;
 
 public class Install {
     
@@ -22,6 +23,7 @@ public class Install {
      * @return
      */
     public static final InstallData init() {
+        UserProfile profile;
         GlobalConfigData config;
     	TaskGroup taskgroup;
         Map<String, String> messages;
@@ -54,6 +56,10 @@ public class Install {
         authorization.add("APPNAME", "erp-custom-mm.materials");
         data.add(authorization);
         
+        profile = new UserProfile("SALES");
+        profile.add(authorization);
+        data.add(profile);
+        
         /*
          * links
          */
@@ -67,9 +73,12 @@ public class Install {
          */
         messages = new HashMap<>();
         messages.put("ACTIVE", "Ativo");
-        messages.put("addmaterial", "Adicionar");
-        messages.put("addprice", "Adicionar");
-        messages.put("addpromo", "Adicionar");
+        messages.put("acceptprices", "Aceitar");
+        messages.put("acceptpromotions", "Aceitar");
+        messages.put("acceptsubmats", "Aceitar");
+        messages.put("addprices", "Adicionar");
+        messages.put("addpromotions", "Adicionar");
+        messages.put("addsubmats", "Adicionar");
         messages.put("basepane", "Dados básicos");
         messages.put("create", "Criar");
         messages.put("DT_FINAL", "Data final");
@@ -92,13 +101,13 @@ public class Install {
         messages.put("MM01", "Mestre de materiais");
         messages.put("NAME", "Descrição");
         messages.put("pricespane", "Preços");
-        messages.put("promotions", "Promoções");
-        messages.put("removematerial", "Remover");
-        messages.put("removeprice", "Remover");
-        messages.put("removepromo", "Remover");
+        messages.put("promotionspane", "Promoções");
+        messages.put("removesubmats", "Remover");
+        messages.put("removeprices", "Remover");
+        messages.put("removepromotions", "Remover");
         messages.put("save", "Salvar");
         messages.put("SUB_MATERIAL", "Material");
-        messages.put("submaterials", "Sub-materiais");
+        messages.put("submatspane", "Sub-materiais");
         messages.put("show", "Exibir");
         messages.put("update", "Atualizar");
         messages.put("validate", "Validar");
@@ -123,15 +132,13 @@ public class Install {
         model = data.getModel("MATERIAL", "CMATERIAL", null);
         
         // identificador
-        cdata.ematid = new DataElement();
-        cdata.ematid.setName("MATERIAL.ID");
+        cdata.ematid = new DataElement("MATERIAL.ID");
         cdata.ematid.setLength(20);
         cdata.ematid.setType(DataType.CHAR);
         cdata.ematid.setUpcase(true);
         data.add(cdata.ematid);
         
-        cdata.imatid = new DocumentModelItem();
-        cdata.imatid.setName("ID");
+        cdata.imatid = new DocumentModelItem("ID");
         cdata.imatid.setTableFieldName("IDENT");
         cdata.imatid.setDataElement(cdata.ematid);
         cdata.imatid.setSearchHelp("SH_MATERIAL");
@@ -139,34 +146,29 @@ public class Install {
         model.add(new DocumentModelKey(cdata.imatid));
         
         // descrição
-        element = new DataElement();
-        element.setName("MATERIAL.NAME");
+        element = new DataElement("MATERIAL.NAME");
         element.setLength(60);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
         data.add(element);
         
-        item = new DocumentModelItem();
-        item.setName("NAME");
+        item = new DocumentModelItem("NAME");
         item.setTableFieldName("NAME1");
         item.setDataElement(element);
         model.add(item);
         
         // ativo?
-        element = new DataElement();
-        element.setName("MATERIAL.ACTIVE");
+        element = new DataElement("MATERIAL.ACTIVE");
         element.setType(DataType.BOOLEAN);
         data.add(element);
         
-        item = new DocumentModelItem();
-        item.setName("ACTIVE");
+        item = new DocumentModelItem("ACTIVE");
         item.setTableFieldName("ACTIV");
         item.setDataElement(element);
         model.add(item);
         
         // tipo de material
-        item = new DocumentModelItem();
-        item.setName("MAT_TYPE");
+        item = new DocumentModelItem("MAT_TYPE");
         item.setTableFieldName("TPMAT");
         item.setDataElement(cdata.mattypeid.getDataElement());
         item.setReference(cdata.mattypeid);
@@ -174,8 +176,7 @@ public class Install {
         model.add(item);
         
         // grupo de materiais
-        item = new DocumentModelItem();
-        item.setName("MAT_GROUP");
+        item = new DocumentModelItem("MAT_GROUP");
         item.setTableFieldName("GRMAT");
         item.setDataElement(cdata.matgrpid.getDataElement());
         item.setReference(cdata.matgrpid);
@@ -185,8 +186,7 @@ public class Install {
         /*
          * Ajuda de pesquisa para material
          */
-        sh = new SearchHelpData();
-        sh.setName("SH_MATERIAL");
+        sh = new SearchHelpData("SH_MATERIAL");
         sh.setModel("MATERIAL");
         sh.setExport("ID");
         sh.add("ID");
@@ -207,28 +207,24 @@ public class Install {
         model = data.getModel("MATERIAL_GROUP", "MATGROUP", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("MATERIAL_GROUP.ID");
+        element = new DataElement("MATERIAL_GROUP.ID");
         element.setType(DataType.CHAR);
         element.setLength(4);
         element.setUpcase(true);
         
-        cdata.matgrpid = new DocumentModelItem();
-        cdata.matgrpid.setName("ID");
+        cdata.matgrpid = new DocumentModelItem("ID");
         cdata.matgrpid.setTableFieldName("IDENT");
         cdata.matgrpid.setDataElement(element);
         model.add(cdata.matgrpid);
         model.add(new DocumentModelKey(cdata.matgrpid));
         
         // descrição
-        element = new DataElement();
-        element.setName("MATERIAL_GROUP.TEXT");
+        element = new DataElement("MATERIAL_GROUP.TEXT");
         element.setType(DataType.CHAR);
         element.setLength(40);
         element.setUpcase(true);
         
-        item = new DocumentModelItem();
-        item.setName("TEXT");
+        item = new DocumentModelItem("TEXT");
         item.setTableFieldName("TEXT");
         item.setDataElement(element);
         model.add(item);
@@ -237,8 +233,7 @@ public class Install {
         data.addValues(model, "FRMC", "FARMACEUTICO");
         data.addValues(model, "VEST", "VESTUARIO");
         
-        shd = new SearchHelpData();
-        shd.setName("SH_MAT_GROUP");
+        shd = new SearchHelpData("SH_MAT_GROUP");
         shd.setModel("MATERIAL_GROUP");
         shd.setExport("ID");
         shd.add("ID");
@@ -259,28 +254,24 @@ public class Install {
         model = data.getModel("MATERIAL_TYPE", "MATTYPE", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("MATERIAL_TYPE.ID");
+        element = new DataElement("MATERIAL_TYPE.ID");
         element.setType(DataType.CHAR);
         element.setLength(4);
         element.setUpcase(true);
         
-        cdata.mattypeid = new DocumentModelItem();
-        cdata.mattypeid.setName("ID");
+        cdata.mattypeid = new DocumentModelItem("ID");
         cdata.mattypeid.setTableFieldName("IDENT");
         cdata.mattypeid.setDataElement(element);
         model.add(cdata.mattypeid);
         model.add(new DocumentModelKey(cdata.mattypeid));
         
         // descrição
-        element = new DataElement();
-        element.setName("MATERIAL_TYPE.TEXT");
+        element = new DataElement("MATERIAL_TYPE.TEXT");
         element.setType(DataType.CHAR);
         element.setLength(40);
         element.setUpcase(true);
         
-        item = new DocumentModelItem();
-        item.setName("TEXT");
+        item = new DocumentModelItem("TEXT");
         item.setTableFieldName("TEXT");
         item.setDataElement(element);
         model.add(item);
@@ -288,8 +279,7 @@ public class Install {
         data.addValues(model, "PROD", "PRODUTO");
         data.addValues(model, "SERV", "SERVICO");
         
-        shd = new SearchHelpData();
-        shd.setName("SH_MAT_TYPE");
+        shd = new SearchHelpData("SH_MAT_TYPE");
         shd.setModel("MATERIAL_TYPE");
         shd.setExport("ID");
         shd.add("ID");
@@ -305,63 +295,54 @@ public class Install {
         model = data.getModel("PRECO_MATERIAL", "CMATPRICE", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("PRECO_MATERIAL.ID");
+        element = new DataElement("PRECO_MATERIAL.ID");
         element.setLength(23);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
         data.add(element);
         
-        item = new DocumentModelItem();
-        item.setName("ID");
+        item = new DocumentModelItem("ID");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
         model.add(item);
         model.add(new DocumentModelKey(item));
         
         // material
-        item = new DocumentModelItem();
-        item.setName("MATERIAL");
+        item = new DocumentModelItem("MATERIAL");
         item.setTableFieldName("MATCD");
         item.setDataElement(cdata.ematid);
         item.setReference(cdata.imatid);
         model.add(item);
         
-        cdata.evalue = new DataElement();
-        cdata.evalue.setName("PRECO_MATERIAL.VALOR");
+        cdata.evalue = new DataElement("PRECO_MATERIAL.VALOR");
         cdata.evalue.setDecimals(3);
         cdata.evalue.setLength(12);
         cdata.evalue.setType(DataType.DEC);
         data.add(element);
         
         // valor venda
-        item = new DocumentModelItem();
-        item.setName("VL_VENDA");
+        item = new DocumentModelItem("VL_VENDA");
         item.setTableFieldName("VLVND");
         item.setDataElement(cdata.evalue);
         model.add(item);
         
-        item = new DocumentModelItem();
-        item.setName("VL_CUSTO");
+        item = new DocumentModelItem("VL_CUSTO");
         item.setTableFieldName("VLCST");
         item.setDataElement(cdata.evalue);
         model.add(item);
         
-        cdata.edate = new DataElement();
-        cdata.edate.setName("PRECO_MATERIAL.DATA");
+        cdata.edate = new DataElement("PRECO_MATERIAL.DATA");
         cdata.edate.setType(DataType.DATE);
         data.add(element);
         
         // data inicial
-        item = new DocumentModelItem();
-        item.setName("DT_INICIAL");
+        item = new DocumentModelItem("DT_INICIAL");
         item.setTableFieldName("DTINI");
         item.setDataElement(cdata.edate);
         model.add(item);
         
         // data final
-        item = new DocumentModelItem();
-        item.setName("DT_FINAL");
+        item = new DocumentModelItem("DT_FINAL");
         item.setTableFieldName("DTTRM");
         item.setDataElement(cdata.edate);
         model.add(item);
@@ -374,52 +355,45 @@ public class Install {
         
         model = data.getModel("PROMOCAO_MATERIAL", "CMATPROMO", null);
         
-        element = new DataElement();
-        element.setName("PROMOCAO_MATERIAL.ID");
+        element = new DataElement("PROMOCAO_MATERIAL.ID");
         element.setType(DataType.CHAR);
         element.setLength(23);
         element.setUpcase(true);
         data.add(element);
         
-        item = new DocumentModelItem();
-        item.setName("ID");
+        item = new DocumentModelItem("ID");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
         
         model.add(item);
         model.add(new DocumentModelKey(item));
         
-        item = new DocumentModelItem();
-        item.setName("MATERIAL");
+        item = new DocumentModelItem("MATERIAL");
         item.setDataElement(cdata.ematid);
         item.setTableFieldName("MATCD");
         item.setReference(cdata.imatid);
 
         model.add(item);
         
-        item = new DocumentModelItem();
-        item.setName("VL_VENDA");
+        item = new DocumentModelItem("VL_VENDA");
         item.setTableFieldName("VLVND");
         item.setDataElement(cdata.evalue);
 
         model.add(item);
         
-        item = new DocumentModelItem();
-        item.setName("VL_CUSTO");
+        item = new DocumentModelItem("VL_CUSTO");
         item.setTableFieldName("VLCST");
         item.setDataElement(cdata.evalue);
 
         model.add(item);
         
-        item = new DocumentModelItem();
-        item.setName("DT_INICIAL");
+        item = new DocumentModelItem("DT_INICIAL");
         item.setTableFieldName("DTINI");
         item.setDataElement(cdata.edate);
 
         model.add(item);
         
-        item = new DocumentModelItem();
-        item.setName("DT_FINAL");
+        item = new DocumentModelItem("DT_FINAL");
         item.setTableFieldName("DTTRM");
         item.setDataElement(cdata.edate);
         
@@ -433,14 +407,12 @@ public class Install {
     	DocumentModel model = data.getModel("SUB_MATERIAL", "CSUBMAT", null);
     	
     	// identificador
-    	element = new DataElement();
-    	element.setName("SUB_MATERIAL.ID");
+    	element = new DataElement("SUB_MATERIAL.ID");
     	element.setLength(23);
     	element.setType(DataType.CHAR);
     	element.setUpcase(true);
     	
-    	item = new DocumentModelItem();
-    	item.setName("ID");
+    	item = new DocumentModelItem("ID");
     	item.setTableFieldName("IDENT");
     	item.setDataElement(element);
     	
@@ -448,8 +420,7 @@ public class Install {
     	model.add(new DocumentModelKey(item));
     	
     	// material referência
-    	item = new DocumentModelItem();
-    	item.setName("MATERIAL");
+    	item = new DocumentModelItem("MATERIAL");
     	item.setTableFieldName("MATID");
     	item.setDataElement(cdata.ematid);
     	item.setReference(cdata.imatid);
@@ -457,8 +428,7 @@ public class Install {
     	model.add(item);
     	
     	// sub-material
-    	item = new DocumentModelItem();
-    	item.setName("SUB_MATERIAL");
+    	item = new DocumentModelItem("SUB_MATERIAL");
     	item.setTableFieldName("SUBMT");
     	item.setDataElement(cdata.ematid);
     	item.setReference(cdata.imatid);
