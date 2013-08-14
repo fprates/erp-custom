@@ -15,11 +15,13 @@ import org.iocaste.packagetool.common.SearchHelpData;
 import org.iocaste.packagetool.common.TaskGroup;
 import org.iocaste.protocol.Function;
 import org.iocaste.protocol.user.Authorization;
+import org.iocaste.protocol.user.UserProfile;
 
 public class Install {
     
     public static final InstallData init(Function function) {
-    	TaskGroup taskgroup;
+        UserProfile profile;
+        TaskGroup taskgroup;
         Map<String, String> messages;
         Authorization authorization;
         InstallData data = new InstallData();
@@ -40,6 +42,10 @@ public class Install {
         authorization.setAction("EXECUTE");
         authorization.add("APPNAME", "erp-custom-sd.documents");
         data.add(authorization);
+        
+        profile = new UserProfile("SALES");
+        profile.add(authorization);
+        data.add(profile);
         
         /*
          * objeto de numeração
@@ -112,13 +118,11 @@ public class Install {
         model = data.getModel("CUSTOM_CONDITION", "CCONDITION", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("CUSTOM_CONDITION.ID");
+        element = new DataElement("CUSTOM_CONDITION.ID");
         element.setType(DataType.NUMC);
         element.setLength(2);
         
-        condid = new DocumentModelItem();
-        condid.setName("ID");
+        condid = new DocumentModelItem("ID");
         condid.setTableFieldName("IDENT");
         condid.setDataElement(element);
         
@@ -126,14 +130,12 @@ public class Install {
         model.add(new DocumentModelKey(condid));
         
         // descrição
-        element = new DataElement();
-        element.setName("CUSTOM_CONDITION.TEXT");
+        element = new DataElement("CUSTOM_CONDITION.TEXT");
         element.setType(DataType.CHAR);
         element.setLength(12);
         element.setUpcase(true);
         
-        item = new DocumentModelItem();
-        item.setName("TEXT");
+        item = new DocumentModelItem("TEXT");
         item.setTableFieldName("TEXT");
         item.setDataElement(element);
         
@@ -145,8 +147,7 @@ public class Install {
         data.addValues(model, 2, "discount");
         
         // ajuda de pesquisa
-        sh = new SearchHelpData();
-        sh.setName("SH_SD_CONDITION");
+        sh = new SearchHelpData("SH_SD_CONDITION");
         sh.setModel("CUSTOM_CONDITION");
         sh.setExport("ID");
         sh.add("ID");
@@ -159,13 +160,11 @@ public class Install {
         model = data.getModel("CUSTOM_SD_CONDITIONS", "CSDCONDITION", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("CUSTOM_SD_CONDITIONS.ID");
+        element = new DataElement("CUSTOM_SD_CONDITIONS.ID");
         element.setLength(13);
         element.setType(DataType.NUMC);
         
-        item = new DocumentModelItem();
-        item.setName("ID");
+        item = new DocumentModelItem("ID");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
         
@@ -175,8 +174,7 @@ public class Install {
         // documento
         element = cdata.docid.getDataElement();
         
-        item = new DocumentModelItem();
-        item.setName("DOCUMENT");
+        item = new DocumentModelItem("DOCUMENT");
         item.setTableFieldName("DOCID");
         item.setDataElement(element);
         item.setReference(cdata.docid);
@@ -186,8 +184,7 @@ public class Install {
         // tipo condição
         element = condid.getDataElement();
         
-        item = new DocumentModelItem();
-        item.setName("CONDICAO");
+        item = new DocumentModelItem("CONDICAO");
         item.setTableFieldName("TPCON");
         item.setDataElement(element);
         item.setReference(condid);
@@ -196,8 +193,7 @@ public class Install {
         model.add(item);
         
         // valor
-        item = new DocumentModelItem();
-        item.setName("VALOR");
+        item = new DocumentModelItem("VALOR");
         item.setTableFieldName("VLCON");
         item.setDataElement(cdata.eprice);
         
@@ -221,14 +217,12 @@ public class Install {
         model = data.getModel("CUSTOM_SD_DOCTYPE", "CSDDOCTYPE", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("CUSTOM_SD_DOCTYPE.ID");
+        element = new DataElement("CUSTOM_SD_DOCTYPE.ID");
         element.setLength(4);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
         
-        doctype = new DocumentModelItem();
-        doctype.setName("ID");
+        doctype = new DocumentModelItem("ID");
         doctype.setTableFieldName("IDENT");
         doctype.setDataElement(element);
         
@@ -236,14 +230,12 @@ public class Install {
         model.add(new DocumentModelKey(doctype));
         
         // descrição
-        element = new DataElement();
-        element.setName("CUSTOM_SD_DOCTYPE.TEXT");
+        element = new DataElement("CUSTOM_SD_DOCTYPE.TEXT");
         element.setLength(30);
         element.setType(DataType.CHAR);
         element.setUpcase(false);
         
-        item = new DocumentModelItem();
-        item.setName("TEXT");
+        item = new DocumentModelItem("TEXT");
         item.setTableFieldName("TEXT");
         item.setDataElement(element);
         
@@ -252,10 +244,9 @@ public class Install {
         data.addValues(model, "SERV", "service.order");
         data.addValues(model, "QUOT", "quotation");
         
-        sh = new SearchHelpData();
+        sh = new SearchHelpData("SH_SD_DOCTYPE");
         sh.setModel("CUSTOM_SD_DOCTYPE");
         sh.setExport("ID");
-        sh.setName("SH_SD_DOCTYPE");
         sh.add("ID");
         sh.add("TEXT");
         data.add(sh);
@@ -266,14 +257,12 @@ public class Install {
         model = data.getModel("CUSTOM_SD_DOCUMENT", "CSDDOCHDR", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("CUSTOM_SD_DOCUMENT.ID");
+        element = new DataElement("CUSTOM_SD_DOCUMENT.ID");
         element.setLength(10);
         element.setType(DataType.NUMC);
         data.add(element);
         
-        cdata.docid = new DocumentModelItem();
-        cdata.docid.setName("ID");
+        cdata.docid = new DocumentModelItem("ID");
         cdata.docid.setTableFieldName("IDENT");
         cdata.docid.setDataElement(element);
         cdata.docid.setSearchHelp("SH_SD_DOC");
@@ -285,8 +274,7 @@ public class Install {
         partnercode = new DummyModelItem("CUSTOM_PARTNER","CODIGO");
         element = new DummyElement("CUSTOM_PARTNER.CODIGO");
         
-        item = new DocumentModelItem();
-        item.setName("RECEIVER");
+        item = new DocumentModelItem("RECEIVER");
         item.setTableFieldName("RECVR");
         item.setDataElement(element);
         item.setReference(partnercode);
@@ -295,12 +283,10 @@ public class Install {
         model.add(item);
         
         // data de criação
-        element = new DataElement();
-        element.setName("CUSTOM_SD_DOCUMENT.DATA_CRIACAO");
+        element = new DataElement("CUSTOM_SD_DOCUMENT.DATA_CRIACAO");
         element.setType(DataType.DATE);
         
-        item = new DocumentModelItem();
-        item.setName("DATA_CRIACAO");
+        item = new DocumentModelItem("DATA_CRIACAO");
         item.setTableFieldName("DTREG");
         item.setDataElement(element);
         
@@ -309,8 +295,7 @@ public class Install {
         // tipo de documento
         element = doctype.getDataElement();
         
-        item = new DocumentModelItem();
-        item.setName("TIPO");
+        item = new DocumentModelItem("TIPO");
         item.setTableFieldName("TPDOC");
         item.setDataElement(element);
         item.setReference(doctype);
@@ -319,23 +304,20 @@ public class Install {
         model.add(item);
         
         // total do documento
-        cdata.eprice = new DataElement();
-        cdata.eprice.setName("CUSTOM_SD_DOCUMENT.PRECO");
+        cdata.eprice = new DataElement("CUSTOM_SD_DOCUMENT.PRECO");
         cdata.eprice.setDecimals(3);
         cdata.eprice.setLength(15);
         cdata.eprice.setType(DataType.DEC);
         
-        item = new DocumentModelItem();
-        item.setName("VALOR");
+        item = new DocumentModelItem("VALOR");
         item.setTableFieldName("VLTOT");
         item.setDataElement(cdata.eprice);
         
         model.add(item);
         
-        sh = new SearchHelpData();
+        sh = new SearchHelpData("SH_SD_DOC");
         sh.setModel("CUSTOM_SD_DOCUMENT");
         sh.setExport("ID");
-        sh.setName("SH_SD_DOC");
         sh.add("ID");
         sh.add("RECEIVER");
         
@@ -355,14 +337,12 @@ public class Install {
         model = data.getModel("CUSTOM_SD_DOCUMENT_ITEM", "CSDDOCITM", null);
         
         // identificador
-        element = new DataElement();
-        element.setName("CUSTOM_SD_DOCUMENT_ITEM.ITEM_NUMBER");
+        element = new DataElement("CUSTOM_SD_DOCUMENT_ITEM.ITEM_NUMBER");
         element.setLength(15);
         element.setType(DataType.NUMC);
         data.add(element);
         
-        item = new DocumentModelItem();
-        item.setName("ITEM_NUMBER");
+        item = new DocumentModelItem("ITEM_NUMBER");
         item.setTableFieldName("ITMNR");
         item.setDataElement(element);
         model.add(item);
@@ -371,8 +351,7 @@ public class Install {
         // documento referência
         element = cdata.docid.getDataElement();
         
-        item = new DocumentModelItem();
-        item.setName("DOCUMENT_ID");
+        item = new DocumentModelItem("DOCUMENT_ID");
         item.setTableFieldName("DOCID");
         item.setDataElement(element);
         item.setReference(cdata.docid);
@@ -382,8 +361,7 @@ public class Install {
         materialid = new DummyModelItem("MATERIAL", "ID");
         element = new DummyElement("MATERIAL.ID");
         
-        item = new DocumentModelItem();
-        item.setName("MATERIAL");
+        item = new DocumentModelItem("MATERIAL");
         item.setTableFieldName("MATCD");
         item.setDataElement(element);
         item.setReference(materialid);
@@ -391,28 +369,24 @@ public class Install {
         model.add(item);
         
         // quantidade
-        element = new DataElement();
-        element.setName("CUSTOM_SD_DOCUMENT_ITEM.QUANTITY");
+        element = new DataElement("CUSTOM_SD_DOCUMENT_ITEM.QUANTITY");
         element.setDecimals(3);
         element.setLength(12);
         element.setType(DataType.DEC);
         
-        item = new DocumentModelItem();
-        item.setName("QUANTITY");
+        item = new DocumentModelItem("QUANTITY");
         item.setTableFieldName("QUANT");
         item.setDataElement(element);
         model.add(item);
         
         // preço unitário
-        item = new DocumentModelItem();
-        item.setName("PRECO_UNITARIO");
+        item = new DocumentModelItem("PRECO_UNITARIO");
         item.setTableFieldName("PUNIT");
         item.setDataElement(cdata.eprice);
         model.add(item);
         
         // preço total
-        item = new DocumentModelItem();
-        item.setName("PRECO_TOTAL");
+        item = new DocumentModelItem("PRECO_TOTAL");
         item.setTableFieldName("PTOTA");
         item.setDataElement(cdata.eprice);
         model.add(item);
