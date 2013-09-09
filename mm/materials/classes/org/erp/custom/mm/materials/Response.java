@@ -60,6 +60,10 @@ public class Response {
         context.priceshelper = new TableTool(tabs, "prices");
         prices = context.priceshelper.getTable();
         prices.importModel(context.pricesmodel);
+        context.priceshelper.setValidator(
+                "VL_CUSTO", ValorCustoValidator.class, "VL_VENDA");
+        context.priceshelper.setValidator(
+                "DT_INICIAL", DataInicialValidator.class, "DT_FINAL");
         context.priceshelper.visible(
                 "VL_VENDA", "VL_CUSTO", "DT_INICIAL", "DT_FINAL");
         tabitem = new TabbedPaneItem(tabs, "pricespane");
