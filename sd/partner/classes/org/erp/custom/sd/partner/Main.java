@@ -46,7 +46,7 @@ public class Main extends AbstractPage {
         itemdata.view = view;
         itemdata.itens = itens;
         itemdata.object = address.getObject();
-        itemdata.partner = identity.get("CODIGO").get();
+        itemdata.partner = identity.get("CODIGO").getl();
         itemdata.container = view.getElement("addresscnt");
         itemdata.mark = "addressmark";
         itemdata.object.setValue("CODIGO", 0l);
@@ -157,7 +157,7 @@ public class Main extends AbstractPage {
         long contactid_, contactid = Request.itemmark(view, itens, form);
         
         itens = view.getElement("communics");
-        for (TableItem item : itens.getItens()) {
+        for (TableItem item : itens.getItems()) {
             contactid_ = Common.getValue(item.get("CONTACT_ID"));
             item.setVisible((contactid == contactid_)? true : false);
         }
@@ -304,7 +304,7 @@ public class Main extends AbstractPage {
         Button removecommunic;
         Table communics = view.getElement("communics");
         
-        for (TableItem item : communics.getItens())
+        for (TableItem item : communics.getItems())
             if (item.isSelected())
                 communics.remove(item);
         
@@ -408,7 +408,7 @@ public class Main extends AbstractPage {
         object = form.getObject();
         
         itens = view.getElement("communics");
-        for (TableItem item : itens.getItens()) {
+        for (TableItem item : itens.getItems()) {
             input = item.get("CONTACT_ID");
             
             contactid = Common.getValue(input);

@@ -88,9 +88,9 @@ public class Response {
         tabitem = new TabbedPaneItem(tabs, "submatspane");
         tabitem.setContainer(context.smaterialshelper.getContainer());
 
-        TableTool.setObjects(prices, context.prices);
-        TableTool.setObjects(promos, context.promos);
-        TableTool.setObjects(submat, context.submats);
+        context.priceshelper.setObjects(context.prices);
+        context.promotionshelper.setObjects(context.promos);
+        context.smaterialshelper.setObjects(context.submats);
         
         validate = new Button(container, "validate");
         validate.setSubmit(true);

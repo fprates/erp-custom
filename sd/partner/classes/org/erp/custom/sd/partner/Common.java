@@ -202,7 +202,7 @@ public class Common {
         
         input.clear();
         
-        for (TableItem item : itens.getItens()) {
+        for (TableItem item : itens.getItems()) {
             codigo = ((Link)item.get(value)).getText();
             lograd = Common.getValue(item.get(display));
             

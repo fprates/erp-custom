@@ -12,7 +12,7 @@ public class CommunicTypeValidator extends AbstractValidator {
     @Override
     public void validate(ValidatorConfig config) throws Exception {
         InputComponent input = config.getInput("TP_COMMUNIC");
-        int communictype = input.get();
+        int communictype = input.geti();
         ExtendedObject object = new Documents(getFunction()).
                 getObject("CUSTOM_COMMUNICATION", communictype);
         

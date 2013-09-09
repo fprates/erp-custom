@@ -19,7 +19,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void acceptprices(View view) {
-        context.priceshelper.accept(view);
+        context.priceshelper.refresh(view);
+        context.priceshelper.accept();
     }
     
     /**
@@ -27,7 +28,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void acceptpromotions(View view) {
-        context.promotionshelper.accept(view);
+        context.promotionshelper.refresh(view);
+        context.promotionshelper.accept();
     }
     
     /**
@@ -35,7 +37,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void acceptsubmats(View view) {
-        context.smaterialshelper.accept(view);
+        context.smaterialshelper.refresh(view);
+        context.smaterialshelper.accept();
     }
     
     /**
@@ -43,7 +46,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addprices(View view) {
-        context.priceshelper.add(view);
+        context.priceshelper.refresh(view);
+        context.priceshelper.add();
     }
 
     /**
@@ -51,7 +55,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addpromotions(View view) {
-        context.promotionshelper.add(view);
+        context.promotionshelper.refresh(view);
+        context.promotionshelper.add();
     }
     
     /**
@@ -59,7 +64,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void addsubmats(View view) {
-        context.smaterialshelper.add(view);
+        context.smaterialshelper.refresh(view);
+        context.smaterialshelper.add();
     }
     
     /**
@@ -122,7 +128,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void removeprices(View view) {
-        context.priceshelper.remove(view);
+        context.priceshelper.refresh(view);
+        context.priceshelper.remove();
     }
     
     /**
@@ -130,7 +137,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void removepromotions(View view) {
-        context.promotionshelper.remove(view);
+        context.promotionshelper.refresh(view);
+        context.promotionshelper.remove();
     }
     
     /**
@@ -138,7 +146,8 @@ public class Main extends AbstractPage {
      * @param view
      */
     public final void removesubmats(View view) {
-        context.smaterialshelper.remove(view);
+        context.smaterialshelper.refresh(view);
+        context.smaterialshelper.remove();
     }
     
     /**

@@ -12,7 +12,7 @@ public class AddressTypeValidator extends AbstractValidator {
     @Override
     public void validate(ValidatorConfig config) throws Exception {
         InputComponent input = config.getInput("TIPO_ENDERECO");
-        int addresstype = input.get();
+        int addresstype = input.geti();
         ExtendedObject object = new Documents(getFunction()).
                 getObject("CUSTOM_ADDRESS_TYPE", addresstype);
         

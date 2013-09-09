@@ -137,7 +137,7 @@ public class Request {
         ExtendedObject object;
         int i = 0;
         
-        for (TableItem item : table.getItens()) {
+        for (TableItem item : table.getItems()) {
             object = item.getObject();
             itemid = getItemId(i, material);
             i++;

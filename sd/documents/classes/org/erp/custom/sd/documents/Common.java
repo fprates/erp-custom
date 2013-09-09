@@ -83,7 +83,7 @@ public class Common {
                 get("VALOR");
         
         if (object == null) {
-            for (TableItem item_ : itens.getItens()) {
+            for (TableItem item_ : itens.getItems()) {
                 i = ((InputComponent)item_.get("ITEM_NUMBER")).get();
                 docid = ((InputComponent)item_.get("DOCUMENT_ID")).get(); 
             }

@@ -42,7 +42,7 @@ public class Request {
         Shell shell = new Shell(function);
         View document = shell.getView(view, "document");
         
-        for (TableItem item : conditions.getItens())
+        for (TableItem item : conditions.getItems())
             oconditions.add(item.getObject());
         
         conditions_ = oconditions.toArray(new ExtendedObject[0]);
@@ -71,7 +71,7 @@ public class Request {
     public static final void condremove(View view) {
         Table conditions = view.getElement("conditions");
         
-        for (TableItem item :  conditions.getItens())
+        for (TableItem item :  conditions.getItems())
             if (item.isSelected())
                 conditions.remove(item);
         
@@ -156,7 +156,7 @@ public class Request {
     public static final void remove(View view) {
         Table itens = view.getElement("itens");
         
-        for (TableItem item : itens.getItens())
+        for (TableItem item : itens.getItems())
             if (item.isSelected())
                 itens.remove(item);
     }
@@ -200,7 +200,7 @@ public class Request {
         }
 
         itens = view.getElement("itens");
-        for (TableItem item : itens.getItens()) {
+        for (TableItem item : itens.getItems()) {
             oitem = item.getObject();
             
             itemnr = oitem.getValue("ITEM_NUMBER");
@@ -242,7 +242,7 @@ public class Request {
         Table itens = view.getElement("itens");
         DataForm header = view.getElement("header");
         
-        for (TableItem item : itens.getItens()) {
+        for (TableItem item : itens.getItems()) {
             input = item.get("PRECO_TOTAL");
             valor += (Double)input.get();
         }

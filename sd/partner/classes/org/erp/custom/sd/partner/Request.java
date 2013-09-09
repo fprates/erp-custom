@@ -52,7 +52,7 @@ public class Request {
         if (addresses.length() == 0)
             return Common.INVALID_ADDRESS;
         
-        for (TableItem item : addresses.getItens()) {
+        for (TableItem item : addresses.getItems()) {
             link = item.get("CODIGO");
             taddress = Long.parseLong(link.getText());
             
@@ -92,7 +92,7 @@ public class Request {
         if (fcodigo == 0)
             return;
         
-        for (TableItem item : itens.getItens()) {
+        for (TableItem item : itens.getItems()) {
             link = item.get("CODIGO");
             tcodigo = Long.parseLong(link.getText());
             
@@ -139,7 +139,7 @@ public class Request {
         ExtendedObject[] objects;
         String strid;
         DataForm form = view.getElement("selection");
-        long ident = form.get("partner").get();
+        long ident = form.get("partner").getl();
         
         if (ident == 0) {
             view.message(Const.ERROR, "field.is.required");
@@ -191,7 +191,7 @@ public class Request {
         Table itens = view.getElement(tablename);
         int i = 0;
         
-        for (TableItem item : itens.getItens()) {
+        for (TableItem item : itens.getItems()) {
             if (item.isSelected()) {
                 itens.remove(item);
                 continue;
@@ -255,7 +255,7 @@ public class Request {
         link = null;
         
         itens = view.getElement("addresses");
-        for (TableItem address : itens.getItens()) {
+        for (TableItem address : itens.getItems()) {
             if (modo == Common.CREATE) {
                 link = (Link)address.get("CODIGO");
                 addrfrom = Long.parseLong(link.getText());
@@ -274,7 +274,7 @@ public class Request {
         Common.loadListFromTable(dataitem, itens, "LOGRADOURO", "CODIGO");
         
         itens = view.getElement("contacts");
-        for (TableItem contact : itens.getItens()) {
+        for (TableItem contact : itens.getItems()) {
             contactid = Long.parseLong(((Link)contact.get("CODIGO")).getText());
             if (modo == Common.CREATE) {
                 input = contact.get("ADDRESS");
@@ -286,7 +286,7 @@ public class Request {
             itemcode = saveItem(documents, contact, codigo);
             
             communics = view.getElement("communics");
-            for (TableItem communic : communics.getItens()) {
+            for (TableItem communic : communics.getItems()) {
                 contactid_ = Common.getValue(communic.get("CONTACT_ID"));
                 if (contactid != contactid_)
                     continue;
