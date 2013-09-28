@@ -2,10 +2,10 @@ package org.erp.custom.mm.materials;
 
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.shell.common.AbstractPage;
+import org.iocaste.shell.common.PageContext;
 import org.iocaste.shell.common.TableTool;
 
-public class Context {
+public class Context extends PageContext {
     public static final byte CREATE = 0;
     public static final byte SHOW = 1;
     public static final byte UPDATE = 2;
@@ -15,7 +15,6 @@ public class Context {
         "material-editor-update"
     };
 
-    public AbstractPage function;
     public DocumentModel materialmodel, pricesmodel, promotionsmodel;
     public DocumentModel submatmodel;
     public String matid;

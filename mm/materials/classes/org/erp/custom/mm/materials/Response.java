@@ -9,9 +9,7 @@ import org.iocaste.shell.common.InputComponent;
 import org.iocaste.shell.common.PageControl;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
-import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableTool;
-import org.iocaste.shell.common.View;
 
 public class Response {
     
@@ -20,12 +18,11 @@ public class Response {
      * @param view
      * @param function
      */
-    public static final void form(View view, Context context) {
+    public static final void form(Context context) {
         InputComponent input;
         Button validate;
-        Table prices, promos, submat;
         TabbedPaneItem tabitem;
-        Form container = new Form(view, "main");
+        Form container = new Form(context.view, "main");
         PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "tabs");
         DataForm base = new DataForm(tabs, "base");
@@ -45,11 +42,11 @@ public class Response {
         base.get("ID").setEnabled(false);
         input = base.get("MAT_TYPE");
         input.setValidator(MaterialTypeValidator.class);
-        context.function.validate(input);
+        ((Main)context.function).validate(input);
         
         input = base.get("MAT_GROUP");
         input.setValidator(MaterialGroupValidator.class);
-        context.function.validate(input);
+        ((Main)context.function).validate(input);
         
         tabitem = new TabbedPaneItem(tabs, "basepane");
         tabitem.setContainer(base);
@@ -58,13 +55,12 @@ public class Response {
          * Prices
          */
         context.priceshelper = new TableTool(tabs, "prices");
-        prices = context.priceshelper.getTable();
-        prices.importModel(context.pricesmodel);
+        context.priceshelper.model(context.pricesmodel);
         context.priceshelper.setValidator(
                 "VL_CUSTO", ValorCustoValidator.class, "VL_VENDA");
         context.priceshelper.setValidator(
                 "DT_INICIAL", DataInicialValidator.class, "DT_FINAL");
-        context.priceshelper.visible(
+        context.priceshelper.setVisibility(true,
                 "VL_VENDA", "VL_CUSTO", "DT_INICIAL", "DT_FINAL");
         tabitem = new TabbedPaneItem(tabs, "pricespane");
         tabitem.setContainer(context.priceshelper.getContainer());
@@ -73,9 +69,8 @@ public class Response {
          * Promotion
          */
         context.promotionshelper = new TableTool(tabs, "promotions");
-        promos = context.promotionshelper.getTable();
-        promos.importModel(context.promotionsmodel);
-        context.promotionshelper.visible(
+        context.promotionshelper.model(context.promotionsmodel);
+        context.promotionshelper.setVisibility(true,
                 "VL_VENDA", "VL_CUSTO", "DT_INICIAL", "DT_FINAL");
         
         tabitem = new TabbedPaneItem(tabs, "promotionspane");
@@ -85,9 +80,8 @@ public class Response {
          * Sub-materials
          */
         context.smaterialshelper = new TableTool(tabs, "submats");
-        submat = context.smaterialshelper.getTable();
-        submat.importModel(context.submatmodel);
-        context.smaterialshelper.visible("SUB_MATERIAL");
+        context.smaterialshelper.model(context.submatmodel);
+        context.smaterialshelper.setVisibility(true, "SUB_MATERIAL");
             
         tabitem = new TabbedPaneItem(tabs, "submatspane");
         tabitem.setContainer(context.smaterialshelper.getContainer());
@@ -105,9 +99,9 @@ public class Response {
             base.get("MAT_TYPE").setObligatory(true);
             base.get("MAT_GROUP").setObligatory(true);
             
-            context.priceshelper.setMode(TableTool.UPDATE, view);
-            context.promotionshelper.setMode(TableTool.UPDATE, view);
-            context.smaterialshelper.setMode(TableTool.UPDATE, view);
+            context.priceshelper.setMode(TableTool.UPDATE);
+            context.promotionshelper.setMode(TableTool.UPDATE);
+            context.smaterialshelper.setMode(TableTool.UPDATE);
             break;
             
         case Context.UPDATE:
@@ -115,23 +109,23 @@ public class Response {
             base.get("MAT_GROUP").setObligatory(true);
             base.setObject(context.material);
             
-            context.priceshelper.setMode(TableTool.UPDATE, view);
-            context.promotionshelper.setMode(TableTool.UPDATE, view);
-            context.smaterialshelper.setMode(TableTool.UPDATE, view);
+            context.priceshelper.setMode(TableTool.UPDATE);
+            context.promotionshelper.setMode(TableTool.UPDATE);
+            context.smaterialshelper.setMode(TableTool.UPDATE);
             break;
             
         case Context.SHOW:
             validate.setVisible(false);
             base.setObject(context.material);
             
-            context.priceshelper.setMode(TableTool.DISPLAY, view);
-            context.promotionshelper.setMode(TableTool.DISPLAY, view);
-            context.smaterialshelper.setMode(TableTool.DISPLAY, view);
+            context.priceshelper.setMode(TableTool.DISPLAY);
+            context.promotionshelper.setMode(TableTool.DISPLAY);
+            context.smaterialshelper.setMode(TableTool.DISPLAY);
             break;
         }
         
-        view.setFocus(base.get("NAME"));
-        view.setTitle(Context.TITLE[context.mode]);
+        context.view.setFocus(base.get("NAME"));
+        context.view.setTitle(Context.TITLE[context.mode]);
     }
 
     /**
@@ -139,9 +133,9 @@ public class Response {
      * @param view
      * @param function
      */
-    public static final void main(View view, Context context) {
+    public static final void main(Context context) {
         InputComponent input;
-        Form container = new Form(view, "main");
+        Form container = new Form(context.view, "main");
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "material");
 
@@ -153,13 +147,13 @@ public class Response {
         
         input = form.get("ID");
         input.setVisible(true);
-        view.setFocus(input);
+        context.view.setFocus(input);
         input.setObligatory(!context.autocode);
         
         new Button(container, "create");
         new Button(container, "show");
         new Button(container, "update");
         
-        view.setTitle("material-selection");
+        context.view.setTitle("material-selection");
     }
 }

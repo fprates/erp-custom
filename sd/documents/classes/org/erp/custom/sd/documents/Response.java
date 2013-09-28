@@ -5,25 +5,24 @@ import java.util.Calendar;
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Element;
 import org.iocaste.shell.common.Form;
 import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.PageContext;
 import org.iocaste.shell.common.PageControl;
 import org.iocaste.shell.common.Table;
-import org.iocaste.shell.common.View;
 
 public class Response {
     
-    public static final void condform(View view, Function function) {
+    public static final void condform(PageContext context) {
         Button validate, condadd, condremove, condapply;
         Table conditions;
-        Form container = new Form(view, "main");
-        Documents documents = new Documents(function);
-        ExtendedObject[] oconditions = view.getParameter("conditions");
-        byte mode = Common.getMode(view);
+        Form container = new Form(context.view, "main");
+        Documents documents = new Documents(context.function);
+        ExtendedObject[] oconditions = context.view.getParameter("conditions");
+        byte mode = Common.getMode(context.view);
 
         new PageControl(container);
         
@@ -45,7 +44,8 @@ public class Response {
         case Common.CREATE:
             if (oconditions != null) {
                 for (ExtendedObject ocondition : oconditions)
-                    Common.insertCondition(conditions, ocondition, view);
+                    Common.insertCondition(
+                            conditions, ocondition, context.view);
             } else {
                 conditions.setVisible(false);
                 condadd.setVisible(true);
@@ -64,14 +64,15 @@ public class Response {
             
             if (oconditions != null)
                 for (ExtendedObject ocondition : oconditions)
-                    Common.insertCondition(conditions, ocondition, view);
+                    Common.insertCondition(
+                            conditions, ocondition, context.view);
             else
                 conditions.setVisible(false);
             
             break;
         }
         
-        view.setTitle(Common.TITLE[Common.CONDITIONS]);
+        context.view.setTitle(Common.TITLE[Common.CONDITIONS]);
     }
     
     /**
@@ -79,19 +80,19 @@ public class Response {
      * @param view
      * @param function
      */
-    public static final void document(View view, Function function) {
+    public static final void document(PageContext context) {
         Calendar calendar;
         Button add, remove, save, validate;
         Table itens;
         InputComponent receiver, tipo;
         DataForm header;
-        ExtendedObject doctype, partner, oheader = view.getParameter("header");
-        ExtendedObject[] oitens = view.getParameter("itens");
-        Form container = new Form(view, "main");
+        ExtendedObject doctype, partner, oheader = context.view.getParameter("header");
+        ExtendedObject[] oitens = context.view.getParameter("itens");
+        Form container = new Form(context.view, "main");
         PageControl pagecontrol = new PageControl(container);
-        Documents documents = new Documents(function);
+        Documents documents = new Documents(context.function);
         DocumentModel model = documents.getModel("CUSTOM_SD_DOCUMENT");
-        byte mode = Common.getMode(view);
+        byte mode = Common.getMode(context.view);
 
         pagecontrol.add("home");
         pagecontrol.add("back");
@@ -132,10 +133,10 @@ public class Response {
         
         switch (mode) {
         case Common.CREATE:
-            calendar = Calendar.getInstance(view.getLocale());
+            calendar = Calendar.getInstance(context.view.getLocale());
             header.get("DATA_CRIACAO").set(calendar.getTime());
             
-            Common.insertItem(itens, view, null);
+            Common.insertItem(itens, context.view, null);
             break;
             
         case Common.SHOW:
@@ -150,22 +151,22 @@ public class Response {
             tipo.setEnabled(false);
             
         case Common.UPDATE:
-            partner = view.getParameter("partner");
+            partner = context.view.getParameter("partner");
             receiver.setText((String)partner.getValue("RAZAO_SOCIAL"));
             
-            doctype = view.getParameter("doctype");
+            doctype = context.view.getParameter("doctype");
             tipo.setText((String)doctype.getValue("TEXT"));
             
             header.setObject(oheader);
             
             for (ExtendedObject oitem : oitens)
-                Common.insertItem(itens, view, oitem);
+                Common.insertItem(itens, context.view, oitem);
             
             break;
         }
 
-        view.setFocus(receiver);
-        view.setTitle(Common.TITLE[mode]);
+        context.view.setFocus(receiver);
+        context.view.setTitle(Common.TITLE[mode]);
     }
     
     /**
@@ -173,18 +174,18 @@ public class Response {
      * @param view
      * @param function
      */
-    public static final void main(View view, Function function) {
-        Form container = new Form(view, "main");
+    public static final void main(PageContext context) {
+        Form container = new Form(context.view, "main");
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
         
         pagecontrol.add("home");
-        form.importModel(new Documents(function).
+        form.importModel(new Documents(context.function).
                 getModel("CUSTOM_SD_DOCUMENT"));
         
         for (Element element : form.getElements())
             if (element.getName().equals("ID"))
-                view.setFocus(element);
+                context.view.setFocus(element);
             else
                 if (element.isDataStorable())
                     element.setVisible(false);
@@ -193,7 +194,7 @@ public class Response {
         new Button(container, "create");
         new Button(container, "update");
 
-        view.setTitle("document-selection");
+        context.view.setTitle("document-selection");
     }
 
 }

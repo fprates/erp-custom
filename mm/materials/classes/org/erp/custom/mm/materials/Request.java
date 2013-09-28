@@ -7,7 +7,6 @@ import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
-import org.iocaste.shell.common.View;
 
 public class Request {
     private static final byte PRICES = 0;
@@ -30,18 +29,18 @@ public class Request {
      * @param view
      * @param function
      */
-    public static final void create(View view, Context context) {
-        DataForm selection = view.getElement("material");
+    public static final void create(Context context) {
+        DataForm selection = context.view.getElement("material");
         Documents documents = new Documents(context.function);
 
         context.matid = selection.get("ID").get();
         if (documents.getObject("MATERIAL", context.matid) != null) {
-            view.message(Const.ERROR, "material.already.exists");
+            context.view.message(Const.ERROR, "material.already.exists");
             return;
         }
         
         context.mode = Context.CREATE;
-        view.redirect("form");
+        context.view.redirect("form");
     }
     
     /**
@@ -55,20 +54,14 @@ public class Request {
                 append(material).toString();
     }
     
-    /**
-     * 
-     * @param view
-     * @param function
-     * @param mode
-     */
-    private static final void load(View view, Context context) {
-        DataForm selection = view.getElement("material");
+    public static final void load(Context context) {
+        DataForm selection = context.view.getElement("material");
         Documents documents = new Documents(context.function);
 
         context.matid = selection.get("ID").get();
         context.material = documents.getObject("MATERIAL", context.matid);
         if (context.material == null) {
-            view.message(Const.ERROR, "material.not.found");
+            context.view.message(Const.ERROR, "material.not.found");
             return;
         }
         
@@ -76,7 +69,7 @@ public class Request {
         context.promos = documents.select(QUERIES[PROMOS], context.matid);
         context.submats = documents.select(QUERIES[SUBMATS], context.matid);
         
-        view.redirect("form");
+        context.view.redirect("form");
     }
     
     /**
@@ -84,12 +77,12 @@ public class Request {
      * @param view
      * @param function
      */
-    public static final void save(View view, Context context) {
+    public static final void save(Context context) {
         boolean autocode;
         GlobalConfig config;
         String material;
         Documents documents = new Documents(context.function);
-        DataForm base = view.getElement("base");
+        DataForm base = context.view.getElement("base");
         ExtendedObject obase = base.getObject();
         
         switch (context.mode) {
@@ -105,7 +98,7 @@ public class Request {
                 material = obase.getValue("ID");
             }
             
-            view.setTitle(Context.TITLE[Context.UPDATE]);
+            context.view.setTitle(Context.TITLE[Context.UPDATE]);
             context.mode = Context.UPDATE;
             documents.save(obase);
             break;
@@ -118,11 +111,11 @@ public class Request {
             break;
         }
         
-        saveItens((Table)view.getElement("prices"), material, documents);
-        saveItens((Table)view.getElement("promotions"), material, documents);
-        saveItens((Table)view.getElement("submats"), material, documents);
+        saveItens((Table)context.view.getElement("prices"), material, documents);
+        saveItens((Table)context.view.getElement("promotions"), material, documents);
+        saveItens((Table)context.view.getElement("submats"), material, documents);
         
-        view.message(Const.STATUS, "material.saved.successfully");
+        context.view.message(Const.STATUS, "material.saved.successfully");
     }
     
     /**
@@ -145,25 +138,5 @@ public class Request {
             object.setValue("MATERIAL", material);
             documents.save(object);
         }
-    }
-    
-    /**
-     * 
-     * @param view
-     * @param context
-     */
-    public static final void show(View view, Context context) {
-        context.mode = Context.SHOW;
-        load(view, context);
-    }
-    
-    /**
-     * 
-     * @param view
-     * @param function
-     */
-    public static final void update(View view, Context context) {
-        context.mode = Context.UPDATE;
-        load(view, context);
     }
 }

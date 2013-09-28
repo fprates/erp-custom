@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
+import org.iocaste.shell.common.PageContext;
 import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
@@ -35,18 +35,18 @@ public class Request {
         Common.insertItem(itens, view, null);
     }
     
-    public static final void condapply(View view, Function function) {
+    public static final void condapply(PageContext context) {
         ExtendedObject[] conditions_;
-        Table conditions = view.getElement("conditions");
+        Table conditions = context.view.getElement("conditions");
         List<ExtendedObject> oconditions = new ArrayList<ExtendedObject>();
-        Shell shell = new Shell(function);
-        View document = shell.getView(view, "document");
+        Shell shell = new Shell(context.function);
+        View document = shell.getView(context.view, "document");
         
         for (TableItem item : conditions.getItems())
             oconditions.add(item.getObject());
         
         conditions_ = oconditions.toArray(new ExtendedObject[0]);
-        view.export("conditions", conditions_);
+        context.view.export("conditions", conditions_);
         
         totalAmountUpdate(document, conditions_);
         shell.updateView(document);
@@ -99,8 +99,8 @@ public class Request {
      * @param view
      * @param function
      */
-    public static final void display(View view, Function function) {
-        load(view, function, Common.SHOW);
+    public static final void display(PageContext context) {
+        load(context, Common.SHOW);
     }
     
     /**
@@ -109,44 +109,44 @@ public class Request {
      * @param function
      * @param mode
      */
-    private static final void load(View view, Function function, byte mode) {
+    private static final void load(PageContext context, byte mode) {
         ExtendedObject header;
         ExtendedObject[] objects;
-        Documents documents = new Documents(function);
-        DataForm form = view.getElement("selection");
+        Documents documents = new Documents(context.function);
+        DataForm form = context.view.getElement("selection");
         long ident = form.get("ID").get();
         
         if (ident == 0) {
-            view.message(Const.ERROR, "document.number.required");
+            context.view.message(Const.ERROR, "document.number.required");
             return;
         }
         
         header = documents.getObject("CUSTOM_SD_DOCUMENT", ident);
         if (header == null) {
-            view.message(Const.ERROR, "invalid.sd.document");
+            context.view.message(Const.ERROR, "invalid.sd.document");
             return;
         }
         
-        view.clearExports();
+        context.view.clearExports();
         objects = documents.select(QUERIES[ITENS], ident);
-        view.export("itens", objects);
+        context.view.export("itens", objects);
         
         objects = documents.select(QUERIES[CONDITIONS], ident);
-        view.export("conditions", objects);
+        context.view.export("conditions", objects);
 
         objects = new ExtendedObject[1];
         objects[0] = documents.getObject("CUSTOM_PARTNER",
                 header.getValue("RECEIVER"));
-        view.export("partner", objects[0]);
+        context.view.export("partner", objects[0]);
         
         objects[0] = documents.getObject("CUSTOM_SD_DOCTYPE",
                 header.getValue("TIPO"));
-        view.export("doctype", objects[0]);
+        context.view.export("doctype", objects[0]);
         
-        view.setReloadableView(true);
-        view.export("mode", mode);
-        view.export("header", header);
-        view.redirect(null, "document");
+        context.view.setReloadableView(true);
+        context.view.export("mode", mode);
+        context.view.export("header", header);
+        context.view.redirect(null, "document");
     }
     
     /**
@@ -166,27 +166,27 @@ public class Request {
      * @param view
      * @param function
      */
-    public static final void save(View view, Function function) {
+    public static final void save(PageContext context) {
         long docid, itemnr;
         Table itens;
         ExtendedObject[] conditions;
-        DataForm header = view.getElement("header");
-        Documents documents = new Documents(function);
+        DataForm header = context.view.getElement("header");
+        Documents documents = new Documents(context.function);
         ExtendedObject oitem, oheader = header.getObject();
-        byte mode = Common.getMode(view);
+        byte mode = Common.getMode(context.view);
         
         switch (mode) {
         case Common.CREATE:
             docid = documents.getNextNumber("SD_DOCUMENT");
             oheader.setValue("ID", docid);
             header.get("ID").set(docid);
-            view.setTitle(Common.TITLE[Common.UPDATE]);
-            view.export("mode", Common.UPDATE);
+            context.view.setTitle(Common.TITLE[Common.UPDATE]);
+            context.view.export("mode", Common.UPDATE);
             
             if (documents.save(oheader) != 0)
                 break;
             
-            view.message(Const.ERROR, "invalid.document.header");
+            context.view.message(Const.ERROR, "invalid.document.header");
             return;
             
         default:
@@ -199,7 +199,7 @@ public class Request {
             break;
         }
 
-        itens = view.getElement("itens");
+        itens = context.view.getElement("itens");
         for (TableItem item : itens.getItems()) {
             oitem = item.getObject();
             
@@ -214,7 +214,7 @@ public class Request {
             documents.save(oitem);
         }
         
-        conditions = view.getParameter("conditions");
+        conditions = context.view.getParameter("conditions");
         if (conditions != null)
             for (ExtendedObject condition : conditions) {
                 itemnr = condition.getValue("ID");
@@ -227,7 +227,7 @@ public class Request {
                 documents.save(condition);
             }
         
-        view.message(Const.STATUS, "document.saved.successfully");
+        context.view.message(Const.STATUS, "document.saved.successfully");
     }
     
     /**
@@ -255,12 +255,7 @@ public class Request {
         input.set(valor);
     }
     
-    /**
-     * 
-     * @param view
-     * @param function
-     */
-    public static final void update(View view, Function function) {
-        load(view, function, Common.UPDATE);
+    public static final void update(PageContext context) {
+        load(context, Common.UPDATE);
     }
 }

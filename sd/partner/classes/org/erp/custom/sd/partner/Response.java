@@ -3,7 +3,6 @@ package org.erp.custom.sd.partner;
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Button;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.Container;
@@ -124,7 +123,7 @@ public class Response {
      * @param function
      */
     private static final void buildContactTab(TabbedPane tabs,
-            DocumentModel model, View view, Function function) {
+            DocumentModel model, Context context) {
         ItemData itemdata;
         TabbedPaneItem tab;
         DataItem dataitem;
@@ -134,9 +133,9 @@ public class Response {
                 removecommunic;
         Container communicscnt, contactcnt = new StandardContainer(
                 tabs, "contactscnt");
-        byte modo = Common.getMode(view);
-        ExtendedObject[] ocontacts = view.getParameter("contacts");
-        ExtendedObject[] ocommunics = view.getParameter("communics");
+        byte modo = Common.getMode(context.view);
+        ExtendedObject[] ocontacts = context.view.getParameter("contacts");
+        ExtendedObject[] ocommunics = context.view.getParameter("communics");
         
         /*
          * Detalhe do item
@@ -178,7 +177,7 @@ public class Response {
         removecommunic.setVisible(false);
         
         communics = new Table(communicscnt, "communics");
-        communics.importModel(new Documents(function).
+        communics.importModel(new Documents(context.function).
                 getModel("CUSTOM_PARTNER_COMM"));
         communics.getColumn("CONTACT_ID").setVisible(false);
         communics.getColumn("PARTNER_ID").setVisible(false);
@@ -224,7 +223,7 @@ public class Response {
             }
             
             dataitem = contact.get("ADDRESS");
-            addresses = view.getElement("addresses");
+            addresses = context.view.getElement("addresses");
             Common.loadListFromTable(dataitem, addresses, "LOGRADOURO",
                     "CODIGO");
             
@@ -238,7 +237,7 @@ public class Response {
             }
             
             for (ExtendedObject ocommunic : ocommunics)
-                Common.insertCommunic(communics, view, ocommunic);
+                Common.insertCommunic(communics, context.view, ocommunic);
             
             break;
         }
@@ -307,29 +306,22 @@ public class Response {
         }
     }
     
-    /**
-     * 
-     * @param view
-     * @param models
-     * @param function
-     */
-    public static final void identity(View view, DocumentModel[] models,
-            Function function) {
-        Form container = new Form(view, "main");
+    public static final void identity(Context context, DocumentModel[] models) {
+        Form container = new Form(context.view, "main");
         PageControl pagecontrol = new PageControl(container);
         TabbedPane tabs = new TabbedPane(container, "pane");
         Button validate = new Button(container, "validate");
         Button save = new Button(container, "save");
-        byte modo = Common.getMode(view);
+        byte modo = Common.getMode(context.view);
         
         validate.setSubmit(true);
         
         pagecontrol.add("home");
         pagecontrol.add("back");
         
-        buildIdentityTab(tabs, models[Common.IDENTITY], view);
-        buildAddressTab(tabs, models[Common.ADDRESS], view);
-        buildContactTab(tabs, models[Common.CONTACT], view, function);
+        buildIdentityTab(tabs, models[Common.IDENTITY], context.view);
+        buildAddressTab(tabs, models[Common.ADDRESS], context.view);
+        buildContactTab(tabs, models[Common.CONTACT], context);
         
         switch (modo) {
         case Common.SHOW:
@@ -339,29 +331,24 @@ public class Response {
             break;
         }
         
-        view.setTitle(Common.TITLE[modo]);
+        context.view.setTitle(Common.TITLE[modo]);
     }
     
-    /**
-     * 
-     * @param view
-     * @param function
-     */
-    public static final void main(View view, Function function) {
-        Form container = new Form(view, "main");
+    public static final void main(Context context) {
+        Form container = new Form(context.view, "main");
         PageControl pagecontrol = new PageControl(container);
         DataForm form = new DataForm(container, "selection");
         DataItem partner = new DataItem(form, Const.TEXT_FIELD, "partner");
         
         pagecontrol.add("home");
         
-        partner.setModelItem(new Documents(function).getModel("CUSTOM_PARTNER").
-                getModelItem("CODIGO"));
+        partner.setModelItem(new Documents(context.function).
+                getModel("CUSTOM_PARTNER").getModelItem("CODIGO"));
         new Button(container, "show");
         new Button(container, "create");
         new Button(container, "update");
         
-        view.setFocus(partner);
-        view.setTitle("partner-selection");
+        context.view.setFocus(partner);
+        context.view.setTitle("partner-selection");
     }
 }

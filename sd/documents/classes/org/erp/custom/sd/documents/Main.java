@@ -4,84 +4,94 @@ import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.packagetool.common.InstallData;
 import org.iocaste.protocol.Message;
 import org.iocaste.shell.common.AbstractPage;
+import org.iocaste.shell.common.PageContext;
 import org.iocaste.shell.common.View;
 
 public class Main extends AbstractPage {
+    private Context context;
     
     public Main() {
         export("install", "install");
     }
 
-    public final void add(View view) {
-        Request.add(view);
+    public final void add() {
+        Request.add(context.view);
     }
     
-    public final void condadd(View view) {
-        Request.condadd(view);
+    public final void condadd() {
+        Request.condadd(context.view);
     }
     
-    public final void condapply(View view) {
-        Request.condapply(view, this);
-        back(view);
+    public final void condapply() {
+        Request.condapply(context);
+        back();
     }
     
-    public final void condcancel(View view) {
-        back(view);
+    public final void condcancel() {
+        back();
     }
     
-    public final void condform(View view) {
-        Response.condform(view, this);
+    public final void condform() {
+        Response.condform(context);
     }
     
-    public final void conditions(View view) {
-        Request.conditions(view);
+    public final void conditions() {
+        Request.conditions(context.view);
     }
     
-    public final void condremove(View view) {
-        Request.condremove(view);
+    public final void condremove() {
+        Request.condremove(context.view);
     }
     
-    public final void create(View view) {
-        Request.create(view);
+    public final void create() {
+        Request.create(context.view);
     }
     
-    public final void display(View view) {
-        Request.display(view, this);
+    public final void display() {
+        Request.display(context);
     }
     
-    public final void document(View view) {
-        Response.document(view, this);
+    public final void document() {
+        Response.document(context);
     }
     
+    @Override
+    public final PageContext init(View view) {
+        context = new Context();
+        
+        return context;
+    }
     public final InstallData install(Message message) {
         return Install.init(this);
     }
     
-    public final void main(View view) {
-        Response.main(view, this);
+    public final void main() {
+        Response.main(context);
     }
     
-    public final void remove(View view) {
-        Request.remove(view);
+    public final void remove() {
+        Request.remove(context.view);
     }
     
-    public final void save(View view) {
-        Request.save(view, this);
+    public final void save() {
+        Request.save(context);
     }
     
-    public final void update(View view) {
-        Request.update(view, this);
+    public final void update() {
+        Request.update(context);
     }
     
-    public final void validate(View view) {
+    public final void validate() {
         ExtendedObject[] objects;
         
-        if (Common.getMode(view) == Common.SHOW)
+        if (Common.getMode(context.view) == Common.SHOW)
             return;
         
-        objects = view.getParameter("conditions");
-        Request.totalAmountUpdate(view, objects);
+        objects = context.view.getParameter("conditions");
+        Request.totalAmountUpdate(context.view, objects);
     }
     
-    public final void validatecond(View view) { }
+    public final void validatecond() { }
 }
+
+class Context extends PageContext { }

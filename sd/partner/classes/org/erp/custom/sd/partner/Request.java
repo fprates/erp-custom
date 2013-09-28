@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
-import org.iocaste.protocol.Function;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
@@ -133,53 +132,53 @@ public class Request {
      * @param function
      * @param mode
      */
-    public static final void load(View view, Function function, byte mode) {
+    public static final void load(Context context, byte mode) {
         Documents documents;
         ExtendedObject partner;
         ExtendedObject[] objects;
         String strid;
-        DataForm form = view.getElement("selection");
+        DataForm form = context.view.getElement("selection");
         long ident = form.get("partner").getl();
         
         if (ident == 0) {
-            view.message(Const.ERROR, "field.is.required");
+            context.view.message(Const.ERROR, "field.is.required");
             return;
         }
         
-        documents = new Documents(function);
+        documents = new Documents(context.function);
         partner = documents.getObject("CUSTOM_PARTNER", ident);
         if (partner == null) {
-            view.message(Const.ERROR, "invalid.partner");
+            context.view.message(Const.ERROR, "invalid.partner");
             return;
         }
         
         strid = Long.toString(ident);
         if (mode == Common.UPDATE && documents.
                 isLocked("CUSTOM_PARTNER", strid)) {
-            view.message(Const.ERROR, "record.is.locked");
+            context.view.message(Const.ERROR, "record.is.locked");
             return;
         }
         
         documents.lock("CUSTOM_PARTNER", strid);
-        view.clearExports();
+        context.view.clearExports();
         objects = documents.select(QUERIES[ADDRESSES], ident);
-        view.export("addresses", objects);
+        context.view.export("addresses", objects);
         
         objects = documents.select(QUERIES[CONTACTS], ident);
-        view.export("contacts", objects);
+        context.view.export("contacts", objects);
 
         objects = documents.select(QUERIES[COMMUNICS], ident);
-        view.export("communics", objects);
+        context.view.export("communics", objects);
         
         objects = new ExtendedObject[1];
         objects[0] = documents.getObject("CUSTOM_PARTNER_TYPE",
                 partner.getValue("TIPO_PARCEIRO"));
-        view.export("partnertype", objects[0]);
         
-        view.export("partner", partner);
-        view.export("mode", mode);
-        view.setReloadableView(true);
-        view.redirect(null, "identity");
+        context.view.export("partnertype", objects[0]);
+        context.view.export("partner", partner);
+        context.view.export("mode", mode);
+        context.view.setReloadableView(true);
+        context.view.redirect("identity");
     }
     
     /**
@@ -206,18 +205,18 @@ public class Request {
      * 
      * @param view
      */
-    public static final void save(View view, Function function) {
+    public static final void save(Context context) {
         DataItem dataitem;
         InputComponent input;
         long codigo, addrfrom, addrto, contactid, contactid_, itemcode;
         Link link;
         Table itens, communics;
         Map<Long, Long> addrtransl;
-        TabbedPane tpane = view.getElement("pane");
+        TabbedPane tpane = context.view.getElement("pane");
         DataForm form = tpane.get("identitytab").getContainer();
         ExtendedObject opartner = form.getObject();
-        byte modo = Common.getMode(view);
-        Documents documents = new Documents(function);
+        byte modo = Common.getMode(context.view);
+        Documents documents = new Documents(context.function);
         
         switch (modo) {
         case Common.CREATE:
@@ -225,14 +224,14 @@ public class Request {
             
             opartner.setValue("CODIGO", codigo);
             if (documents.save(opartner) == 0) {
-                view.message(Const.ERROR, "header.save.error");
+                context.view.message(Const.ERROR, "header.save.error");
                 return;
             }
             
             form.get("CODIGO").set(codigo);
             documents.lock("CUSTOM_PARTNER", Long.toString(codigo));
-            view.setTitle(Common.TITLE[Common.UPDATE]);
-            view.export("mode", Common.UPDATE);
+            context.view.setTitle(Common.TITLE[Common.UPDATE]);
+            context.view.export("mode", Common.UPDATE);
             
             break;
         default:
@@ -243,7 +242,7 @@ public class Request {
             documents.update(QUERIES[DEL_CONTACTS], codigo);
             documents.update(QUERIES[DEL_ADDRESSES], codigo);
             
-            view.export("mode", Common.UPDATE);
+            context.view.export("mode", Common.UPDATE);
             
             break;
         }
@@ -254,7 +253,7 @@ public class Request {
         addrto = 0;
         link = null;
         
-        itens = view.getElement("addresses");
+        itens = context.view.getElement("addresses");
         for (TableItem address : itens.getItems()) {
             if (modo == Common.CREATE) {
                 link = (Link)address.get("CODIGO");
@@ -269,11 +268,11 @@ public class Request {
             }
         }
         
-        form = view.getElement("contact");
+        form = context.view.getElement("contact");
         dataitem = form.get("ADDRESS");
         Common.loadListFromTable(dataitem, itens, "LOGRADOURO", "CODIGO");
         
-        itens = view.getElement("contacts");
+        itens = context.view.getElement("contacts");
         for (TableItem contact : itens.getItems()) {
             contactid = Long.parseLong(((Link)contact.get("CODIGO")).getText());
             if (modo == Common.CREATE) {
@@ -285,7 +284,7 @@ public class Request {
             
             itemcode = saveItem(documents, contact, codigo);
             
-            communics = view.getElement("communics");
+            communics = context.view.getElement("communics");
             for (TableItem communic : communics.getItems()) {
                 contactid_ = Common.getValue(communic.get("CONTACT_ID"));
                 if (contactid != contactid_)
@@ -295,7 +294,7 @@ public class Request {
             }
         }
         
-        view.message(Const.STATUS, "partner.saved.successfuly");
+        context.view.message(Const.STATUS, "partner.saved.successfuly");
     }
     
     /**
