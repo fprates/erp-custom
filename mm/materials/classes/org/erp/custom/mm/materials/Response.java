@@ -55,6 +55,7 @@ public class Response {
          * Prices
          */
         context.priceshelper = new TableTool(tabs, "prices");
+        context.priceshelper.setContext(context);
         context.priceshelper.model(context.pricesmodel);
         context.priceshelper.setValidator(
                 "VL_CUSTO", ValorCustoValidator.class, "VL_VENDA");
@@ -69,6 +70,7 @@ public class Response {
          * Promotion
          */
         context.promotionshelper = new TableTool(tabs, "promotions");
+        context.promotionshelper.setContext(context);
         context.promotionshelper.model(context.promotionsmodel);
         context.promotionshelper.setVisibility(true,
                 "VL_VENDA", "VL_CUSTO", "DT_INICIAL", "DT_FINAL");
@@ -80,6 +82,7 @@ public class Response {
          * Sub-materials
          */
         context.smaterialshelper = new TableTool(tabs, "submats");
+        context.smaterialshelper.setContext(context);
         context.smaterialshelper.model(context.submatmodel);
         context.smaterialshelper.setVisibility(true, "SUB_MATERIAL");
             
