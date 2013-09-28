@@ -84,7 +84,8 @@ public class Install {
         messages.put("DT_FINAL", "Data final");
         messages.put("DT_INICIAL", "Data inicial");
         messages.put("dtini.gt.dtfin",
-                "Data final não pode ser maiorn que a data inicial");
+                "Data final não pode ser maior que a data inicial.");
+        messages.put("entries.saved", "Entradas salvas com sucesso.");
         messages.put("ID", "Código");
         messages.put("MATERIAL_AUTOCODE", "Auto-numeração");
         messages.put("MAT_GROUP", "Grupo de materiais");
