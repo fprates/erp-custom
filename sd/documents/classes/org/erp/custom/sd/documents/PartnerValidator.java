@@ -14,14 +14,13 @@ public class PartnerValidator extends AbstractValidator {
         Documents documents;
         ExtendedObject partner;
         InputComponent receiver = config.getInput("RECEIVER");
-        long partnerid = receiver.get();
+        long partnerid = receiver.getl();
         
         if (partnerid == 0)
             return;
         
         documents = new Documents(getFunction());
         partner = documents.getObject("CUSTOM_PARTNER", partnerid);
-        
         if (partner == null)
             return;
         

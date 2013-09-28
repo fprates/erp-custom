@@ -114,7 +114,7 @@ public class Request {
         ExtendedObject[] objects;
         Documents documents = new Documents(context.function);
         DataForm form = context.view.getElement("selection");
-        long ident = form.get("ID").get();
+        long ident = form.get("ID").getl();
         
         if (ident == 0) {
             context.view.message(Const.ERROR, "document.number.required");
@@ -192,7 +192,7 @@ public class Request {
         default:
             documents.modify(oheader);
 
-            docid = oheader.getValue("ID");
+            docid = oheader.getl("ID");
             documents.update(QUERIES[DEL_CONDITIONS], docid);
             documents.update(QUERIES[DEL_ITENS], docid);
             
@@ -203,7 +203,7 @@ public class Request {
         for (TableItem item : itens.getItems()) {
             oitem = item.getObject();
             
-            itemnr = oitem.getValue("ITEM_NUMBER");
+            itemnr = oitem.getl("ITEM_NUMBER");
             if (itemnr < (docid * 100000)) {
                 itemnr += (docid * 100000);
                 oitem.setValue("ITEM_NUMBER", itemnr);
@@ -217,7 +217,7 @@ public class Request {
         conditions = context.view.getParameter("conditions");
         if (conditions != null)
             for (ExtendedObject condition : conditions) {
-                itemnr = condition.getValue("ID");
+                itemnr = condition.getl("ID");
                 if (itemnr < (docid * 1000)) {
                     itemnr += (docid * 1000);
                     condition.setValue("ID", itemnr);

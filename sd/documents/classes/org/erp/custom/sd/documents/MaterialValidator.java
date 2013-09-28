@@ -31,10 +31,10 @@ public class MaterialValidator extends AbstractValidator {
         if (objects == null)
             return;
         
-        uprice = objects[0].getValue("VL_VENDA");
+        uprice = objects[0].getd("VL_VENDA");
         config.getInput("PRECO_UNITARIO").set(uprice);
         
-        quantity = config.getInput("QUANTITY").get();
+        quantity = config.getInput("QUANTITY").getd();
         itemtotal = quantity * uprice;
         config.getInput("PRECO_TOTAL").set(itemtotal);
     }

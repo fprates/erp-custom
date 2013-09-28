@@ -90,8 +90,8 @@ public class Common {
             
             i++;
         } else {
-            i = object.getValue("ITEM_NUMBER");
-            docid = object.getValue("DOCUMENT_ID");
+            i = object.getl("ITEM_NUMBER");
+            docid = object.getl("DOCUMENT_ID");
         }
         
         item = new TableItem(itens);
