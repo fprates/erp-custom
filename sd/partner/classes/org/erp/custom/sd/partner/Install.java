@@ -614,47 +614,30 @@ public class Install {
         DocumentModel partnertype;
         DocumentModelItem item;
         
-        partnertype = data.getModel("CUSTOM_PARTNER_TYPE", "CPRTNRTYPE", "");
+        partnertype = data.getModel("CUSTOM_PARTNER_TYPE", "CPRTNRTYPE", null);
         
         element = new DataElement("CUSTOM_PARTNER_TYPE.CODIGO");
-        element.setLength(3);
-        element.setType(DataType.NUMC);
-        data.add(element);
-        
-        item = new DocumentModelItem("CODIGO");
-        item.setDataElement(element);
-        item.setTableFieldName("IDENT");
-        
-        partnertype.add(item);
-        partnertype.add(new DocumentModelKey(item));
-        
-        element = new DataElement("CUSTOM_PARTNER_TYPE.SIGLA");
         element.setLength(2);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
-        item = new DocumentModelItem("SIGLA");
+        item = new DocumentModelItem("CODIGO");
         item.setDataElement(element);
-        item.setTableFieldName("SIGLA");
-        
+        item.setTableFieldName("PRTCD");
         partnertype.add(item);
+        partnertype.add(new DocumentModelKey(item));
         
         element = new DataElement("CUSTOM_PARTNER_TYPE.DESCRICAO");
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("DESCRICAO");
         item.setDataElement(element);
         item.setTableFieldName("DESCR");
-        
         partnertype.add(item);
         
-        data.addValues(partnertype, 0, "CL", "CLIENTE");
-        data.addValues(partnertype, 1, "FR", "FORNECEDOR");
-        data.addValues(partnertype, 2, "TR", "TRANSPORTADOR");
+        data.addValues(partnertype, "CL", "CLIENTE");
+        data.addValues(partnertype, "FR", "FORNECEDOR");
+        data.addValues(partnertype, "TR", "TRANSPORTADOR");
         
         return partnertype;
     }

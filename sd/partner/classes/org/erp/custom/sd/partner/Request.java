@@ -217,13 +217,12 @@ public class Request {
         ExtendedObject opartner = form.getObject();
         byte modo = Common.getMode(context.view);
         Documents documents = new Documents(context.function);
+        Services services = new Services();
         
         switch (modo) {
         case Common.CREATE:
-            codigo = documents.getNextNumber("CUSTPARTNER");
-            
-            opartner.setValue("CODIGO", codigo);
-            if (documents.save(opartner) == 0) {
+            codigo = services.create(opartner);
+            if (codigo == 0) {
                 context.view.message(Const.ERROR, "header.save.error");
                 return;
             }

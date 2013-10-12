@@ -17,7 +17,7 @@ public class PartnerTypeValidator extends AbstractValidator {
     @Override
     public void validate(ValidatorConfig config) throws Exception {
         InputComponent input = config.getInput("TIPO_PARCEIRO");
-        int partnertype = input.geti();
+        String partnertype = input.get();
         ExtendedObject object = new Documents(getFunction()).
                 getObject("CUSTOM_PARTNER_TYPE", partnertype);
         

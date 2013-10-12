@@ -39,7 +39,7 @@
         </javac>
         
         <jar basedir="${builddir}/tmp"
-          destfile="${builddir}/lib/${archive.prefix}${ant.project.name}.jar"/>
+          destfile="${basedir}/lib/${archive.prefix}${ant.project.name}.jar"/>
         <delete dir="${builddir}/tmp"/>
     	
         <!-- compilação classes -->
