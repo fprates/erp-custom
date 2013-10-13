@@ -137,6 +137,7 @@ public class Request {
         ExtendedObject partner;
         ExtendedObject[] objects;
         String strid;
+        Services services;
         DataForm form = context.view.getElement("selection");
         long ident = form.get("partner").getl();
         
@@ -144,14 +145,15 @@ public class Request {
             context.view.message(Const.ERROR, "field.is.required");
             return;
         }
-        
-        documents = new Documents(context.function);
-        partner = documents.getObject("CUSTOM_PARTNER", ident);
+
+        services = new Services();
+        partner = services.load(ident, context.function);
         if (partner == null) {
             context.view.message(Const.ERROR, "invalid.partner");
             return;
         }
         
+        documents = new Documents(context.function);
         strid = Long.toString(ident);
         if (mode == Common.UPDATE && documents.
                 isLocked("CUSTOM_PARTNER", strid)) {
@@ -221,7 +223,7 @@ public class Request {
         
         switch (modo) {
         case Common.CREATE:
-            codigo = services.create(opartner);
+            codigo = services.create(opartner, context.function);
             if (codigo == 0) {
                 context.view.message(Const.ERROR, "header.save.error");
                 return;

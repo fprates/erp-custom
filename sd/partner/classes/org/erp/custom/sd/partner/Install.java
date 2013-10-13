@@ -44,16 +44,13 @@ public class Install {
         shdata.add("RAZAO_SOCIAL");
         shdata.setModel("CUSTOM_PARTNER");
         shdata.setExport("CODIGO");
-        
         data.add(shdata);
         
         shdata = new SearchHelpData("SH_PARTNER_TYPE");
         shdata.add("CODIGO");
-        shdata.add("SIGLA");
         shdata.add("DESCRICAO");
         shdata.setModel("CUSTOM_PARTNER_TYPE");
         shdata.setExport("CODIGO");
-        
         data.add(shdata);
         
         shdata = new SearchHelpData("SH_ADDRESS_TYPE");
@@ -61,7 +58,6 @@ public class Install {
         shdata.add("DESCRICAO");
         shdata.setModel("CUSTOM_ADDRESS_TYPE");
         shdata.setExport("CODIGO");
-        
         data.add(shdata);
         
         shdata = new SearchHelpData("SH_COMMUNICATION");
@@ -69,7 +65,6 @@ public class Install {
         shdata.add("DESCRICAO");
         shdata.setModel("CUSTOM_COMMUNICATION");
         shdata.setExport("CODIGO");
-        
         data.add(shdata);
         
         data.addNumberFactory("CUSTPARTNER");
@@ -240,18 +235,18 @@ public class Install {
             DocumentModel partnertype) {
         DataElement element;
         DocumentModelItem typecode, item;
-        DocumentModel partner = data.getModel("CUSTOM_PARTNER", "CPARTNER", "");
+        DocumentModel partner = data.getModel("CUSTOM_PARTNER", "CPARTNER",
+                "org.erp.custom.sd.partner.common.PartnerData");
         
         element = new DataElement("CUSTOM_PARTNER.CODIGO");
         element.setLength(10);
         element.setType(DataType.NUMC);
-        data.add(element);
-        
+        element.setAttributeType(DataType.LONG);
         item = new DocumentModelItem("CODIGO");
         item.setTableFieldName("IDENT");
+        item.setAttributeName("id");
         item.setDataElement(element);
         item.setSearchHelp("SH_PARTNER");
-        
         partner.add(item);
         partner.add(new DocumentModelKey(item));
         
@@ -259,74 +254,60 @@ public class Install {
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("RAZAO_SOCIAL");
         item.setTableFieldName("NAME1");
+        item.setAttributeName("name1");
         item.setDataElement(element);
-        
         partner.add(item);
         
         item = new DocumentModelItem("NOME_FANTASIA");
         item.setTableFieldName("NAME2");
+        item.setAttributeName("name2");
         item.setDataElement(element);
-        
         partner.add(item);
         
         element = new DataElement("CUSTOM_PARTNER.DOCUMENTO_FISCAL");
         element.setLength(22);
         element.setType(DataType.CHAR);
-        data.add(element);
-        
         item = new DocumentModelItem("DOCUMENTO_FISCAL");
         item.setTableFieldName("DOCFS");
         item.setDataElement(element);
-        
         partner.add(item);
         
         element = new DataElement("CUSTOM_PARTNER.INSCR_ESTADUAL");
         element.setLength(18);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("INSCR_ESTADUAL");
         item.setTableFieldName("IESTA");
         item.setDataElement(element);
-        
         partner.add(item);
         
         element = new DataElement("CUSTOM_PARTNER.INSCR_MUNICIPAL");
         element.setLength(20);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("INSCR_MUNICIPAL");
         item.setTableFieldName("IMUNI");
         item.setDataElement(element);
-        
         partner.add(item);
         
         element = new DataElement("CUSTOM_PARTNER.TIPO_PESSOA");
         element.setLength(1);
         element.setType(DataType.NUMC);
-        data.add(element);
-        
         item = new DocumentModelItem("TIPO_PESSOA");
         item.setTableFieldName("TPPES");
+        item.setAttributeName("entityType");
         item.setDataElement(element);
-        
         partner.add(item);
         
         typecode = partnertype.getModelItem("CODIGO");
-        
         item = new DocumentModelItem("TIPO_PARCEIRO");
         item.setTableFieldName("TPPAR");
+        item.setAttributeName("type");
         item.setDataElement(typecode.getDataElement());
         item.setReference(typecode);
         item.setSearchHelp("SH_PARTNER_TYPE");
-        
         partner.add(item);
         
         return partner;
@@ -344,119 +325,92 @@ public class Install {
         DataElement element;
         DocumentModelItem item, partnercode, addresstypecode;
         DocumentModel address = data.
-                getModel("CUSTOM_PARTNER_ADDRESS", "CPARTNERADDR", "");
+                getModel("CUSTOM_PARTNER_ADDRESS", "CPARTNERADDR", null);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.CODIGO");
         element.setLength(12);
         element.setType(DataType.NUMC);
-        data.add(element);
-        
         item = new DocumentModelItem("CODIGO");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
-        
         address.add(item);
         address.add(new DocumentModelKey(item));
         
         partnercode = partner.getModelItem("CODIGO");
-        
         item = new DocumentModelItem("PARTNER_ID");
         item.setTableFieldName("PRTNR");
         item.setDataElement(partnercode.getDataElement());
         item.setReference(partnercode);
-        
         address.add(item);
 
         addresstypecode = addresstype.getModelItem("CODIGO");
-        
         item = new DocumentModelItem("TIPO_ENDERECO");
         item.setTableFieldName("TPEND");
         item.setDataElement(addresstypecode.getDataElement());
         item.setReference(addresstypecode);
         item.setSearchHelp("SH_ADDRESS_TYPE");
-        
         address.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.LOGRADOURO");
         element.setLength(60);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("LOGRADOURO");
         item.setTableFieldName("LOGRA");
         item.setDataElement(element);
-        
         address.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.CEP");
         element.setLength(8);
         element.setType(DataType.NUMC);
-        data.add(element);
-        
         item = new DocumentModelItem("CEP");
         item.setTableFieldName("CPSTL");
         item.setDataElement(element);
-        
         address.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.BAIRRO");
         element.setLength(30);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        
         item = new DocumentModelItem("BAIRRO");
         item.setTableFieldName("NEIGH");
         item.setDataElement(element);
-        
         address.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.CIDADE");
         element.setLength(30);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("CIDADE");
         item.setTableFieldName("CITY");
         item.setDataElement(element);
-        
         address.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.TELEFONE");
         element.setLength(16);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("TELEFONE");
         item.setTableFieldName("TEL01");
         item.setDataElement(element);
-        
         address.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.EMAIL");
         element.setLength(80);
         element.setType(DataType.CHAR);
         element.setUpcase(false);
-        data.add(element);
-        
         item = new DocumentModelItem("EMAIL");
         item.setTableFieldName("EMAIL");
         item.setDataElement(element);
-        
         address.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.WEB_PAGE");
         element.setLength(80);
         element.setType(DataType.CHAR);
         element.setUpcase(false);
-        data.add(element);
-        
         item = new DocumentModelItem("WEB_PAGE");
         item.setTableFieldName("WPAGE");
         item.setDataElement(element);
-        
         address.add(item);
         
         return address;
@@ -479,12 +433,9 @@ public class Install {
         element = new DataElement("CUSTOM_PARTNER_CONTACT.CODIGO");
         element.setLength(12);
         element.setType(DataType.NUMC);
-        data.add(element);
-        
         item = new DocumentModelItem("CODIGO");
         item.setDataElement(element);
         item.setTableFieldName("IDENT");
-        
         contact.add(item);
         contact.add(new DocumentModelKey(item));
         
@@ -492,25 +443,20 @@ public class Install {
         item.setTableFieldName("PRTNR");
         item.setDataElement(address.getModelItem("PARTNER_ID").
                 getDataElement());
-        
         contact.add(item);
         
         element = new DataElement("CUSTOM_PARTNER_CONTACT.NOME");
         element.setLength(40);
         element.setType(DataType.CHAR);
         element.setUpcase(true);
-        data.add(element);
-        
         item = new DocumentModelItem("PNOME");
         item.setTableFieldName("NAME1");
         item.setDataElement(element);
-        
         contact.add(item);
         
         item = new DocumentModelItem("UNOME");
         item.setTableFieldName("NAME2");
         item.setDataElement(element);
-        
         contact.add(item);
         
         addresscode = address.getModelItem("CODIGO");
@@ -518,7 +464,6 @@ public class Install {
         item.setTableFieldName("ADDRS");
         item.setDataElement(addresscode.getDataElement());
         item.setReference(addresscode);
-        
         contact.add(item);
         
         return contact;

@@ -4,12 +4,14 @@ import org.erp.custom.sd.partner.common.PartnerData;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
 import org.iocaste.protocol.AbstractFunction;
+import org.iocaste.protocol.Function;
 import org.iocaste.protocol.Message;
 
 public class Services extends AbstractFunction {
 
     public Services() {
         export("create", "create");
+        export("load", "load");
     }
     
     public final long create(Message message) {
@@ -18,13 +20,12 @@ public class Services extends AbstractFunction {
         ExtendedObject partner = new ExtendedObject(
                 documents.getModel("CUSTOM_PARTNER"));
         
-        partner.setValue("NOME_FANTASIA", data.getName());
-        partner.setValue("TIPO_PARCEIRO", data.getType());
-        return create(partner);
+        partner.setInstance(data);
+        return create(partner, this);
     }
     
-    public final long create(ExtendedObject partner) {
-        Documents documents = new Documents(this);
+    public final long create(ExtendedObject partner, Function function) {
+        Documents documents = new Documents(function);
         long codigo = documents.getNextNumber("CUSTPARTNER");
         
         partner.setValue("CODIGO", codigo);
@@ -32,5 +33,21 @@ public class Services extends AbstractFunction {
             return 0;
         
         return codigo;
+    }
+    
+    public final PartnerData load(Message message) {
+        long id = message.get("id");
+        ExtendedObject object = load(id, this);
+        
+        if (object == null)
+            return null;
+        
+        return object.newInstance();
+    }
+    
+    public final ExtendedObject load(long id, Function function) {
+        Documents documents = new Documents(function);
+        
+        return documents.getObject("CUSTOM_PARTNER", id);
     }
 }

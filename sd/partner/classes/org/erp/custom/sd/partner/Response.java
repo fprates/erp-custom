@@ -1,5 +1,7 @@
 package org.erp.custom.sd.partner;
 
+import org.erp.custom.sd.partner.common.PartnerData;
+
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
@@ -280,8 +282,8 @@ public class Response {
             
             if (name.equals("TIPO_PESSOA")) {
                 dataitem.setComponentType(Const.LIST_BOX);
-                dataitem.add("fis", 0);
-                dataitem.add("jur", 1);
+                dataitem.add("fis", PartnerData.FIS);
+                dataitem.add("jur", PartnerData.JUR);
                 continue;
             }
             

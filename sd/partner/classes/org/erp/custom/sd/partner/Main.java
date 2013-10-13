@@ -388,6 +388,7 @@ public class Main extends AbstractPage {
         }
     }
     
+    @Override
     public final void validate() { }
 }
 

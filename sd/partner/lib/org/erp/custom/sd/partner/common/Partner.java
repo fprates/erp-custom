@@ -19,4 +19,12 @@ public class Partner extends AbstractServiceInterface {
         message.add("data", data);
         return call(message);
     }
+    
+    public final PartnerData load(long id) {
+        Message message = new Message();
+        
+        message.setId("load");
+        message.add("id", id);
+        return call(message);
+    }
 }
