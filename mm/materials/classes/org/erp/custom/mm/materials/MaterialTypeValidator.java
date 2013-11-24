@@ -22,7 +22,7 @@ public class MaterialTypeValidator extends AbstractValidator {
         if (object == null)
             return;
         
-        text = object.getValue("TEXT");
+        text = object.get("TEXT");
         config.getInput("MAT_TYPE").setText(text);
     }
 

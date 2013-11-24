@@ -10,6 +10,7 @@ import org.iocaste.shell.common.PageControl;
 import org.iocaste.shell.common.TabbedPane;
 import org.iocaste.shell.common.TabbedPaneItem;
 import org.iocaste.shell.common.TableTool;
+import org.iocaste.shell.common.TableToolData;
 
 public class Response {
     
@@ -19,6 +20,7 @@ public class Response {
      * @param function
      */
     public static final void form(Context context) {
+        TableToolData ttdata;
         InputComponent input;
         Button validate;
         TabbedPaneItem tabitem;
@@ -54,8 +56,11 @@ public class Response {
         /*
          * Prices
          */
-        context.priceshelper = new TableTool(tabs, "prices");
-        context.priceshelper.setContext(context);
+        ttdata = new TableToolData();
+        ttdata.container = tabs;
+        ttdata.name = "prices";
+        ttdata.context = context;
+        context.priceshelper = new TableTool(ttdata);
         context.priceshelper.model(context.pricesmodel);
         context.priceshelper.setValidator(
                 "VL_CUSTO", ValorCustoValidator.class, "VL_VENDA");
@@ -69,8 +74,11 @@ public class Response {
         /*
          * Promotion
          */
-        context.promotionshelper = new TableTool(tabs, "promotions");
-        context.promotionshelper.setContext(context);
+        ttdata = new TableToolData();
+        ttdata.container = tabs;
+        ttdata.name = "promotions";
+        ttdata.context = context;
+        context.promotionshelper = new TableTool(ttdata);
         context.promotionshelper.model(context.promotionsmodel);
         context.promotionshelper.setVisibility(true,
                 "VL_VENDA", "VL_CUSTO", "DT_INICIAL", "DT_FINAL");
@@ -81,8 +89,11 @@ public class Response {
         /*
          * Sub-materials
          */
-        context.smaterialshelper = new TableTool(tabs, "submats");
-        context.smaterialshelper.setContext(context);
+        ttdata = new TableToolData();
+        ttdata.container = tabs;
+        ttdata.name = "submats";
+        ttdata.context = context;
+        context.smaterialshelper = new TableTool(ttdata);
         context.smaterialshelper.model(context.submatmodel);
         context.smaterialshelper.setVisibility(true, "SUB_MATERIAL");
             

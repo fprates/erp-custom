@@ -92,10 +92,10 @@ public class Request {
             if (autocode) {
                 material = Long.toString(documents.
                         getNextNumber("MATERIAL_ID"));
-                obase.setValue("ID", material);
+                obase.set("ID", material);
                 base.setObject(obase);
             } else {
-                material = obase.getValue("ID");
+                material = obase.get("ID");
             }
             
             context.view.setTitle(Context.TITLE[Context.UPDATE]);
@@ -103,7 +103,7 @@ public class Request {
             documents.save(obase);
             break;
         default:
-            material = obase.getValue("ID");
+            material = obase.get("ID");
             documents.modify(obase);
             documents.update(QUERIES[DEL_SUBMAT], material);
             documents.update(QUERIES[DEL_PRICES], material);
@@ -134,8 +134,8 @@ public class Request {
             object = item.getObject();
             itemid = getItemId(i, material);
             i++;
-            object.setValue("ID", itemid);
-            object.setValue("MATERIAL", material);
+            object.set("ID", itemid);
+            object.set("MATERIAL", material);
             documents.save(object);
         }
     }
