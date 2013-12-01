@@ -107,7 +107,7 @@ public class Common {
             item.add(input);
         }
         
-        codigo = itemdata.object.getValue("CODIGO");
+        codigo = itemdata.object.getl("CODIGO");
         
         if (codigo == 0) {
             if (i > 1) {
@@ -123,7 +123,7 @@ public class Common {
         }
         
         i--;
-        itemdata.object.setValue("CODIGO", codigo);
+        itemdata.object.set("CODIGO", codigo);
         link = itemdata.itens.get(i).get("CODIGO");
         link.setText(Long.toString(codigo));
         link.add(index, i);

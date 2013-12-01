@@ -47,7 +47,7 @@ public class Main extends AbstractPage {
         itemdata.partner = identity.get("CODIGO").getl();
         itemdata.container = context.view.getElement("addresscnt");
         itemdata.mark = "addressmark";
-        itemdata.object.setValue("CODIGO", 0l);
+        itemdata.object.set("CODIGO", 0l);
         
         Common.insertItem(itemdata);
         updatePartnerView(context.view);
@@ -99,10 +99,10 @@ public class Main extends AbstractPage {
         itemdata.partner = identity.get("CODIGO").get();
         itemdata.container = context.view.getElement("contactcnt");
         itemdata.mark = "contactmark";
-        itemdata.object.setValue("CODIGO", 0l);
+        itemdata.object.set("CODIGO", 0l);
         Common.insertItem(itemdata);
         
-        contact.get("CODIGO").set(object.getValue("CODIGO"));
+        contact.get("CODIGO").set(object.get("CODIGO"));
         updatePartnerView(context.view);
         updateCommunicsView(context.view, !VISIBLE);
         
@@ -383,7 +383,7 @@ public class Main extends AbstractPage {
             if (contactid > 0)
                 continue;
             
-            contactid = object.getValue("CODIGO");
+            contactid = object.getl("CODIGO");
             input.set(contactid);
         }
     }

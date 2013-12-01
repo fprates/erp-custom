@@ -301,7 +301,7 @@ public class Response {
         case Common.UPDATE:
         case Common.SHOW:
             object = view.getParameter("partnertype");
-            partnertype.setText((String)object.getValue("DESCRICAO"));
+            partnertype.setText(object.getst("DESCRICAO"));
             partner.setObject(opartner);
             
             break;

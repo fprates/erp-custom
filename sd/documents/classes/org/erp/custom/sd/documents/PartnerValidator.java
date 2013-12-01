@@ -24,7 +24,7 @@ public class PartnerValidator extends AbstractValidator {
         if (partner == null)
             return;
         
-        receiver.setText((String)partner.getValue("RAZAO_SOCIAL"));
+        receiver.setText(partner.getst("RAZAO_SOCIAL"));
     }
 
 }

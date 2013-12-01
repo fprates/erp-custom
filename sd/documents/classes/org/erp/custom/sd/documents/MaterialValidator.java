@@ -2,6 +2,7 @@ package org.erp.custom.sd.documents;
 
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.documents.common.Query;
 import org.iocaste.shell.common.AbstractValidator;
 import org.iocaste.shell.common.Shell;
 import org.iocaste.shell.common.ValidatorConfig;
@@ -19,15 +20,17 @@ public class MaterialValidator extends AbstractValidator {
         double uprice, quantity, itemtotal;
         Documents documents;
         ExtendedObject[] objects;
-        String query;
+        Query query;
         String material = config.getInput("MATERIAL").get();
         
         if (Shell.isInitial(material))
             return;
         
         documents = new Documents(getFunction());
-        query = "from PRECO_MATERIAL where MATERIAL = ?";
-        objects = documents.select(query, material);
+        query = new Query();
+        query.setModel("PRECO_MATERIAL");
+        query.andEqual("MATERIAL", material);
+        objects = documents.select(query);
         if (objects == null)
             return;
         

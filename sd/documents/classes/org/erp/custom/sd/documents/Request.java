@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.documents.common.Query;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.InputComponent;
@@ -15,16 +16,6 @@ import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.View;
 
 public class Request {
-    private static final byte DEL_ITENS = 0;
-    private static final byte ITENS = 1;
-    private static final byte DEL_CONDITIONS = 2;
-    private static final byte CONDITIONS = 3;
-    private static final String[] QUERIES = {
-        "delete from custom_sd_document_item where document_id = ?",
-        "from custom_sd_document_item where document_id = ?",
-        "delete from custom_sd_conditions where document = ?",
-        "from custom_sd_conditions where document = ?"
-    };
     
     /**
      * 
@@ -38,7 +29,7 @@ public class Request {
     public static final void condapply(PageContext context) {
         ExtendedObject[] conditions_;
         Table conditions = context.view.getElement("conditions");
-        List<ExtendedObject> oconditions = new ArrayList<ExtendedObject>();
+        List<ExtendedObject> oconditions = new ArrayList<>();
         Shell shell = new Shell(context.function);
         View document = shell.getView(context.view, "document");
         
@@ -110,6 +101,7 @@ public class Request {
      * @param mode
      */
     private static final void load(PageContext context, byte mode) {
+        Query query;
         ExtendedObject header;
         ExtendedObject[] objects;
         Documents documents = new Documents(context.function);
@@ -128,25 +120,30 @@ public class Request {
         }
         
         context.view.clearExports();
-        objects = documents.select(QUERIES[ITENS], ident);
+        query = new Query();
+        query.setModel("custom_sd_document_item");
+        query.andEqual("document_id", ident);
+        objects = documents.select(query);
         context.view.export("itens", objects);
         
-        objects = documents.select(QUERIES[CONDITIONS], ident);
+        query = new Query();
+        query.setModel("custom_sd_conditions");
+        query.andEqual("document", ident);
+        objects = documents.select(query);
         context.view.export("conditions", objects);
 
         objects = new ExtendedObject[1];
         objects[0] = documents.getObject("CUSTOM_PARTNER",
-                header.getValue("RECEIVER"));
+                header.get("RECEIVER"));
         context.view.export("partner", objects[0]);
         
         objects[0] = documents.getObject("CUSTOM_SD_DOCTYPE",
-                header.getValue("TIPO"));
+                header.get("TIPO"));
         context.view.export("doctype", objects[0]);
-        
         context.view.setReloadableView(true);
         context.view.export("mode", mode);
         context.view.export("header", header);
-        context.view.redirect(null, "document");
+        context.view.redirect("document");
     }
     
     /**
@@ -167,6 +164,7 @@ public class Request {
      * @param function
      */
     public static final void save(PageContext context) {
+        Query[] queries;
         long docid, itemnr;
         Table itens;
         ExtendedObject[] conditions;
@@ -178,7 +176,7 @@ public class Request {
         switch (mode) {
         case Common.CREATE:
             docid = documents.getNextNumber("SD_DOCUMENT");
-            oheader.setValue("ID", docid);
+            oheader.set("ID", docid);
             header.get("ID").set(docid);
             context.view.setTitle(Common.TITLE[Common.UPDATE]);
             context.view.export("mode", Common.UPDATE);
@@ -191,11 +189,16 @@ public class Request {
             
         default:
             documents.modify(oheader);
-
             docid = oheader.getl("ID");
-            documents.update(QUERIES[DEL_CONDITIONS], docid);
-            documents.update(QUERIES[DEL_ITENS], docid);
             
+            queries = new Query[2];
+            queries[0] = new Query("delete");
+            queries[0].setModel("custom_sd_conditions");
+            queries[0].andEqual("document", docid);
+            queries[1] = new Query("delete");
+            queries[1].setModel("custom_sd_document_item");
+            queries[1].andEqual("document_id", docid);
+            documents.update(queries);
             break;
         }
 
@@ -206,11 +209,11 @@ public class Request {
             itemnr = oitem.getl("ITEM_NUMBER");
             if (itemnr < (docid * 100000)) {
                 itemnr += (docid * 100000);
-                oitem.setValue("ITEM_NUMBER", itemnr);
+                oitem.set("ITEM_NUMBER", itemnr);
                 ((InputComponent)item.get("ITEM_NUMBER")).set(itemnr);
             }
             
-            oitem.setValue("DOCUMENT_ID", docid);
+            oitem.set("DOCUMENT_ID", docid);
             documents.save(oitem);
         }
         
@@ -220,10 +223,10 @@ public class Request {
                 itemnr = condition.getl("ID");
                 if (itemnr < (docid * 1000)) {
                     itemnr += (docid * 1000);
-                    condition.setValue("ID", itemnr);
+                    condition.set("ID", itemnr);
                 }
                 
-                condition.setValue("DOCUMENT", docid);
+                condition.set("DOCUMENT", docid);
                 documents.save(condition);
             }
         
@@ -244,12 +247,12 @@ public class Request {
         
         for (TableItem item : itens.getItems()) {
             input = item.get("PRECO_TOTAL");
-            valor += (Double)input.get();
+            valor += input.getd();
         }
 
         if (objects != null)
             for (ExtendedObject object : objects)
-                valor += (Double)object.getValue("VALOR");
+                valor += object.getd("VALOR");
         
         input = header.get("VALOR");
         input.set(valor);

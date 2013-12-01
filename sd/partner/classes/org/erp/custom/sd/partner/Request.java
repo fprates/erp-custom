@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.documents.common.Query;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.DataItem;
@@ -16,22 +17,7 @@ import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 import org.iocaste.shell.common.View;
 
-public class Request {
-    private static final byte ADDRESSES = 0;
-    private static final byte CONTACTS = 1;
-    private static final byte COMMUNICS = 2;
-    private static final byte DEL_COMMUNICS = 3;
-    private static final byte DEL_CONTACTS = 4;
-    private static final byte DEL_ADDRESSES = 5;
-    private static final String[] QUERIES = {
-        "from CUSTOM_PARTNER_ADDRESS where partner_id = ?",
-        "from CUSTOM_PARTNER_CONTACT where partner_id = ?",
-        "from CUSTOM_PARTNER_COMM where partner_id = ?",
-        "delete from CUSTOM_PARTNER_COMM where PARTNER_ID = ?",
-        "delete from CUSTOM_PARTNER_CONTACT where PARTNER_ID = ?",
-        "delete from CUSTOM_PARTNER_ADDRESS where PARTNER_ID = ?"
-    };
-    
+public class Request {    
     /**
      * 
      * @param contact
@@ -42,7 +28,7 @@ public class Request {
             View view) {
         Link link;
         Table addresses;
-        long taddress, faddress = contact.getValue("ADDRESS");
+        long taddress, faddress = contact.getl("ADDRESS");
         
         if (faddress == 0)
             return Common.NULL_ADDRESS;
@@ -120,7 +106,7 @@ public class Request {
         Link link = item.get("CODIGO");
         long codigo = Long.parseLong(link.getText());
         
-        object.setValue("CODIGO", codigo);
+        object.set("CODIGO", codigo);
         form.setObject(object);
         
         return codigo;
@@ -133,6 +119,7 @@ public class Request {
      * @param mode
      */
     public static final void load(Context context, byte mode) {
+        Query query;
         Documents documents;
         ExtendedObject partner;
         ExtendedObject[] objects;
@@ -163,18 +150,27 @@ public class Request {
         
         documents.lock("CUSTOM_PARTNER", strid);
         context.view.clearExports();
-        objects = documents.select(QUERIES[ADDRESSES], ident);
+        query = new Query();
+        query.setModel("CUSTOM_PARTNER_ADDRESS");
+        query.andEqual("PARTNER_ID", ident);
+        objects = documents.select(query);
         context.view.export("addresses", objects);
         
-        objects = documents.select(QUERIES[CONTACTS], ident);
+        query = new Query();
+        query.setModel("CUSTOM_PARTNER_CONTACT");
+        query.andEqual("PARTNER_ID", ident);
+        objects = documents.select(query);
         context.view.export("contacts", objects);
 
-        objects = documents.select(QUERIES[COMMUNICS], ident);
+        query = new Query();
+        query.setModel("CUSTOM_PARTNER_COMM");
+        query.andEqual("PARTNER_ID", ident);
+        objects = documents.select(query);
         context.view.export("communics", objects);
         
         objects = new ExtendedObject[1];
         objects[0] = documents.getObject("CUSTOM_PARTNER_TYPE",
-                partner.getValue("TIPO_PARCEIRO"));
+                partner.get("TIPO_PARCEIRO"));
         
         context.view.export("partnertype", objects[0]);
         context.view.export("partner", partner);
@@ -208,6 +204,7 @@ public class Request {
      * @param view
      */
     public static final void save(Context context) {
+        Query[] queries;
         DataItem dataitem;
         InputComponent input;
         long codigo, addrfrom, addrto, contactid, contactid_, itemcode;
@@ -237,12 +234,22 @@ public class Request {
             break;
         default:
             documents.modify(opartner);
-            codigo = opartner.getValue("CODIGO");
+            codigo = opartner.getl("CODIGO");
             
-            documents.update(QUERIES[DEL_COMMUNICS], codigo);
-            documents.update(QUERIES[DEL_CONTACTS], codigo);
-            documents.update(QUERIES[DEL_ADDRESSES], codigo);
+            queries = new Query[3];
+            queries[0] = new Query("delete");
+            queries[0].setModel("CUSTOM_PARTNER_COMM");
+            queries[0].andEqual("PARTNER_ID", codigo);
             
+            queries[1] = new Query("delete");
+            queries[1].setModel("CUSTOM_PARTNER_CONTACT");
+            queries[1].andEqual("PARTNER_ID", codigo);
+            
+            queries[2] = new Query("delete");
+            queries[2].setModel("CUSTOM_PARTNER_ADDRESS");
+            queries[2].andEqual("PARTNER_ID", codigo);
+            
+            documents.update(queries);
             context.view.export("mode", Common.UPDATE);
             
             break;
@@ -338,8 +345,8 @@ public class Request {
         if (codigo < (partner * 100))
             codigo += (partner * 100);
         
-        object.setValue("CODIGO", codigo);
-        object.setValue("PARTNER_ID", partner);
+        object.set("CODIGO", codigo);
+        object.set("PARTNER_ID", partner);
         documents.save(object);
         
         link.setText(Long.toString(codigo));

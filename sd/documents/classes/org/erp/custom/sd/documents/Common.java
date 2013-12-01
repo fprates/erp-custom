@@ -57,9 +57,9 @@ public class Common {
             object = item.getObject();
             
             if (last != null)
-                l = last.getValue("ID");
+                l = last.getl("ID");
             
-            object.setValue("ID", l + 1);
+            object.set("ID", l + 1);
         }
         
         item.setObject(object);

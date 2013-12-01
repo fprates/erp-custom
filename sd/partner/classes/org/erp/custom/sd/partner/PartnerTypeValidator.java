@@ -24,7 +24,7 @@ public class PartnerTypeValidator extends AbstractValidator {
         if (object == null)
             return;
         
-        input.setText((String)object.getValue("DESCRICAO"));
+        input.setText(object.getst("DESCRICAO"));
     }
 
 }

@@ -28,7 +28,7 @@ public class Services extends AbstractFunction {
         Documents documents = new Documents(function);
         long codigo = documents.getNextNumber("CUSTPARTNER");
         
-        partner.setValue("CODIGO", codigo);
+        partner.set("CODIGO", codigo);
         if (documents.save(partner) == 0)
             return 0;
         

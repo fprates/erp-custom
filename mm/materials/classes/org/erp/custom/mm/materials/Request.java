@@ -2,28 +2,14 @@ package org.erp.custom.mm.materials;
 
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
+import org.iocaste.documents.common.Query;
 import org.iocaste.globalconfig.common.GlobalConfig;
 import org.iocaste.shell.common.Const;
 import org.iocaste.shell.common.DataForm;
 import org.iocaste.shell.common.Table;
 import org.iocaste.shell.common.TableItem;
 
-public class Request {
-    private static final byte PRICES = 0;
-    private static final byte PROMOS = 1;
-    private static final byte SUBMATS = 2;
-    private static final byte DEL_SUBMAT = 3;
-    private static final byte DEL_PRICES = 4;
-    private static final byte DEL_PROMOS = 5;
-    private static final String[] QUERIES = {
-        "from PRECO_MATERIAL where MATERIAL = ?",
-        "from PROMOCAO_MATERIAL where MATERIAL = ?",
-        "from SUB_MATERIAL where MATERIAL = ?",
-        "delete from SUB_MATERIAL where MATERIAL = ?",
-        "delete from PRECO_MATERIAL where MATERIAL = ?",
-        "delete from PROMOCAO_MATERIAL where MATERIAL = ?"
-    };
-    
+public class Request {    
     /**
      * 
      * @param view
@@ -55,6 +41,7 @@ public class Request {
     }
     
     public static final void load(Context context) {
+        Query query;
         DataForm selection = context.view.getElement("material");
         Documents documents = new Documents(context.function);
 
@@ -65,10 +52,20 @@ public class Request {
             return;
         }
         
-        context.prices = documents.select(QUERIES[PRICES], context.matid);
-        context.promos = documents.select(QUERIES[PROMOS], context.matid);
-        context.submats = documents.select(QUERIES[SUBMATS], context.matid);
+        query = new Query();
+        query.setModel("PRECO_MATERIAL");
+        query.andEqual("MATERIAL", context.matid);
+        context.prices = documents.select(query);
         
+        query = new Query();
+        query.setModel("PROMOCAO_MATERIAL");
+        query.andEqual("MATERIAL", context.matid);
+        context.promos = documents.select(query);
+        
+        query = new Query();
+        query.setModel("SUB_MATERIAL");
+        query.andEqual("MATERIAL", context.matid);
+        context.submats = documents.select(query);
         context.view.redirect("form");
     }
     
@@ -78,6 +75,7 @@ public class Request {
      * @param function
      */
     public static final void save(Context context) {
+        Query[] queries;
         boolean autocode;
         GlobalConfig config;
         String material;
@@ -105,9 +103,17 @@ public class Request {
         default:
             material = obase.get("ID");
             documents.modify(obase);
-            documents.update(QUERIES[DEL_SUBMAT], material);
-            documents.update(QUERIES[DEL_PRICES], material);
-            documents.update(QUERIES[DEL_PROMOS], material);
+            queries = new Query[3];
+            queries[0] = new Query("delete");
+            queries[0].setModel("SUB_MATERIAL");
+            queries[0].andEqual("MATERIAL", material);
+            queries[1] = new Query("delete");
+            queries[1].setModel("PRECO_MATERIAL");
+            queries[1].andEqual("MATERIAL", material);
+            queries[2] = new Query("delete");
+            queries[2].setModel("PROMOCAO_MATERIAL");
+            queries[2].andEqual("MATERIAL", material);
+            documents.update(queries);
             break;
         }
         

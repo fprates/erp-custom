@@ -152,10 +152,10 @@ public class Response {
             
         case Common.UPDATE:
             partner = context.view.getParameter("partner");
-            receiver.setText((String)partner.getValue("RAZAO_SOCIAL"));
+            receiver.setText(partner.getst("RAZAO_SOCIAL"));
             
             doctype = context.view.getParameter("doctype");
-            tipo.setText((String)doctype.getValue("TEXT"));
+            tipo.setText(doctype.getst("TEXT"));
             
             header.setObject(oheader);
             

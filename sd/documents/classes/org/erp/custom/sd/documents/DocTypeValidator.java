@@ -24,7 +24,7 @@ public class DocTypeValidator extends AbstractValidator {
         if (object == null)
             return;
         
-        input.setText((String)object.getValue("TEXT"));
+        input.setText(object.getst("TEXT"));
     }
 
 }
