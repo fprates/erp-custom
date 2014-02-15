@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="sd/documents/classes/|sd/documents/web/|sd/partner/classes/|sd/partner/web/|sd/partner/lib/|mm/materials/classes/|mm/materials/web/|config/classes/|sd/partner/lib/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/sd/partner/classes"/>
+	<classpathentry kind="src" path="src/sd/documents/classes"/>
+	<classpathentry kind="src" path="src/mm/materials/classes"/>
+	<classpathentry kind="src" path="src/sd/partner/lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="ext/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/iocaste.jar" sourcepath="/iocaste"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
