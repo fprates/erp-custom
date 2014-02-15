@@ -11,7 +11,7 @@ public class MasterData {
 
     public static final void install(InstallContext context) {
         DocumentModel model;
-        DocumentModelItem item, currency;
+        DocumentModelItem item, currency, countryid;
         DataElement element;
         SearchHelpData shd;
         
@@ -61,11 +61,11 @@ public class MasterData {
         element.setType(DataType.CHAR);
         element.setLength(2);
         element.setUpcase(true);
-        item = new DocumentModelItem("COUNTRY_ID");
-        item.setTableFieldName("CNTID");
-        item.setDataElement(element);
-        model.add(new DocumentModelKey(item));
-        model.add(item);
+        countryid = new DocumentModelItem("COUNTRY_ID");
+        countryid.setTableFieldName("CNTID");
+        countryid.setDataElement(element);
+        model.add(new DocumentModelKey(countryid));
+        model.add(countryid);
 
         element = new DataElement("COUNTRY_NAME");
         element.setType(DataType.CHAR);
@@ -78,12 +78,12 @@ public class MasterData {
 
         item = new DocumentModelItem("CURRENCY");
         item.setTableFieldName("CURID");
-        item.setDataElement(element);
+        item.setDataElement(currency.getDataElement());
         item.setReference(currency);
         model.add(item);
         
-        context.data.addValues(model, "BR", "BRASIL", "BRL");
-        context.data.addValues(model, "US", "UNITED STATES OF AMERICA", "USD");
+        context.data.addValues(model, "BR", "Brasil", "BRL");
+        context.data.addValues(model, "US", "United States of America", "USD");
         
         shd = new SearchHelpData("SH_COUNTRY");
         shd.setModel("COUNTRIES");
@@ -91,5 +91,72 @@ public class MasterData {
         shd.add("NAME");
         shd.setExport("COUNTRY_ID");
         context.data.add(shd);
+        
+        /*
+         * Regiões
+         */
+        model = context.data.getModel("REGION",  "REGION", null);
+        element = new DataElement("REGION_KEY");
+        element.setType(DataType.CHAR);
+        element.setLength(4);
+        element.setUpcase(true);
+        item = new DocumentModelItem("REGION_ID");
+        item.setTableFieldName("REGID");
+        item.setDataElement(element);
+        model.add(item);
+        model.add(new DocumentModelKey(item));
+        
+        item = new DocumentModelItem("COUNTRY_ID");
+        item.setTableFieldName("CNTID");
+        item.setDataElement(countryid.getDataElement());
+        item.setReference(countryid);
+        model.add(item);
+        
+        element = new DataElement("REGION_CODE");
+        element.setType(DataType.CHAR);
+        element.setLength(2);
+        element.setUpcase(true);
+        item = new DocumentModelItem("CODE");
+        item.setTableFieldName("REGCD");
+        item.setDataElement(element);
+        model.add(item);
+        
+        element = new DataElement("REGION_TEXT");
+        element.setType(DataType.CHAR);
+        element.setLength(30);
+        element.setUpcase(false);
+        item = new DocumentModelItem("TEXT");
+        item.setTableFieldName("REGTX");
+        item.setDataElement(element);
+        model.add(item);
+        
+        context.data.addValues(model, "BRAC", "BR", "AC", "Acre");
+        context.data.addValues(model, "BRAL", "AL", "BR", "Alagoas");
+        context.data.addValues(model, "BRAM", "AM", "BR", "Amazonas");
+        context.data.addValues(model, "BRAP", "AP", "BR", "Amapá");
+        context.data.addValues(model, "BRBA", "BA", "BR", "Bahia");
+        context.data.addValues(model, "BRCE", "CE", "BR", "Ceará");
+        context.data.addValues(model, "BRDF", "DF", "BR", "Brasília");
+        context.data.addValues(model, "BRES", "ES", "BR", "Espírito Santo");
+        context.data.addValues(model, "BRGO", "GO", "BR", "Goiás");
+        context.data.addValues(model, "BRMA", "MA", "BR", "Maranhão");
+        context.data.addValues(model, "BRMG", "MG", "BR", "Minas Gerais");
+        context.data.addValues(model, "BRMS", "MS", "BR", "Mato Grosso do Sul");
+        context.data.addValues(model, "BRMT", "MT", "BR", "Mato Grosso");
+        context.data.addValues(model, "BRPA", "PA", "BR", "Pará");
+        context.data.addValues(model, "BRPB", "PB", "BR", "Paraíba");
+        context.data.addValues(model, "BRPE", "PE", "BR", "Pernambuco");
+        context.data.addValues(model, "BRPI", "PI", "BR", "Piauí");
+        context.data.addValues(model, "BRPR", "PR", "BR", "Paraná");
+        context.data.addValues(model, "BRRJ", "RJ", "BR", "Rio de Janeiro");
+        context.data.addValues(model, "BRRN", "RN", "BR", "Rio Grande do "
+                + "Norte");
+        context.data.addValues(model, "BRRO", "RO", "BR", "Rondônia");
+        context.data.addValues(model, "BRRR", "RR", "BR", "Roraima");
+        context.data.addValues(model, "BRRS", "RS", "BR", "Rio Grande do Sul");
+        context.data.addValues(model, "BRSC", "SC", "BR", "Santa Catarina");
+        context.data.addValues(model, "BRSE", "SE", "BR", "Sergipe");
+        context.data.addValues(model, "BRSP", "SP", "BR", "São Paulo");
+        context.data.addValues(model, "BRTO", "TO", "BR", "Tocantins");
     }
 }
