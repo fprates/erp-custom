@@ -2,15 +2,17 @@ package org.erp.custom.sd.partner.install;
 
 import org.iocaste.documents.common.DataElement;
 import org.iocaste.documents.common.DataType;
+import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
 
 public class ContactCommunication {
     public static final void install(InstallContext context) {
         DataElement element;
-        DocumentModelItem item, modelitem;
+        DocumentModel model;
+        DocumentModelItem item, reference;
         
-        context.communication = context.data.getModel("CUSTOM_PARTNER_COMM",
+        model = context.data.getModel("CUSTOM_PARTNER_COMM",
                 "CPARTNERCOMM", null);
         
         /*
@@ -22,42 +24,42 @@ public class ContactCommunication {
         item = new DocumentModelItem("CODIGO");
         item.setTableFieldName("IDENT");
         item.setDataElement(element);
-        context.communication.add(item);
-        context.communication.add(new DocumentModelKey(item));
+        model.add(item);
+        model.add(new DocumentModelKey(item));
         
         /*
          * parceiro
          */
-        modelitem = context.partner.getModelItem("CODIGO");
-        element = modelitem.getDataElement();
+        reference = context.partner.getModelItem("CODIGO");
+        element = reference.getDataElement();
         item = new DocumentModelItem("PARTNER_ID");
         item.setTableFieldName("PRTNR");
         item.setDataElement(element);
-        item.setReference(modelitem);
-        context.communication.add(item);
+        item.setReference(reference);
+        model.add(item);
         
         /*
          * contato
          */
-        modelitem = context.contact.getModelItem("CODIGO");
-        element = modelitem.getDataElement();
+        reference = context.contact.getModelItem("CODIGO");
+        element = reference.getDataElement();
         item = new DocumentModelItem("CONTACT_ID");
         item.setTableFieldName("CNTCT");
         item.setDataElement(element);
-        item.setReference(modelitem);
-        context.communication.add(item);
+        item.setReference(reference);
+        model.add(item);
         
         /*
          * tipo de comunicação
          */
-        modelitem = context.communication.getModelItem("CODIGO");
-        element = modelitem.getDataElement();
+        reference = context.communication.getModelItem("CODIGO");
+        element = reference.getDataElement();
         item = new DocumentModelItem("TP_COMMUNIC");
         item.setTableFieldName("TPCOM");
         item.setDataElement(element);
-        item.setReference(modelitem);
+        item.setReference(reference);
         item.setSearchHelp("SH_COMMUNICATION");
-        context.communication.add(item);
+        model.add(item);
         
         /*
          * descrição da comunicação
@@ -66,6 +68,6 @@ public class ContactCommunication {
         item = new DocumentModelItem("COMMUNICATION");
         item.setTableFieldName("COMMU");
         item.setDataElement(element);
-        context.communication.add(item);
+        model.add(item);
     }
 }
