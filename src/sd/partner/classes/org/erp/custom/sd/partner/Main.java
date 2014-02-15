@@ -1,5 +1,6 @@
 package org.erp.custom.sd.partner;
 
+import org.erp.custom.sd.partner.install.Install;
 import org.iocaste.documents.common.DocumentModel;
 import org.iocaste.documents.common.Documents;
 import org.iocaste.documents.common.ExtendedObject;
