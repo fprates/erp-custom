@@ -1,0 +1,14 @@
+<project name="iocaste" default="compile">
+    <property name="builddir" value="${basedir}/build"/>
+	<property name="debug.status" value="on"/>
+	
+    <target name="compile">
+        <ant antfile="${basedir}/src/mm/materials/build.xml"/>
+        <ant antfile="${basedir}/src/sd/partner/build.xml"/>
+        <ant antfile="${basedir}/src/sd/documents/build.xml"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${builddir}"/>
+    </target>
+</project>
