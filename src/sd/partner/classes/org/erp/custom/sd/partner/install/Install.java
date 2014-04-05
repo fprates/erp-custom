@@ -20,7 +20,8 @@ public class Install {
         Map<String, String> messages;
         Authorization authorization;
         InstallContext context = new InstallContext();
-        
+
+        MasterData.install(context);
         PartnerType.install(context);
         Partner.install(context);
         AddressType.install(context);
@@ -28,7 +29,6 @@ public class Install {
         Communication.install(context);
         PartnerContact.install(context);
         ContactCommunication.install(context);
-        MasterData.install(context);
         
         context.data.addNumberFactory("CUSTPARTNER");
         context.data.link("XD01", "erp-custom-sd.partner");
@@ -76,6 +76,7 @@ public class Install {
         messages.put("RAZAO_SOCIAL", "Razão social");
         messages.put("record.is.locked",
                 "Registro bloqueado para atualização por outro usuário.");
+        messages.put("REGION", "Estado");
         messages.put("REGION-CONFIG", "Regiões/Estados");
         messages.put("removeaddress", "Remover");
         messages.put("removecommunic", "Remover comunicação");

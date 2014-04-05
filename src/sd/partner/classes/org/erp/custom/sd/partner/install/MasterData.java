@@ -100,11 +100,11 @@ public class MasterData {
         element.setType(DataType.CHAR);
         element.setLength(4);
         element.setUpcase(true);
-        item = new DocumentModelItem("REGION_ID");
-        item.setTableFieldName("REGID");
-        item.setDataElement(element);
-        model.add(item);
-        model.add(new DocumentModelKey(item));
+        context.region = new DocumentModelItem("REGION_ID");
+        context.region.setTableFieldName("REGID");
+        context.region.setDataElement(element);
+        model.add(context.region);
+        model.add(new DocumentModelKey(context.region));
         
         item = new DocumentModelItem("COUNTRY_ID");
         item.setTableFieldName("CNTID");
@@ -129,6 +129,14 @@ public class MasterData {
         item.setTableFieldName("REGTX");
         item.setDataElement(element);
         model.add(item);
+        
+        shd = new SearchHelpData("SH_REGION");
+        shd.setModel("REGION");
+        shd.add("REGION_ID");
+        shd.add("CODE");
+        shd.add("TEXT");
+        shd.setExport("REGION_ID");
+        context.data.add(shd);
         
         context.data.addValues(model, "BRAC", "BR", "AC", "Acre");
         context.data.addValues(model, "BRAL", "BR", "AL", "Alagoas");

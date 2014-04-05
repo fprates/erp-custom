@@ -73,6 +73,13 @@ public class PartnerAddress {
         item.setDataElement(element);
         context.address.add(item);
         
+        item = new DocumentModelItem("REGION");
+        item.setTableFieldName("REGCD");
+        item.setDataElement(context.region.getDataElement());
+        item.setReference(context.region);
+        item.setSearchHelp("SH_REGION");
+        context.address.add(item);
+        
         element = new DataElement("CUSTOM_PARTNER_ADDRESS.TELEFONE");
         element.setLength(16);
         element.setType(DataType.CHAR);
