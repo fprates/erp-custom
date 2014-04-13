@@ -4,12 +4,14 @@ import org.iocaste.documents.common.DataElement;
 import org.iocaste.documents.common.DataType;
 import org.iocaste.documents.common.DocumentModelItem;
 import org.iocaste.documents.common.DocumentModelKey;
+import org.iocaste.documents.common.DummyElement;
+import org.iocaste.documents.common.DummyModelItem;
 
 public class PartnerAddress {
 
     public static final void install(InstallContext context) {
         DataElement element;
-        DocumentModelItem item, partnercode, addresstypecode;
+        DocumentModelItem item, partnercode, addresstypecode, reference;
         
         context.address = context.data.getModel(
                 "CUSTOM_PARTNER_ADDRESS", "CPARTNERADDR", null);
@@ -73,10 +75,12 @@ public class PartnerAddress {
         item.setDataElement(element);
         context.address.add(item);
         
+        element = new DummyElement("REGION_CODE");
+        reference = new DummyModelItem("REGION", "REGION_ID");
         item = new DocumentModelItem("REGION");
         item.setTableFieldName("REGCD");
-        item.setDataElement(context.region.getDataElement());
-        item.setReference(context.region);
+        item.setDataElement(element);
+        item.setReference(reference);
         item.setSearchHelp("SH_REGION");
         context.address.add(item);
         

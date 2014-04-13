@@ -21,7 +21,6 @@ public class Install {
         Authorization authorization;
         InstallContext context = new InstallContext();
 
-        MasterData.install(context);
         PartnerType.install(context);
         Partner.install(context);
         AddressType.install(context);
@@ -32,10 +31,7 @@ public class Install {
         
         context.data.addNumberFactory("CUSTPARTNER");
         context.data.link("XD01", "erp-custom-sd.partner");
-        context.data.link("COUNTRY-CONFIG", "iocaste-dataeditor "
-                + "model=COUNTRIES action=edit");
-        context.data.link("REGION-CONFIG", "iocaste-dataeditor "
-                + "model=REGION action=edit");
+        
         messages = new HashMap<>();
         messages.put("addaddress", "Adicionar");
         messages.put("addcommunic", "Adicionar comunicação");
@@ -50,7 +46,6 @@ public class Install {
         messages.put("COMMUNICATION", "Comunicação");
         messages.put("communicscnt", "Comunicação");
         messages.put("contacttab", "Contatos");
-        messages.put("COUNTRY-CONFIG", "Países");
         messages.put("create", "Criar");
         messages.put("DESCRICAO", "Descrição");
         messages.put("DOCUMENTO_FISCAL", "Documento fiscal");
@@ -77,7 +72,6 @@ public class Install {
         messages.put("record.is.locked",
                 "Registro bloqueado para atualização por outro usuário.");
         messages.put("REGION", "Estado");
-        messages.put("REGION-CONFIG", "Regiões/Estados");
         messages.put("removeaddress", "Remover");
         messages.put("removecommunic", "Remover comunicação");
         messages.put("removecontact", "Remover contato");
@@ -107,8 +101,6 @@ public class Install {
         
         taskgroup = new TaskGroup("ERP");
         taskgroup.add("XD01");
-        taskgroup.add("COUNTRY-CONFIG");
-        taskgroup.add("REGION-CONFIG");
         context.data.add(taskgroup);
         
         return context.data;
