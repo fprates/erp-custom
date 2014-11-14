@@ -1,14 +1,77 @@
-<project name="iocaste" default="compile">
+<project name="erp" default="compile">
     <property name="builddir" value="${basedir}/build"/>
-	<property name="debug.status" value="on"/>
+    <property name="debug.status" value="true"/>
+    <property name="vendor" value="aegis"/>
+    <property name="server.class" value="org.${vendor}.${ant.project.name}.Servlet"/>
+    <property name="warfilename" value="${basedir}/${ant.project.name}.war"/>
+    
+    <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
+    <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"/>
 	
     <target name="compile">
-        <ant antfile="${basedir}/src/mm/materials/build.xml"/>
-        <ant antfile="${basedir}/src/sd/partner/build.xml"/>
-        <ant antfile="${basedir}/src/sd/documents/build.xml"/>
-    </target>
+        <mkdir dir="${builddir}/web"/>
+        <mkdir dir="${builddir}/lib"/>
+        <mkdir dir="${builddir}/classes"/>
+    	
+        <!-- dependências -->
+        <path id="dependencies">
+            <fileset dir="${basedir}/lib"/>
+            <fileset dir="${basedir}/ext"/>
+            <fileset dir="${builddir}/lib"/>
+        </path>
+        
+        <!-- substituições -->
+        <copy todir="${builddir}/web" file="${basedir}/src/web/web.xml"/>
+        
+        <replace file="${builddir}/web/web.xml"
+            token="@server.class@" value="${server.class}"/>
+    	
+        <!-- compilação lib -->
+        <!-- <mkdir dir="${builddir}/tmp"/>
+        <javac srcdir="${basedir}/src/lib" destdir="${builddir}/tmp"
+        	debug="${debug.status}">
+            <classpath refid="dependencies"/>
+        </javac>
+        
+        <jar basedir="${builddir}/tmp"
+             destfile="${builddir}/lib/${ant.project.name}.jar"/>
+        <delete dir="${builddir}/tmp"/> -->
+    	
+        <!-- compilação classes -->
+        <javac srcdir="${basedir}/src/classes" destdir="${builddir}/classes"
+        	debug="${debug.status}">
+            <classpath refid="dependencies"/>
+        </javac>
+        
+        <copy todir="${builddir}/classes">
+            <fileset dir="${basedir}/src/classes" excludes="**/*.java"/>
+        </copy>
+        
+        <!-- pacote .war -->
+        <war destfile="${warfilename}"
+            webxml="${builddir}/web/web.xml">
+            <webinf dir="${basedir}/src/web/">
+                <exclude name="web.xml"/>
+                <include name="**/*"/> 
+            </webinf>
+            <lib dir="${builddir}/lib" includes="*.jar"/>
+            <lib dir="${basedir}/lib" includes="*.jar"/>
+            <classes dir="${builddir}/classes"/>
+        </war>
 
-    <target name="clean">
+        <condition property="manager_url" value="${url}/manager/text"
+        		else="${url}/manager">
+            <equals arg1="${tomcat_version}" arg2="7"/>
+        </condition>
+        
+        <undeploy url="${manager_url}" username="${username}"
+        	password="${password}" path="/${ant.project.name}"
+        	failonerror="false"/>
+    	
+        <deploy url="${manager_url}" username="${username}"
+        	password="${password}" path="/${ant.project.name}"
+        	war="file:${warfilename}" failonerror="false"/>
+
         <delete dir="${builddir}"/>
     </target>
 </project>
