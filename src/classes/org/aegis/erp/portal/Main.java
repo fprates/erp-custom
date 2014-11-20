@@ -37,6 +37,7 @@ public class Main extends AbstractModelViewer {
 
         link.customconfig = new CustomConfig();
         loadManagedModule(context, link);
+        register("expire_date", new ExpireDateValidate());
     }
 
     @Override
