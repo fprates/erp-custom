@@ -26,6 +26,14 @@ public class PortalConfig extends AbstractViewConfig {
         component.add("AEGISSDDOCDS");
         component.add("AEGISSDDOCCH");
         
+        component = getDashboardItem("portal", "delivery");
+        component.setBorderColor("#ffffff");
+        component.setColor("#aaaaff");
+        component.addText("delivery");
+        component.add("AEGISDLVRYCR");
+        component.add("AEGISDLVRYDS");
+        component.add("AEGISDLVRYCH");
+        
         component = getDashboardItem("portal", "customer");
         component.setBorderColor("#ffffff");
         component.setColor("#aaaaaa");

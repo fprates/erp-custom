@@ -10,6 +10,7 @@ public class PortalSpec extends AbstractViewSpec {
         navcontrol("main");
         dashboard("main", "portal");
         dashboardgroup("portal", "quotation");
+        dashboardgroup("portal", "delivery");
         dashboardgroup("portal", "customer");
         dashboardgroup("portal", "material");
         dashboardgroup("portal", "parameters");

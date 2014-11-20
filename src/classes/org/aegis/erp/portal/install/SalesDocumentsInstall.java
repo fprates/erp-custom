@@ -2,6 +2,7 @@ package org.aegis.erp.portal.install;
 
 import org.iocaste.appbuilder.common.AbstractInstallObject;
 import org.iocaste.appbuilder.common.ComplexModelInstall;
+import org.iocaste.appbuilder.common.MessagesInstall;
 import org.iocaste.appbuilder.common.ModelInstall;
 import org.iocaste.appbuilder.common.StandardInstallContext;
 import org.iocaste.documents.common.DataElement;
@@ -20,7 +21,15 @@ public class SalesDocumentsInstall extends AbstractInstallObject {
         DataElement paymentcode, paymenttext, amount;
         DocumentModelItem payment, unitid, currency;
         SearchHelpData shd;
-        
+        MessagesInstall messages = messageInstance("pt_BR");
+
+        messages.put("CURRENCY", "Moeda");
+        messages.put("ITEM", "Item");
+        messages.put("MATERIAL", "Material");
+        messages.put("PRICE", "Preço");
+        messages.put("QUANTITY", "Quantidade");
+        messages.put("QUANTITY_UNIT", "Un.Quant.");
+                
         paymentcode = elementnumc(
                 "AEGIS_PAYMNT_CODE", 3);
         paymenttext = elementchar(
@@ -87,7 +96,7 @@ public class SalesDocumentsInstall extends AbstractInstallObject {
          */
         model = tag("sd_items", modelInstance("AEGIS_SD_ITEM", "AEGISSDIT"));
         model.key(
-                "ITEM_KEY", "KEYIT", docitemkey);
+                "ITEM_KEY", "ITKEY", docitemkey);
         searchhelp(model.reference(
                 "DOCUMENT", "SDDOC", getItem("docid")), "AEGIS_AD_DOCUMENTS");
         model.item(
