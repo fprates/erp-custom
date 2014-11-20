@@ -5,17 +5,18 @@ import org.aegis.erp.portal.install.DeliveryInstall;
 import org.aegis.erp.portal.install.MaterialInstall;
 import org.aegis.erp.portal.install.TextsInstall;
 import org.aegis.erp.portal.install.SalesDocumentsInstall;
-import org.iocaste.appbuilder.common.AbstractPageBuilder;
 import org.iocaste.appbuilder.common.AppBuilderLink;
 import org.iocaste.appbuilder.common.PageBuilderContext;
 import org.iocaste.appbuilder.common.PageBuilderDefaultInstall;
 import org.iocaste.appbuilder.common.ViewContext;
+import org.iocaste.appbuilder.common.cmodelviewer.AbstractModelViewer;
 
-public class Main extends AbstractPageBuilder {
+public class Main extends AbstractModelViewer {
 
     @Override
     public void config(PageBuilderContext context) throws Exception {
         ViewContext view;
+        AppBuilderLink link;
         
         context.addManager("sd", new SDManager(context));
         view = context.instance("portal");
@@ -23,11 +24,19 @@ public class Main extends AbstractPageBuilder {
         view.set(new PortalConfig());
         for (String name : new String[] {
                 "quotation",
+                "delivery",
                 "customer",
                 "material",
                 "parameters"
         })
             view.put(name, new DashboardRedirect(name));
+        
+        link = getReceivedLink();
+        if (link == null)
+            return;
+
+        link.customconfig = new CustomConfig();
+        loadManagedModule(context, link);
     }
 
     @Override
@@ -45,6 +54,15 @@ public class Main extends AbstractPageBuilder {
         link.cmodel = "AEGIS_SD_DOCUMENT";
         link.entity = "sddocument";
         link.number = "AEGIS_SD";
+        link.appname = "erp";
+
+        link = defaultinstall.builderLinkInstance();
+        link.change = "AEGISDLVRYCH";
+        link.create = "AEGISDLVRYCR";
+        link.display = "AEGISDLVRYDS";
+        link.cmodel = "AEGIS_DELIVERY";
+        link.entity = "delivery";
+        link.number = "AEGISDLVRY";
         
         link = defaultinstall.builderLinkInstance();
         link.change = "AEGISMATRLCH";
