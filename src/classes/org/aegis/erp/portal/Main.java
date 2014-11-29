@@ -10,6 +10,7 @@ import org.iocaste.appbuilder.common.PageBuilderContext;
 import org.iocaste.appbuilder.common.PageBuilderDefaultInstall;
 import org.iocaste.appbuilder.common.ViewContext;
 import org.iocaste.appbuilder.common.cmodelviewer.AbstractModelViewer;
+import org.iocaste.appbuilder.common.cmodelviewer.MaintenanceConfig;
 
 public class Main extends AbstractModelViewer {
 
@@ -35,7 +36,18 @@ public class Main extends AbstractModelViewer {
         if (link == null)
             return;
 
-        link.customconfig = new CustomConfig();
+        link.extcontext = new ERPContext();
+        ((ERPContext)link.extcontext).link = link;
+        switch (link.entity) {
+        case "sddocument":
+            link.maintenanceconfig = new CustomMaintenanceConfig();
+            break;
+        case "delivery":
+            link.createselectconfig = new CreateSelectConfig();
+            link.maintenanceconfig = new MaintenanceConfig();
+            link.validate = new CreateSelectValidate();
+        }
+        
         loadManagedModule(context, link);
         register("expire_date", new ExpireDateValidate());
     }
@@ -64,6 +76,7 @@ public class Main extends AbstractModelViewer {
         link.cmodel = "AEGIS_DELIVERY";
         link.entity = "delivery";
         link.number = "AEGISDLVRY";
+        link.appname = "erp";
         
         link = defaultinstall.builderLinkInstance();
         link.change = "AEGISMATRLCH";

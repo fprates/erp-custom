@@ -6,7 +6,7 @@ import org.iocaste.appbuilder.common.tabletool.TableToolColumn;
 import org.iocaste.appbuilder.common.tabletool.TableToolData;
 import org.iocaste.shell.common.DataForm;
 
-public class CustomConfig extends MaintenanceConfig {
+public class CustomMaintenanceConfig extends MaintenanceConfig {
 
     @Override
     protected void execute(PageBuilderContext context) {
